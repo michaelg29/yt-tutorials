@@ -4,9 +4,10 @@ Following instructions starting at [Learn OpenGL](https://learnopengl.com/Gettin
 Make sure everything you configure is set for **_x64_** in your IDE.
 
 ## Initial
-1. Create directory named 'Linking' in Solution Directory
+1. Create project in IDE (These directions are for Visual Studio 2019)
+2. Create directory named 'Linking' in Solution Directory
     * eg. $(SolutionDir)\Linking
-2. Set Properties
+3. Set Properties
     * Linker -> Input
         * Additional Dependencies
             \+ opengl32.lib
