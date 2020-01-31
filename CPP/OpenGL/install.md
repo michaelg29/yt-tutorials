@@ -46,4 +46,10 @@ Make sure everything you configure is set for **_x64_** in your IDE.
 
 ## stb_image.h
 1. Download raw file from [GitHub/nothings/stb](https://raw.githubusercontent.com/nothings/stb/master/stb_image.h)
-2. Move *stb_image.h* file that was just downloaded to *$(ProjectDir)\lib* directory
+2. Create directory *stb* in *$(SolutionDir)\linking* directory
+3. Move *stb_image.h* file that was just downloaded to *$(SolutionDir)\Linking* directory
+4. Create file *stb.cpp* in *$(ProjectDir)\lib* directory and add the following code:
+```cpp
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
+```
