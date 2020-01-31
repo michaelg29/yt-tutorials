@@ -16,7 +16,7 @@ Make sure everything you configure is set for **_x64_** in your IDE.
             \+ $(SolutionDir)\Linking\lib;
         * Include Directories
             \+ $(SolutionDir)\Linking\include;
-4. Create directories *src* and *lib* in Project Directory
+4. Create directories *src*, *lib*, and *assets* in Project Directory
 
 ## GLFW
 1. Download package from [GLFW](https://www.glfw.org/download.html)
