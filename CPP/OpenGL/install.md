@@ -16,6 +16,7 @@ Make sure everything you configure is set for **_x64_** in your IDE.
             \+ $(SolutionDir)\Linking\lib;
         * Include Directories
             \+ $(SolutionDir)\Linking\include;
+4. Create directories *src* and *lib* in Project Directory
 
 ## GLFW
 1. Download package from [GLFW](https://www.glfw.org/download.html)
@@ -36,10 +37,13 @@ Make sure everything you configure is set for **_x64_** in your IDE.
         * Options -> Generate a Loader: checked **(required)**
 2. Drag include directory in download to Linking directory in solution
     * This should add the *glad* and *KHR* directories to your *Linking\include* directory
-3. Drag *src* directory in download to Project directory
-    * This should add the *glad.c* file to your $(ProjectDir)\src directory
+3. Drag *src/glad.c* file in download to *$(ProjectDir)\lib* directory
 
 ## GLM
 1. Find latest package from [GLM](https://github.com/g-truc/glm/tags)
     * Click on the package and download the .zip file
 2. Drag the *glm* directory that is next to the other directories like *doc* from the download folder to the *Linking\include* directory
+
+## stb_image.h
+1. Download raw file from [GitHub/nothings/stb](https://raw.githubusercontent.com/nothings/stb/master/stb_image.h)
+2. Move *stb_image.h* file that was just downloaded to *$(ProjectDir)\lib* directory
