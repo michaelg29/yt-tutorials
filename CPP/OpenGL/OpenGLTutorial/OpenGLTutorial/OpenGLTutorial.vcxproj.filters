@@ -21,5 +21,16 @@
     <ClCompile Include="src\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\stb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\vertex_core.glsl" />
+    <None Include="assets\fragment_core.glsl" />
+    <None Include="assets\fragment_core_2.glsl" />
   </ItemGroup>
 </Project>
