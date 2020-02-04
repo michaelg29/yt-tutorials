@@ -1,2 +1,3 @@
-﻿  main.cpp
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(954,5): warning MSB8027: Two or more files with the name of glad.c will produce outputs to the same location. This can lead to an incorrect build result.  The files involved are src\glad.c, src\glad.c.
+  main.cpp
   OpenGLTutorial.vcxproj -> C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\x64\Debug\OpenGLTutorial.exe
