@@ -39,4 +39,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\image1.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\image2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
