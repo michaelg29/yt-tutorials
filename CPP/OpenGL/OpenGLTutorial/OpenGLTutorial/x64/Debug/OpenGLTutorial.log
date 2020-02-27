@@ -1,6 +1,6 @@
 ﻿  C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\
   main.cpp
-C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(21): warning C4101: 'infoLog': unreferenced local variable
-C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(20): warning C4101: 'success': unreferenced local variable
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(23): warning C4101: 'infoLog': unreferenced local variable
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(22): warning C4101: 'success': unreferenced local variable
   OpenGLTutorial.vcxproj -> C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\x64\Debug\OpenGLTutorial.exe
   C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\
