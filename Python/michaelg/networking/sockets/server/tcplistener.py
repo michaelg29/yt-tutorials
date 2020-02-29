@@ -8,7 +8,7 @@ import socket, threading
 from .tcpclientmodel import TcpClient
 
 class TcpListener:
-    def __init__(self, ipAddr, port, packetSize, hasCommands=False):
+    def __init__(self, ipAddr, port, packetSize, hasCommands=False, overrideReceive=False):
         """
         TcpListener constructor
 
@@ -43,6 +43,7 @@ class TcpListener:
         self.__running = False
         self.__binded = False
         self.__hasCommands = hasCommands
+        self.__overrideReceive = overrideReceive
 
     # don't override
     def run(self):
@@ -110,7 +111,7 @@ class TcpListener:
 
             # start client thread
             clientThread = threading.Thread(
-                target=self.__clientThread,
+                target=self.clientThread if self.__overrideReceive else self.__clientThread,
                 args={client}
             )
             clientThread.setDaemon(True)
@@ -163,6 +164,10 @@ class TcpListener:
         self.clientDisconnected(client)
         self.clients.remove(client)
 
+    # override if self.overrideReceive
+    def clientThread(self, client):
+        pass
+
     # override this
     def cmdThread(self):
         """
@@ -204,7 +209,7 @@ class TcpListener:
         return None
 
     # don't override
-    def send(self, client, msg, doEncode=True):
+    def send(self, client, msg, doEncode=True, tagFinished=True):
         """
         public send message function
 
@@ -224,7 +229,7 @@ class TcpListener:
         None
         """
         
-        client.send(self.packetSize, msg, doEncode)
+        client.send(self.packetSize, msg, doEncode, tagFinished)
 
     # recommended to override
     def generateClientObject(self, clientSock, clientAddr):
