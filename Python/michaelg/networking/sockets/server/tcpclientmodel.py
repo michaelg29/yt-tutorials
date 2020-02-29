@@ -18,8 +18,11 @@ class TcpClient:
         -------
         TcpClient object
         """
-        pass
+        
+        self.sock = clientSock
+        self.addr = clientAddr
 
+    # don't override
     def send(self, packetSize, msg, doEncode=True):
         """
         public send message function
@@ -36,4 +39,17 @@ class TcpClient:
         ------
         None
         """
-        pass
+        
+        # modify message
+        send_b = msg.encode("utf8") if doEncode else msg # true_result if condition else false_result
+        send_b += "finished".encode("utf8")
+
+        # break up and send individual packets
+        size = len(send_b)
+        idx = 0
+
+        while idx < size - packetSize:
+            self.sock.send(send_b[idx:idx + packetSize])
+            idx += packetSize
+
+        self.sock.send(send_b[idx:])
