@@ -46,14 +46,12 @@ class HttpServer(TcpListener):
         print(f"HTTP Server started at {self.ipAddr}:{self.port}")
 
     def clientConnected(self, client):
-        print("Client connected")
+        pass
 
     def clientDisconnected(self, client):
-        print("Client disconnected")
+        pass
 
     def msgReceived(self, client, msg):
-        print(msg)
-
         req = HttpRequest(client, msg, self.atts)
         req.parse()
         req.follow()
