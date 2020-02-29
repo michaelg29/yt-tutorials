@@ -15,11 +15,36 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\fragment_core.glsl" />
+    <None Include="assets\fragment_core_2.glsl" />
+    <None Include="assets\vertex_core.glsl" />
+    <None Include="glfw3.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\stb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\image1.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\image2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
