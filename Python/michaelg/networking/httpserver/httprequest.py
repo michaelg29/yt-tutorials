@@ -18,7 +18,7 @@ class HttpRequest:
         self.server_atts = server_atts
 
         self.request = self.body.split()
-        
+
         self.response_code = 200
         self.response_content = ""
 
@@ -84,7 +84,7 @@ class HttpRequest:
             f'Cache-Control: no-cache, private{rc}' + \
             f'Content-Length: {len(self.response_content)}{rc}' + \
             f'Content-Type: {self.type}, charset=iso-8859-1{rc}'
-        
+
         if self.bytes:
             msg += f'Accept-Ranges: bytes{rc}{rc}'
             msg = msg.encode("utf8") + self.response_content
@@ -94,12 +94,18 @@ class HttpRequest:
         return msg
 
     def readText(self, path):
-        with open(f"{self.server_atts.contextRoute}/{path}", "r") as f:
-            self.response_content = f.read()
+        try:
+            with open(f"{self.server_atts.contextRoute}/{path}", "r") as f:
+                self.response_content = f.read()
+        except:
+            self.response_content = ""
 
     def readBytes(self, path):
-        with open(f"{self.server_atts.contextRoute}/{path}", "rb") as f:
-            self.response_content = f.read()
+        try:
+            with open(f"{self.server_atts.contextRoute}/{path}", "rb") as f:
+                self.response_content = f.read()
+        except:
+            self.response_content = b''
 
     def renderTemplate(self, path):
         template = Template('')
