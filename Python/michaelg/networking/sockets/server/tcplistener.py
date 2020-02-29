@@ -1,5 +1,6 @@
 """
 Tcp Listener class
+
 Provides template class to be inherited from for a tcp server
 """
 
@@ -10,7 +11,9 @@ class TcpListener:
     def __init__(self, ipAddr, port, packetSize, hasCommands=False):
         """
         TcpListener constructor
+
         initializes values
+
         Parameters
         ----------
         ipAddr : str
@@ -21,6 +24,7 @@ class TcpListener:
             size of packets for communication
         hasCommands : bool
             determines whether or not to start commands thread
+
         Returns
         -------
         TcpServer object
@@ -44,10 +48,13 @@ class TcpListener:
     def run(self):
         """
         public run function
+
         binds socket and initializes all communication and command threads
+
         Parameters
         ----------
         None
+
         Returns
         -------
         None
@@ -72,15 +79,19 @@ class TcpListener:
             self.__commandsThread.start()
 
         self.__running = True
+        self.serverStarted()
 
     # don't override
     def __acceptThread(self):
         """
         private accept thread function
+
         thread to accept incoming clients
+
         Parameters
         ----------
         None
+
         Return
         ------
         None
@@ -108,11 +119,14 @@ class TcpListener:
     def __clientThread(self, client):
         """
         private client thread function
+
         initialized for each client to handle communications
+
         Parameters
         ----------
         client : TcpClient
             client class with information about client
+
         Return
         ------
         None
@@ -152,34 +166,49 @@ class TcpListener:
     def cmdThread(self):
         """
         command thread
+
         if hasCommands, server starts this thread to accept commands as input
+
         Parameters
         ----------
         None
+
         Return
         ------
         None
         """
         pass
 
+    # don't override
     def getTcpClient(self, sock):
         """
         function to retrieve client object
+
         compares socket to each socket in list of clients
+
         Parameters
         ----------
         sock : socket
             desired socket object
+
         Return
         ------
         client object with matching socket, None if no match
         """
-        pass
+        
+        for client in self.clients:
+            if client.sock == sock:
+                return client
 
+        return None
+
+    # don't override
     def send(self, client, msg, doEncode=True):
         """
         public send message function
+
         calls send function for client parameter
+
         Parameters
         ----------
         client : TcpClient
@@ -188,79 +217,102 @@ class TcpListener:
             message to send
         doEncode : bool
             specify whether or not to encode message into bytes
+
         Return
         ------
         None
         """
-        pass
+        
+        client.send(self.packetSize, msg, doEncode)
 
+    # recommended to override
     def generateClientObject(self, clientSock, clientAddr):
         """
         function to generate client object
+
         should be overriden to generate object of type that inherits from TcpClient
+
         Parameters
         ----------
         clientSock : socket
             socket of client
         clientAddr : address
             address of client
+
         Return
         ------
         client object inherited from TcpClient with clientSock, clientAddr
         """
-        pass
+        
+        return TcpClient(clientSock, clientAddr)
 
+    # override this
     def serverStarted(self):
         """
         server started event callback
+
         when server is fully started, the program calls this function
+
         Parameters
         ----------
         None
+
         Return
         ------
         None
         """
         pass
 
+    # override this
     def clientConnected(self, client):
         """
         client connected event callback
+
         when a client connects, the program calls this function
+
         Parameters
         ----------
         client : TcpClient
             client that has connected
+
         Return
         ------
         None
         """
         pass
 
+    # override this
     def clientDisconnected(self, client):
         """
         client disconnected event callback
+
         when a client disconnects, the program calls this function
+
         Parameters
         ----------
         client : TcpClient
             client that disconnected
+
         Return
         ------
         None
         """
         pass
 
+    # override this
     def msgReceived(self, client, msg):
         """
         message received event callback
+
         when server receives message, the program calls this function
+
         Parameters
         ----------
         client : TcpClient
             sending client
         msg : str
             sent message
+
         Return
         ------
         None
