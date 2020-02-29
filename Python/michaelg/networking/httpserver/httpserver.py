@@ -2,12 +2,16 @@ from ..sockets.server.tcplistener import TcpListener
 from .httpclientmodel import HttpClientModel
 from .httprequest import HttpRequest
 
+from jinja2 import Environment, FileSystemLoader
+
 class WebServerAttributes:
     def __init__(self, contextRoute, errorFile):
         self.contextRoute = contextRoute
         self.errorFile = errorFile
 
         self.actions = {}
+
+        self.jinja_env = Environment(loader=FileSystemLoader(self.contextRoute))
 
 class HttpServer(TcpListener):
     def __init__(self, ipAddr, port):
@@ -35,6 +39,9 @@ class HttpServer(TcpListener):
         client.sock.close()
         self.client.remove(client)
 
+    def generateClientObject(self, clientsock, clientaddr):
+        return HttpClientModel(clientsock, clientaddr)
+
     def serverStarted(self):
         print(f"HTTP Server started at {self.ipAddr}:{self.port}")
 
@@ -51,4 +58,7 @@ class HttpServer(TcpListener):
         req.parse()
         req.follow()
 
-        self.send(client, req.genResponse(), True, False)
+        self.send(client, req.genResponse(), not req.bytes, False)
+
+    def addApp(self, app):
+        self.atts.actions.update(app.getRoutes())
