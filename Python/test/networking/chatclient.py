@@ -1,5 +1,5 @@
 import sys
-sys.path.append(f"D:\Documents\Youtube\yt-tutorials\python") # replace with path to your networking library
+sys.path.append(f"C:\src\yt-tutorials\python") # replace with path to your networking library
 
 from michaelg.networking.sockets.client.tcpclient import TcpClient
 
