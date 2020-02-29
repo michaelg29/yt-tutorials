@@ -25,7 +25,7 @@ class TcpClient:
         
         self.ipAddr = ipAddr
         self.port = port
-        self.__client = socket.socket(
+        self.sock = socket.socket(
             family=socket.AF_INET,
             type=socket.SOCK_STREAM
         )
