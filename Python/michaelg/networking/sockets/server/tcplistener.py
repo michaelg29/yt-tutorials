@@ -5,7 +5,7 @@ Provides template class to be inherited from for a tcp server
 """
 
 import socket, threading
-from tcpclientmodel import TcpClient
+from .tcpclientmodel import TcpClient
 
 class TcpListener:
     def __init__(self, ipAddr, port, packetSize, hasCommands=False):
@@ -69,7 +69,6 @@ class TcpListener:
             target=self.__acceptThread
         )
         self.__incomingConnectionThread.setDaemon(True)
-        self.__incomingConnectionThread.start()
 
         # initialize the commands thread if necessary
         if self.__hasCommands:
@@ -80,6 +79,8 @@ class TcpListener:
 
         self.__running = True
         self.serverStarted()
+
+        self.__incomingConnectionThread.start()
 
     # don't override
     def __acceptThread(self):
