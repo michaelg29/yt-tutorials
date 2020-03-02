@@ -12,11 +12,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Shader.h"
+#include "io/keyboard.h"
+#include "io/mouse.h"
+#include "io/joystick.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
 float mixVal = 0.5f;
+
+glm::mat4 mouseTransform = glm::mat4(1.0f);
+
+Joystick mainJ(0);
 
 int main() {
 	int success;
@@ -53,6 +60,11 @@ int main() {
 	glViewport(0, 0, 800, 600);
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+	glfwSetKeyCallback(window, Keyboard::keyCallback);
+
+	glfwSetCursorPosCallback(window, Mouse::cursorPosCallback);
+	glfwSetMouseButtonCallback(window, Mouse::mouseButtonCallback);
 
 	// SHADERS===============================
 	Shader shader("assets/vertex_core.glsl", "assets/fragment_core.glsl");
@@ -160,6 +172,11 @@ int main() {
 	shader.activate();
 	shader.setMat4("transform", trans);*/
 
+	mainJ.update();
+	if (mainJ.isPresent()) {
+		std::cout << mainJ.getName() << " is present." << std::endl;
+	}
+
 	while (!glfwWindowShouldClose(window)) {
 		// process input
 		processInput(window);
@@ -185,6 +202,7 @@ int main() {
 		//trans = glm::rotate(trans, glm::radians(timeValue / 100), glm::vec3(0.1f, 0.1f, 0.1f));
 		//shader.setMat4("transform", trans);
 
+		shader.setMat4("mouseTransform", mouseTransform);
 		shader.setFloat("mixVal", mixVal);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -215,21 +233,47 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 void processInput(GLFWwindow* window) {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+	if (Keyboard::key(GLFW_KEY_ESCAPE)) {
 		glfwSetWindowShouldClose(window, true);
 	}
 
 	// change mix value
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+	if (Keyboard::key(GLFW_KEY_UP)) {
 		mixVal += .05f;
 		if (mixVal > 1) {
 			mixVal = 1.0f;
 		}
 	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+	if (Keyboard::key(GLFW_KEY_DOWN)) {
 		mixVal -= .05f;
 		if (mixVal < 0) {
 			mixVal = 0.0f;
 		}
+	}
+
+	// mouse
+	/*if (Mouse::button(GLFW_MOUSE_BUTTON_LEFT)) {
+		double x = Mouse::getMouseX();
+		double y = Mouse::getMouseY();
+
+		std::cout << x << ' ' << y << std::endl;
+
+		mouseTransform = glm::mat4(1.0f);
+		mouseTransform = glm::translate(mouseTransform, glm::vec3(x, y, 0.0f));
+	}*/
+
+	// joystick
+	mainJ.update();
+
+	float lx = mainJ.axesState(GLFW_JOYSTICK_AXES_LEFT_STICK_X);
+	float ly = -mainJ.axesState(GLFW_JOYSTICK_AXES_LEFT_STICK_Y);
+
+	// account for deadzone
+	if (std::abs(lx) > .05) {
+		mouseTransform = glm::translate(mouseTransform, glm::vec3(lx / 10, 0.0f, 0.0f));
+	}
+
+	if (std::abs(ly) > .05) {
+		mouseTransform = glm::translate(mouseTransform, glm::vec3(0.0f, ly / 10, 0.0f));
 	}
 }
