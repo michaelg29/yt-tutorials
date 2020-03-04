@@ -38,7 +38,7 @@ Will be using the example of creating a math library.
     #include "MathLibrary.h"
 
     BOOL APIENTRY DllMain( 	HMODULE hModule,
-    						DWORD  ul_reason_for_call,
+    			   			DWORD  ul_reason_for_call,
     						LPVOID lpReserved
     						)
     {
