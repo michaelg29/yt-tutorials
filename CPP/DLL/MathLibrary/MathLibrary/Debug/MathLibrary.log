@@ -1,0 +1,6 @@
+﻿  dllmain.cpp
+  MathLibrary.cpp
+C:\src\yt-tutorials\CPP\DLL\MathLibrary\MathLibrary\MathLibrary.cpp(5,17): warning C4309: 'initializing': truncation of constant value
+  Generating Code...
+     Creating library C:\src\yt-tutorials\CPP\DLL\MathLibrary\Debug\MathLibrary.lib and object C:\src\yt-tutorials\CPP\DLL\MathLibrary\Debug\MathLibrary.exp
+  MathLibrary.vcxproj -> C:\src\yt-tutorials\CPP\DLL\MathLibrary\Debug\MathLibrary.dll
