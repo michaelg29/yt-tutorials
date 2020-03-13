@@ -2,7 +2,7 @@
 out vec4 FragColor;
 
 // uniform vec4 ourColor; // set in code during render
-in vec3 ourColor;
+//in vec3 ourColor;
 in vec2 TexCoord;
 
 uniform sampler2D texture1;
