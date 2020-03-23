@@ -15,20 +15,20 @@
 #include "io/keyboard.h"
 #include "io/mouse.h"
 #include "io/joystick.h"
+#include "io/screen.h"
+#include "io/camera.h"
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window);
-
-unsigned int SCR_WIDTH = 800;
-unsigned int SCR_HEIGHT = 600;
+void processInput(GLFWwindow* window, double deltaTime);
 
 float mixVal = 0.5f;
 
-glm::mat4 mouseTransform = glm::mat4(1.0f);
-
-float x, y, z;
-
 Joystick mainJ(0);
+Camera Camera::defaultCamera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera Camera::secondary(glm::vec3(5.0f, 5.0f, 5.0f));
+bool Camera::usingDefault = true;
+
+double deltaTime = 0.0f; // tme btwn frames
+double lastFrame = 0.0f; // time of last frame
 
 int main() {
 	int success;
@@ -48,7 +48,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COPMPAT, GL_TRUE);
 #endif
 
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "OpenGL Tutorial", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(Screen::SCR_WIDTH, Screen::SCR_HEIGHT, "OpenGL Tutorial", NULL, NULL);
 	if (window == NULL) { // window not created
 		std::cout << "Could not create window." << std::endl;
 		glfwTerminate();
@@ -64,12 +64,14 @@ int main() {
 
 	glViewport(0, 0, 800, 600);
 
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetFramebufferSizeCallback(window, Screen::framebufferSizeCallback);
 
 	glfwSetKeyCallback(window, Keyboard::keyCallback);
 
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // disable cursor
 	glfwSetCursorPosCallback(window, Mouse::cursorPosCallback);
 	glfwSetMouseButtonCallback(window, Mouse::mouseButtonCallback);
+	glfwSetScrollCallback(window, Mouse::mouseWheelCallback);
 
 	// SHADERS===============================
 	Shader shader("assets/vertex_core.glsl", "assets/fragment_core.glsl");
@@ -228,12 +230,14 @@ int main() {
 		std::cout << mainJ.getName() << " is present." << std::endl;
 	}
 
-	x = 0.0f;
-	y = 0.0f;
-	z = 3.0f;
 	while (!glfwWindowShouldClose(window)) {
+		// calculate dt
+		double currentTime = glfwGetTime();
+		deltaTime = currentTime - lastFrame;
+		lastFrame = currentTime;
+
 		// process input
-		processInput(window);
+		processInput(window, deltaTime);
 
 		// render
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -256,7 +260,6 @@ int main() {
 		//trans = glm::rotate(trans, glm::radians(timeValue / 100), glm::vec3(0.1f, 0.1f, 0.1f));
 		//shader.setMat4("transform", trans);
 
-		shader.setMat4("mouseTransform", mouseTransform);
 		shader.setFloat("mixVal", mixVal);
 
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -274,8 +277,10 @@ int main() {
 		glm::mat4 view = glm::mat4(1.0f);
 		glm::mat4 projection = glm::mat4(1.0f);
 		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(-55.0f), glm::vec3(0.5f, 0.5f, 0.5f));
-		view = glm::translate(view, glm::vec3(-x, -y, -z));
-		projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		view = Camera::usingDefault ? Camera::defaultCamera.getViewMatrix() : Camera::secondary.getViewMatrix();
+		projection = glm::perspective(
+			glm::radians(Camera::usingDefault ? Camera::defaultCamera.zoom : Camera::secondary.zoom), 
+			(float)Screen::SCR_WIDTH / (float)Screen::SCR_HEIGHT, 0.1f, 100.0f);
 
 		shader.setMat4("model", model);
 		shader.setMat4("view", view);
@@ -296,11 +301,7 @@ int main() {
 	return 0;
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-	glViewport(0, 0, width, height);
-}
-
-void processInput(GLFWwindow* window) {
+void processInput(GLFWwindow* window, double deltaTime) {
 	if (Keyboard::key(GLFW_KEY_ESCAPE)) {
 		glfwSetWindowShouldClose(window, true);
 	}
@@ -319,52 +320,39 @@ void processInput(GLFWwindow* window) {
 		}
 	}
 
-	// move camera
-	float changeVal = 0.01f;
-	if (Keyboard::key(GLFW_KEY_A)) {
-		x -= changeVal;
-	}
-	if (Keyboard::key(GLFW_KEY_D)) {
-		x += changeVal;
+	// update camera
+	if (Keyboard::keyWentDown(GLFW_KEY_TAB)) {
+		Camera::usingDefault = !Camera::usingDefault;
 	}
 
-	if (Keyboard::key(GLFW_KEY_SPACE)) {
-		y += changeVal;
-	}
-	if (Keyboard::key(GLFW_KEY_LEFT_SHIFT)) {
-		y -= changeVal;
-	}
+	// move camera
+	CameraDirection direction = CameraDirection::NONE;
 
 	if (Keyboard::key(GLFW_KEY_W)) {
-		z -= changeVal;
+		direction = CameraDirection::FORWARD;
 	}
 	if (Keyboard::key(GLFW_KEY_S)) {
-		z += changeVal;
+		direction = CameraDirection::BACKWARD;
+	}
+	if (Keyboard::key(GLFW_KEY_D)) {
+		direction = CameraDirection::RIGHT;
+	}
+	if (Keyboard::key(GLFW_KEY_A)) {
+		direction = CameraDirection::LEFT;
+	}
+	if (Keyboard::key(GLFW_KEY_SPACE)) {
+		direction = CameraDirection::UP;
+	}
+	if (Keyboard::key(GLFW_KEY_LEFT_SHIFT)) {
+		direction = CameraDirection::DOWN;
 	}
 
-	// mouse
-	/*if (Mouse::button(GLFW_MOUSE_BUTTON_LEFT)) {
-		double x = Mouse::getMouseX();
-		double y = Mouse::getMouseY();
-
-		std::cout << x << ' ' << y << std::endl;
-
-		mouseTransform = glm::mat4(1.0f);
-		mouseTransform = glm::translate(mouseTransform, glm::vec3(x, y, 0.0f));
-	}*/
-
-	// joystick
-	//mainJ.update();
-
-	//float lx = mainJ.axesState(GLFW_JOYSTICK_AXES_LEFT_STICK_X);
-	//float ly = -mainJ.axesState(GLFW_JOYSTICK_AXES_LEFT_STICK_Y);
-
-	//// account for deadzone
-	//if (std::abs(lx) > .05) {
-	//	mouseTransform = glm::translate(mouseTransform, glm::vec3(lx / 10, 0.0f, 0.0f));
-	//}
-
-	//if (std::abs(ly) > .05) {
-	//	mouseTransform = glm::translate(mouseTransform, glm::vec3(0.0f, ly / 10, 0.0f));
-	//}
+	if ((int)direction) {
+		if (Camera::usingDefault) {
+			Camera::defaultCamera.updateCameraPos(direction, deltaTime);
+		}
+		else {
+			Camera::secondary.updateCameraPos(direction, deltaTime);
+		}
+	}
 }
