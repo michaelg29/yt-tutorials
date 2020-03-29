@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "style/style.dart" as styles;
 
+import "page2.dart" as page2;
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -30,6 +32,13 @@ class HomePage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Text("Hello, Flutter!"),
+            RaisedButton(
+              child: Text("Goto page 2"),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => page2.Page2()));
+              },
+            )
           ],
         ),
       ),
