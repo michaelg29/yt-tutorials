@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "style/style.dart" as styles;
 
 void main() => runApp(MyApp());
 
@@ -8,6 +9,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "YouTube tutorial",
       home: HomePage(),
+      debugShowCheckedModeBanner: false,
+      theme: styles.main,
     );
   }
 }
