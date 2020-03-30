@@ -1,11 +1,30 @@
 import "package:flutter/material.dart";
 import "style/style.dart" as styles;
 
+import "utils/navigator.dart" as nav;
+
 import "page2.dart" as page2;
 
 void main() => runApp(MyApp());
 
+List<List<dynamic>> routes = [
+  [
+    "/",
+    "Home",
+    (context) => HomePage(),
+  ],
+  [
+    "/p2",
+    "Page 2",
+    (context) => page2.Page2(),
+  ]
+];
+
 class MyApp extends StatelessWidget {
+  MyApp() {
+    nav.setRoutes(routes);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -46,6 +65,7 @@ class HomePage extends StatelessWidget {
         child: Icon(Icons.print),
         onPressed: _print,
       ),
+      drawer: Drawer(child: nav.buildList(context, ["/"])),
     );
   }
 }
