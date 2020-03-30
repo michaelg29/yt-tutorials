@@ -16,7 +16,7 @@ List<List<dynamic>> routes = [
   [
     "/p2",
     "Page 2",
-    (context) => page2.Page2(),
+    (context, args) => page2.Page2(args: args),
   ]
 ];
 
@@ -54,8 +54,7 @@ class HomePage extends StatelessWidget {
             RaisedButton(
               child: Text("Goto page 2"),
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => page2.Page2()));
+                nav.sendTo(context, "/p2", {"name": "Name2"});
               },
             )
           ],
@@ -65,7 +64,14 @@ class HomePage extends StatelessWidget {
         child: Icon(Icons.print),
         onPressed: _print,
       ),
-      drawer: Drawer(child: nav.buildList(context, ["/"])),
+      drawer: Drawer(
+          child: nav.buildList(context, [
+        "/"
+      ], {
+        "/p2": {
+          "name": "Flutter",
+        },
+      })),
     );
   }
 }
