@@ -43,9 +43,9 @@ Widget buildList(BuildContext context,
         title: Text(getName(rt)),
         onTap: () {
           if (args != null && args.containsKey(rt)) {
-            sendTo(context, rt, args[rt]);
+            sendTo(context, rt, args: args[rt], pop: true);
           } else {
-            sendTo(context, rt);
+            sendTo(context, rt, pop: true);
           }
         },
       );
@@ -53,7 +53,12 @@ Widget buildList(BuildContext context,
   );
 }
 
-void sendTo(BuildContext context, String route, [Map<String, dynamic> args]) {
+void sendTo(BuildContext context, String route,
+    {Map<String, dynamic> args, bool pop = false}) {
+  if (pop) {
+    Navigator.pop(context);
+  }
+
   Widget result;
 
   if (args == null) {
@@ -65,5 +70,16 @@ void sendTo(BuildContext context, String route, [Map<String, dynamic> args]) {
   }
 
   Navigator.of(context).push(PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => result));
+    pageBuilder: (context, animation, secondaryAnimation) => result,
+    transitionDuration: Duration(seconds: 5),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(1.0, 1.0);
+      var end = Offset.zero;
+      var curve = Curves.bounceInOut;
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      var offsetAnimation = animation.drive(tween);
+
+      return SlideTransition(position: offsetAnimation, child: child);
+    },
+  ));
 }

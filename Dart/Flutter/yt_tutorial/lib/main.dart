@@ -54,7 +54,7 @@ class HomePage extends StatelessWidget {
             RaisedButton(
               child: Text("Goto page 2"),
               onPressed: () {
-                nav.sendTo(context, "/p2", {"name": "Name2"});
+                nav.sendTo(context, "/p2", args: {"name": "Name2"});
               },
             )
           ],
