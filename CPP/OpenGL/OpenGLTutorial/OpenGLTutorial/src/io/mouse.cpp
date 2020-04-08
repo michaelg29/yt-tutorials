@@ -30,12 +30,7 @@ void Mouse::cursorPosCallback(GLFWwindow* window, double _x, double _y) {
 	lastX = x;
 	lastY = y;
 
-	if (Camera::usingDefault) {
-		Camera::defaultCamera.updateCameraDirection(dx, dy);
-	}
-	else {
-		Camera::secondary.updateCameraDirection(dx, dy);
-	}
+	Camera::defaultCamera.updateCameraDirection(dx, dy);
 }
 
 void Mouse::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
@@ -51,12 +46,7 @@ void Mouse::mouseButtonCallback(GLFWwindow* window, int button, int action, int 
 }
 
 void Mouse::mouseWheelCallback(GLFWwindow* window, double dx, double dy) {
-	if (Camera::usingDefault) {
-		Camera::defaultCamera.updateCameraZoom(dy);
-	}
-	else {
-		Camera::secondary.updateCameraZoom(dy);
-	}
+	Camera::defaultCamera.updateCameraZoom(dy);
 }
 
 double Mouse::getMouseX() {

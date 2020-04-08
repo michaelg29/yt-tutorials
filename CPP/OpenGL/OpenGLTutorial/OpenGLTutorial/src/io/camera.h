@@ -19,8 +19,6 @@ enum class CameraDirection {
 class Camera {
 public:
 	static Camera defaultCamera;
-	static Camera secondary;
-	static bool usingDefault;
 
 	glm::vec3 cameraPos;
 
@@ -43,6 +41,7 @@ public:
 	void updateCameraZoom(double dy); // scroll wheel
 
 	glm::mat4 getViewMatrix();
+	float getZoom();
 
 private:
 	void updateCameraVectors();
