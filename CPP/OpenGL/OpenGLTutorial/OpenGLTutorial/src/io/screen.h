@@ -10,6 +10,23 @@ public:
 	static unsigned int SCR_HEIGHT;
 
 	static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+
+	Screen();
+
+	bool init();
+
+	void setParameters();
+
+	// main loop
+	void update();
+	void newFrame();
+
+	// window closing
+	bool shouldClose();
+	void setShouldClose(bool shouldClose);
+
+private:
+	GLFWwindow* window;
 };
 
 #endif

@@ -134,29 +134,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="assets\fragment_core.glsl" />
-    <None Include="assets\fragment_core_2.glsl" />
-    <None Include="assets\vertex_core.glsl" />
+    <None Include="assets\object.fs" />
+    <None Include="assets\object.vs" />
     <None Include="glfw3.dll" />
+    <None Include="src\graphics\texture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\stb.cpp" />
     <ClCompile Include="src\glad.c" />
+    <ClCompile Include="src\graphics\mesh.cpp" />
+    <ClCompile Include="src\graphics\model.cpp" />
+    <ClCompile Include="src\graphics\texture.cpp" />
     <ClCompile Include="src\io\camera.cpp" />
     <ClCompile Include="src\io\joystick.cpp" />
     <ClCompile Include="src\io\keyboard.cpp" />
     <ClCompile Include="src\io\mouse.cpp" />
     <ClCompile Include="src\io\screen.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\graphics\shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\graphics\mesh.h" />
+    <ClInclude Include="src\graphics\model.h" />
+    <ClInclude Include="src\graphics\models\cube.hpp" />
     <ClInclude Include="src\io\camera.h" />
     <ClInclude Include="src\io\joystick.h" />
     <ClInclude Include="src\io\keyboard.h" />
     <ClInclude Include="src\io\mouse.h" />
     <ClInclude Include="src\io\screen.h" />
-    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\graphics\shader.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\image1.jpg" />
