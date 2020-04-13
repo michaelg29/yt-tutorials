@@ -3,8 +3,7 @@
 
 #include <glm/glm.hpp>
 
-struct Material
-{
+struct Material {
     glm::vec3 ambient;
     glm::vec3 diffuse;
     glm::vec3 specular;
@@ -34,6 +33,8 @@ struct Material
     static Material red_rubber;
     static Material white_rubber;
     static Material yellow_rubber;
+
+    static Material mix(Material m1, Material m2, float mix = 0.5f);
 };
 
 #endif

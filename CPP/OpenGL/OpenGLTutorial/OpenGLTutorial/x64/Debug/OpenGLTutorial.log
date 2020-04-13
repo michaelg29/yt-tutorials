@@ -1,7 +1,8 @@
 ﻿  C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\
   main.cpp
-C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\cube.hpp(62,30): warning C4018: '<': signed/unsigned mismatch
-C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(36,7): warning C4101: 'infoLog': unreferenced local variable
-C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(35,6): warning C4101: 'success': unreferenced local variable
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\cube.hpp(66,30): warning C4018: '<': signed/unsigned mismatch
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(72,64): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(37,7): warning C4101: 'infoLog': unreferenced local variable
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(36,6): warning C4101: 'success': unreferenced local variable
   OpenGLTutorial.vcxproj -> C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\x64\Debug\OpenGLTutorial.exe
   C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\

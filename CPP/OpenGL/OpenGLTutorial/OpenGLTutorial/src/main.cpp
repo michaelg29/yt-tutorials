@@ -12,6 +12,7 @@
 #include "graphics/model.h"
 
 #include "graphics/models/cube.hpp"
+#include "graphics/models/lamp.hpp"
 
 #include "io/keyboard.h"
 #include "io/mouse.h"
@@ -65,10 +66,14 @@ int main() {
 
 	// SHADERS===============================
 	Shader shader("assets/object.vs", "assets/object.fs");
+	Shader lampShader("assets/object.vs", "assets/lamp.fs");
 
 	// MODELS==============================
-	Cube cube(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.75f));
+	Cube cube(Material::mix(Material::emerald, Material::gold, 0.7), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.75f));
 	cube.init();
+
+	Lamp lamp(glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(-1.0f, -.5f, .5f), glm::vec3(0.25f));
+	lamp.init();
 
 	mainJ.update();
 	if (mainJ.isPresent()) {
@@ -91,6 +96,13 @@ int main() {
 		shader.activate();
 
 		shader.setFloat("mixVal", mixVal);
+		shader.set3Float("light.position", lamp.pos);
+		shader.set3Float("viewPos", Camera::defaultCamera.cameraPos);
+
+		// set light strengths
+		shader.set3Float("light.ambient", lamp.ambient);
+		shader.set3Float("light.diffuse", lamp.diffuse);
+		shader.set3Float("light.specular", lamp.specular);
 
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -108,10 +120,18 @@ int main() {
 
 		cube.render(shader);
 
+		lampShader.activate();
+		lampShader.setMat4("view", view);
+		lampShader.setMat4("projection", projection);
+		lamp.render(lampShader);
+
 		// send new frame to window
 		screen.newFrame();
 		glfwPollEvents();
 	}
+
+	cube.cleanup();
+	lamp.cleanup();
 
 	glfwTerminate();
 	return 0;
