@@ -12,6 +12,7 @@
 
 struct Vertex {
 	glm::vec3 pos;
+	glm::vec3 normal;
 	glm::vec2 texCoord;
 
 	/*
@@ -31,7 +32,7 @@ public:
 	std::vector<Texture> textures;
 
 	Mesh();
-	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures = {});
 
 	void render(Shader shader);
 
