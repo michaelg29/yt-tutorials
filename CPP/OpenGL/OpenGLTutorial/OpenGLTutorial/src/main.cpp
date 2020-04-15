@@ -10,6 +10,7 @@
 #include "graphics/shader.h"
 #include "graphics/texture.h"
 #include "graphics/model.h"
+#include "graphics/light.h"
 
 #include "graphics/models/cube.hpp"
 #include "graphics/models/lamp.hpp"
@@ -22,8 +23,6 @@
 
 void processInput(double deltaTime);
 
-float mixVal = 0.5f;
-
 Screen screen;
 
 Joystick mainJ(0);
@@ -31,6 +30,8 @@ Camera Camera::defaultCamera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 double deltaTime = 0.0f; // tme btwn frames
 double lastFrame = 0.0f; // time of last frame
+
+bool flashlightOn = false;
 
 int main() {
 	int success;
@@ -69,11 +70,49 @@ int main() {
 	Shader lampShader("assets/object.vs", "assets/lamp.fs");
 
 	// MODELS==============================
-	Cube cube(Material::mix(Material::emerald, Material::gold, 0.7), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.75f));
-	cube.init();
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
 
-	Lamp lamp(glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(-1.0f, -.5f, .5f), glm::vec3(0.25f));
-	lamp.init();
+	Cube cubes[10];
+	for (unsigned int i = 0; i < 10; i++) {
+		cubes[i] = Cube(cubePositions[i], glm::vec3(1.0f));
+		cubes[i].init();
+	}
+
+	// LIGHTS
+	DirLight dirLight = { glm::vec3(-0.2f, -1.0f, -0.3f), glm::vec3(0.1f), glm::vec3(0.4f), glm::vec3(0.5f) };
+
+	glm::vec3 pointLightPositions[] = {
+		glm::vec3(0.7f,  0.2f,  2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f,  2.0f, -12.0f),
+		glm::vec3(0.0f,  0.0f, -3.0f)
+	};
+	Lamp lamps[4];
+	for (unsigned int i = 0; i < 4; i++) {
+		lamps[i] = Lamp(glm::vec3(1.0f),
+			glm::vec3(0.05f), glm::vec3(0.8f), glm::vec3(1.0f),
+			1.0f, 0.07f, 0.032f,
+			pointLightPositions[i], glm::vec3(0.25f));
+		lamps[i].init();
+	}
+
+	SpotLight s = {
+		Camera::defaultCamera.cameraPos, Camera::defaultCamera.cameraFront,
+		glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.0f)),
+		1.0f, 0.07f, 0.032f,
+		glm::vec3(0.0f), glm::vec3(1.0f), glm::vec3(1.0f)
+	};
 
 	mainJ.update();
 	if (mainJ.isPresent()) {
@@ -95,17 +134,24 @@ int main() {
 		// draw shapes
 		shader.activate();
 
-		shader.setFloat("mixVal", mixVal);
-		shader.set3Float("light.position", lamp.pos);
 		shader.set3Float("viewPos", Camera::defaultCamera.cameraPos);
 
-		// set light strengths
-		shader.set3Float("light.ambient", lamp.ambient);
-		shader.set3Float("light.diffuse", lamp.diffuse);
-		shader.set3Float("light.specular", lamp.specular);
+		dirLight.render(shader);
 
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		for (unsigned int i = 0; i < 4; i++) {
+			lamps[i].pointLight.render(shader, i);
+		}
+		shader.setInt("noPointLights", 4);
+
+		if (flashlightOn) {
+			s.position = Camera::defaultCamera.cameraPos;
+			s.direction = Camera::defaultCamera.cameraFront;
+			s.render(shader, 0);
+			shader.setInt("noSpotLights", 1);
+		}
+		else {
+			shader.setInt("noSpotLights", 0);
+		}
 
 		// create transformation
 		glm::mat4 view = glm::mat4(1.0f);
@@ -118,20 +164,29 @@ int main() {
 		shader.setMat4("view", view);
 		shader.setMat4("projection", projection);
 
-		cube.render(shader);
+		for (unsigned int i = 0; i < 10; i++) {
+			cubes[i].render(shader);
+		}
 
 		lampShader.activate();
 		lampShader.setMat4("view", view);
 		lampShader.setMat4("projection", projection);
-		lamp.render(lampShader);
+
+		for (unsigned int i = 0; i < 4; i++) {
+			lamps[i].render(lampShader);
+		}
 
 		// send new frame to window
 		screen.newFrame();
 		glfwPollEvents();
 	}
 
-	cube.cleanup();
-	lamp.cleanup();
+	for (unsigned int i = 0; i < 10; i++) {
+		cubes[i].cleanup();
+	}
+	for (unsigned int i = 0; i < 4; i++) {
+		lamps[i].cleanup();
+	}
 
 	glfwTerminate();
 	return 0;
@@ -142,18 +197,8 @@ void processInput(double deltaTime) {
 		screen.setShouldClose(true);
 	}
 
-	// change mix value
-	if (Keyboard::key(GLFW_KEY_UP)) {
-		mixVal += .05f;
-		if (mixVal > 1) {
-			mixVal = 1.0f;
-		}
-	}
-	if (Keyboard::key(GLFW_KEY_DOWN)) {
-		mixVal -= .05f;
-		if (mixVal < 0) {
-			mixVal = 0.0f;
-		}
+	if (Keyboard::keyWentDown(GLFW_KEY_L)) {
+		flashlightOn = !flashlightOn;
 	}
 
 	// move camera
