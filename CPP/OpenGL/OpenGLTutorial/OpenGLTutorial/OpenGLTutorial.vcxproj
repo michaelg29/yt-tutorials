@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClCompile Include="lib\stb.cpp" />
     <ClCompile Include="src\glad.c" />
+    <ClCompile Include="src\graphics\light.cpp" />
     <ClCompile Include="src\graphics\material.cpp" />
     <ClCompile Include="src\graphics\mesh.cpp" />
     <ClCompile Include="src\graphics\model.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="src\graphics\shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\graphics\light.h" />
     <ClInclude Include="src\graphics\material.h" />
     <ClInclude Include="src\graphics\mesh.h" />
     <ClInclude Include="src\graphics\model.h" />
@@ -169,6 +171,8 @@
     <ClInclude Include="src\graphics\shader.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="assets\flag.png" />
+    <Image Include="assets\flag_specular.png" />
     <Image Include="assets\image1.jpg" />
     <Image Include="assets\image2.png" />
   </ItemGroup>
