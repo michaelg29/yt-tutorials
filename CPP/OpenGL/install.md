@@ -53,3 +53,31 @@ Make sure everything you configure is set for **_x64_** in your IDE.
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 ```
+
+## Open Asset Import Library (ASSIMP)
+1. Make sure you have CMake installed ([Download Here](https://cmake.org/download))
+2. Download the latest release ASSIMP code (.zip file) from [their site](https://assimp.org/index.php/downloads) or [GitHub](https://github.com/assimp/assimp/releases)
+3. Unzip the download to some location on your computer (eg. *C:\src\libs*)
+4. Open up the CMake GUI and input the following entries:
+	* Where is the source code: *C:\src\libs\assimp-x.x.x*
+	* Where to build the binaries: *C:\src\libs\assimp-x.x.x\build*
+	* *note: replace C:\src\libs\assimp-x.x.x with the root of the installation (wherever you unzipped the library*
+5. Push configure
+	* If it asks to create a new directory, accept
+	* For the version, choose the corresponding compiler you have on your computer (for this installation it is Visual Studio 16 2019
+	* If it gives errors, press configure then generate again
+6. Go to the build directory (*C:\src\libs\assimp-x.x.x\build*) and open the *Assimp.sln* file in the *build* folder in Visual Studio
+	* You should see several projects in the project explorer
+	* Make sure the ALL_BUILD project is set as the startup project (it will be highlighted)
+	* Click on Build > Build Solution (make sure you are in the x64 configuration)
+7. Adding the Library Files
+8. After this, go back to the build directory and go to *build/code/Debug* or *build/code/Release*
+	* *build\code\Debug\assimp-vcxxx-mtd.dll* -> *$(ProjectDir)*
+	* *build\code\Debug\assimp-vcxxx-mtd.lib* -> *$(SolutionDir)\linking\lib\assimp*
+	* *assimp-x.x.x\include* -> *$(SolutionDir)\linking\include*
+	* *assimp-x.x.x\build/include* -> *$(SolutionDir)\linking\include*
+8. Configuring the OpenGL Project
+	* the include directory is already taken care of
+	* Linker -> Input
+        * Additional Dependencies
+            \+ assimp\assimp-vcxxx-mtd.lib
