@@ -1,5 +1,7 @@
 #include "mesh.h"
 
+#include <iostream>
+
 std::vector<Vertex> Vertex::genList(float* vertices, int noVertices) {
 	std::vector<Vertex> ret(noVertices);
 
@@ -27,24 +29,53 @@ std::vector<Vertex> Vertex::genList(float* vertices, int noVertices) {
 	return ret;
 }
 
-Mesh::Mesh() {}
-
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
-	: vertices(vertices), indices(indices), textures(textures) {
+	: vertices(vertices), indices(indices), textures(textures), noTex(false) {
+	setup();
+}
+
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, aiColor4D diffuse, aiColor4D specular)
+	: vertices(vertices), indices(indices), diffuse(diffuse), specular(specular), noTex(true) {
 	setup();
 }
 
 void Mesh::render(Shader shader) {
-	// textures
-	for (unsigned int i = 0; i < textures.size(); i++) {
-		shader.setInt(textures[i].name, textures[i].id);
-		textures[i].activate();
-		glBindTexture(GL_TEXTURE_2D, textures[i].id);
+	if (noTex) {
+		// materials
+		shader.set4Float("material.diffuse", diffuse);
+		shader.set4Float("material.specular", specular);
+		shader.setInt("noTex", 1);
 	}
+	else {
+		// textures
+		unsigned int diffuseIdx = 0;
+		unsigned int specularIdx = 0;
 
+		for (unsigned int i = 0; i < textures.size(); i++) {
+			// activate texture
+			glActiveTexture(GL_TEXTURE0 + i);
+
+			// retrieve texture info
+			std::string name;
+			switch (textures[i].type) {
+			case aiTextureType_DIFFUSE:
+				name = "diffuse" + std::to_string(diffuseIdx++);
+				break;
+			case aiTextureType_SPECULAR:
+				name = "specular" + std::to_string(specularIdx++);
+				break;
+			}
+
+			// set the shader value
+			shader.setInt(name, i);
+			// bind texture
+			textures[i].bind();
+		}
+	}
+	
 	// EBO stuff
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, vertices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
 	// reset
