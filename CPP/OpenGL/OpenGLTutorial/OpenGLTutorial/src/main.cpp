@@ -70,27 +70,11 @@ int main() {
 	Shader lampShader("assets/object.vs", "assets/lamp.fs");
 
 	// MODELS==============================
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
-
-	Cube cubes[10];
-	for (unsigned int i = 0; i < 10; i++) {
-		cubes[i] = Cube(cubePositions[i], glm::vec3(1.0f));
-		cubes[i].init();
-	}
+	Model m(glm::vec3(0.0f, -2.0f, -5.0f), glm::vec3(0.05f), true);
+	m.loadModel("assets/models/m4a1/scene.gltf");
 
 	// LIGHTS
-	DirLight dirLight = { glm::vec3(-0.2f, -1.0f, -0.3f), glm::vec3(0.1f), glm::vec3(0.4f), glm::vec3(0.5f) };
+	DirLight dirLight = { glm::vec3(-0.2f, -1.0f, -0.3f), glm::vec4(0.1f, 0.1f, 0.1f, 1.0f), glm::vec4(0.4f, 0.4f, 0.4f, 1.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f) };
 
 	glm::vec3 pointLightPositions[] = {
 		glm::vec3(0.7f,  0.2f,  2.0f),
@@ -101,7 +85,7 @@ int main() {
 	Lamp lamps[4];
 	for (unsigned int i = 0; i < 4; i++) {
 		lamps[i] = Lamp(glm::vec3(1.0f),
-			glm::vec3(0.05f), glm::vec3(0.8f), glm::vec3(1.0f),
+			glm::vec4(0.05f, 0.05f, 0.05f, 1.0f), glm::vec4(0.8f, 0.8f, 0.8f, 1.0f), glm::vec4(1.0f),
 			1.0f, 0.07f, 0.032f,
 			pointLightPositions[i], glm::vec3(0.25f));
 		lamps[i].init();
@@ -111,7 +95,7 @@ int main() {
 		Camera::defaultCamera.cameraPos, Camera::defaultCamera.cameraFront,
 		glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.0f)),
 		1.0f, 0.07f, 0.032f,
-		glm::vec3(0.0f), glm::vec3(1.0f), glm::vec3(1.0f)
+		glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec4(1.0f), glm::vec4(1.0f)
 	};
 
 	mainJ.update();
@@ -164,9 +148,7 @@ int main() {
 		shader.setMat4("view", view);
 		shader.setMat4("projection", projection);
 
-		for (unsigned int i = 0; i < 10; i++) {
-			cubes[i].render(shader);
-		}
+		m.render(shader);
 
 		lampShader.activate();
 		lampShader.setMat4("view", view);
@@ -181,9 +163,8 @@ int main() {
 		glfwPollEvents();
 	}
 
-	for (unsigned int i = 0; i < 10; i++) {
-		cubes[i].cleanup();
-	}
+	m.cleanup();
+
 	for (unsigned int i = 0; i < 4; i++) {
 		lamps[i].cleanup();
 	}

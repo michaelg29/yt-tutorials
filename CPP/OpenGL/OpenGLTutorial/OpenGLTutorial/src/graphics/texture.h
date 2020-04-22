@@ -4,39 +4,24 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <assimp/scene.h>
+
 #include <stb/stb_image.h>
 
 class Texture {
 public:
-	Texture();
-	Texture(const char* path, const char* name, bool defaultParams = true);
+	Texture(std::string dir, std::string path, aiTextureType type);
 
 	void generate();
 	void load(bool flip = true);
 
-	void setFilters(GLenum all);
-	void setFilters(GLenum mag, GLenum min);
-
-	void setWrap(GLenum all);
-	void setWrap(GLenum s, GLenum t);
-
-	void setBorderColor(float borderColor[4]);
-
-	void activate();
+	void bind();
 
 	// texture object
-	int id;
-	unsigned int tex;
-	const char* name;
-
-private:
-	static int currentId;
-
-	// img properties
-	const char* path;
-	int width;
-	int height;
-	int nChannels;
+	unsigned int id;
+	aiTextureType type;
+	std::string dir;
+	std::string path;
 };
 
 #endif

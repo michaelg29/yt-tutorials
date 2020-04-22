@@ -1,8 +1,7 @@
 ﻿  C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\
   main.cpp
-C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\cube.hpp(64,30): warning C4018: '<': signed/unsigned mismatch
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\cube.hpp(61,30): warning C4018: '<': signed/unsigned mismatch
 C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(38,7): warning C4101: 'infoLog': unreferenced local variable
 C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(37,6): warning C4101: 'success': unreferenced local variable
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   OpenGLTutorial.vcxproj -> C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\x64\Debug\OpenGLTutorial.exe
   C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\

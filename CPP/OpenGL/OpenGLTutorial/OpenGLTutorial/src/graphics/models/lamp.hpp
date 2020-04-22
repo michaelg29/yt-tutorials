@@ -14,15 +14,10 @@ public:
 
 	PointLight pointLight;
 
-	// light strength values
-	glm::vec3 ambient;
-	glm::vec3 diffuse;
-	glm::vec3 specular;
-
 	Lamp(glm::vec3 lightColor = glm::vec3(1.0f),
-		glm::vec3 ambient = glm::vec3(1.0f),
-		glm::vec3 diffuse = glm::vec3(1.0f),
-		glm::vec3 specular = glm::vec3(1.0f),
+		glm::vec4 ambient = glm::vec4(1.0f),
+		glm::vec4 diffuse = glm::vec4(1.0f),
+		glm::vec4 specular = glm::vec4(1.0f),
 		float k0 = 1.0f,
 		float k1 = 0.07f,
 		float k2 = 0.017f,
