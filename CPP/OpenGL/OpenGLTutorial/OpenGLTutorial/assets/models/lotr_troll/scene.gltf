@@ -1,0 +1,499 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 10414,
+      "max": [
+        199.50941467285156,
+        117.75025939941406,
+        49.827114105224609
+      ],
+      "min": [
+        -199.50941467285156,
+        -127.42281341552734,
+        -45.810581207275391
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 124968,
+      "componentType": 5126,
+      "count": 10414,
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 10414,
+      "max": [
+        1,
+        0.99999618530273438,
+        0.99995511770248413,
+        1
+      ],
+      "min": [
+        -1,
+        -0.99999886751174927,
+        -0.9999549388885498,
+        1
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 10414,
+      "max": [
+        0.99505281448364258,
+        0.99606043100357056
+      ],
+      "min": [
+        0.0029876586049795151,
+        0.005398772656917572
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 52266,
+      "max": [
+        10413
+      ],
+      "min": [
+        0
+      ],
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 249936,
+      "componentType": 5126,
+      "count": 278,
+      "max": [
+        99.560325622558594,
+        295.97625732421875,
+        69.366195678710938
+      ],
+      "min": [
+        -99.560325622558594,
+        129.48599243164062,
+        -71.749183654785156
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 253272,
+      "componentType": 5126,
+      "count": 278,
+      "max": [
+        0.99162960052490234,
+        0.98265171051025391,
+        0.99915546178817749
+      ],
+      "min": [
+        -0.99162960052490234,
+        -0.93061941862106323,
+        -0.99931871891021729
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 166624,
+      "componentType": 5126,
+      "count": 278,
+      "max": [
+        0.84758275747299194,
+        0.99999475479125977,
+        0.93578487634658813,
+        1
+      ],
+      "min": [
+        -0.98054260015487671,
+        -0.99886089563369751,
+        -0.9740368127822876,
+        1
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 83312,
+      "componentType": 5126,
+      "count": 278,
+      "max": [
+        0.99436408281326294,
+        0.9920995831489563
+      ],
+      "min": [
+        0.0067537426948547363,
+        0.0048544406890869141
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 85536,
+      "componentType": 5126,
+      "count": 278,
+      "max": [
+        0.99436408281326294,
+        0.9920995831489563
+      ],
+      "min": [
+        0.0067537426948547363,
+        0.0048544406890869141
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 209064,
+      "componentType": 5125,
+      "count": 1206,
+      "max": [
+        277
+      ],
+      "min": [
+        0
+      ],
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "Ole Gunnar Isager (https://sketchfab.com/FrenchBaguette)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/lotr-troll-for-animatingrigging-f4d777fd41d045fb8692f19f07b998fe",
+      "title": "LOTR Troll (for animating/rigging)"
+    },
+    "generator": "Sketchfab-8.23.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 213888,
+      "byteOffset": 0,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 87760,
+      "byteOffset": 213888,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 256608,
+      "byteOffset": 301648,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 171072,
+      "byteOffset": 558256,
+      "byteStride": 16,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 729328,
+      "uri": "scene.bin"
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/TEX_Troll_baseColor.jpeg"
+    },
+    {
+      "uri": "textures/TEX_Troll_metallicRoughness.png"
+    },
+    {
+      "uri": "textures/TEX_Troll_emissive.jpeg"
+    },
+    {
+      "uri": "textures/TEX_Troll_normal.png"
+    },
+    {
+      "uri": "textures/TEX_pants_baseColor.png"
+    },
+    {
+      "uri": "textures/TEX_pants_metallicRoughness.png"
+    },
+    {
+      "uri": "textures/TEX_pants_normal.png"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "emissiveFactor": [
+        1,
+        1,
+        1
+      ],
+      "emissiveTexture": {
+        "index": 2,
+        "texCoord": 0
+      },
+      "name": "TEX_Troll",
+      "normalTexture": {
+        "index": 3,
+        "scale": 1,
+        "texCoord": 0
+      },
+      "occlusionTexture": {
+        "index": 1,
+        "strength": 1,
+        "texCoord": 0
+      },
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "baseColorTexture": {
+          "index": 0,
+          "texCoord": 0
+        },
+        "metallicFactor": 0,
+        "metallicRoughnessTexture": {
+          "index": 1,
+          "texCoord": 0
+        },
+        "roughnessFactor": 1
+      }
+    },
+    {
+      "alphaCutoff": 0.56878810975609762,
+      "alphaMode": "MASK",
+      "doubleSided": true,
+      "name": "TEX_pants",
+      "normalTexture": {
+        "index": 6,
+        "scale": 1,
+        "texCoord": 0
+      },
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "baseColorTexture": {
+          "index": 4,
+          "texCoord": 0
+        },
+        "metallicFactor": 1,
+        "metallicRoughnessTexture": {
+          "index": 5,
+          "texCoord": 0
+        },
+        "roughnessFactor": 1
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "polySurface7_TEX_Troll_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TANGENT": 2,
+            "TEXCOORD_0": 3
+          },
+          "indices": 4,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Pants_TEX_pants_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 6,
+            "POSITION": 5,
+            "TANGENT": 7,
+            "TEXCOORD_0": 8,
+            "TEXCOORD_1": 9
+          },
+          "indices": 10,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "name": "RootNode (gltf orientation matrix)",
+      "rotation": [
+        -0.70710678118654746,
+        -0,
+        -0,
+        0.70710678118654757
+      ]
+    },
+    {
+      "children": [
+        2
+      ],
+      "name": "RootNode (model correction matrix)"
+    },
+    {
+      "children": [
+        3
+      ],
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "4a8a972e9a1b416da7c17879bb7c0d34.fbx"
+    },
+    {
+      "children": [
+        4,
+        6
+      ],
+      "name": "RootNode"
+    },
+    {
+      "children": [
+        5
+      ],
+      "matrix": [
+        2.2000000476837158,
+        0,
+        0,
+        0,
+        0,
+        2.2000000476837158,
+        0,
+        0,
+        0,
+        0,
+        2.2000000476837158,
+        0,
+        0,
+        280.5,
+        0,
+        1
+      ],
+      "name": "polySurface7"
+    },
+    {
+      "mesh": 0,
+      "name": "polySurface7_TEX_Troll_0"
+    },
+    {
+      "children": [
+        7
+      ],
+      "name": "group"
+    },
+    {
+      "children": [
+        8
+      ],
+      "name": "Pants"
+    },
+    {
+      "mesh": 1,
+      "name": "Pants_TEX_pants_0"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "OSG_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    },
+    {
+      "sampler": 0,
+      "source": 3
+    },
+    {
+      "sampler": 0,
+      "source": 4
+    },
+    {
+      "sampler": 0,
+      "source": 5
+    },
+    {
+      "sampler": 0,
+      "source": 6
+    }
+  ]
+}
+
