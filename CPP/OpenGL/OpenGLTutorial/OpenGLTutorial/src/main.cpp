@@ -14,6 +14,7 @@
 
 #include "graphics/models/cube.hpp"
 #include "graphics/models/lamp.hpp"
+#include "graphics/models/gun.hpp"
 
 #include "io/keyboard.h"
 #include "io/mouse.h"
@@ -26,7 +27,7 @@ void processInput(double deltaTime);
 Screen screen;
 
 Joystick mainJ(0);
-Camera Camera::defaultCamera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera Camera::defaultCamera(glm::vec3(0.0f, 0.0f, 0.0f));
 
 double deltaTime = 0.0f; // tme btwn frames
 double lastFrame = 0.0f; // time of last frame
@@ -70,8 +71,8 @@ int main() {
 	Shader lampShader("assets/object.vs", "assets/lamp.fs");
 
 	// MODELS==============================
-	Model m(glm::vec3(0.0f, -2.0f, -5.0f), glm::vec3(0.05f), true);
-	m.loadModel("assets/models/m4a1/scene.gltf");
+	Gun g;
+	g.loadModel("assets/models/m4a1/scene.gltf");
 
 	// LIGHTS
 	DirLight dirLight = { glm::vec3(-0.2f, -1.0f, -0.3f), glm::vec4(0.1f, 0.1f, 0.1f, 1.0f), glm::vec4(0.4f, 0.4f, 0.4f, 1.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f) };
@@ -148,7 +149,7 @@ int main() {
 		shader.setMat4("view", view);
 		shader.setMat4("projection", projection);
 
-		m.render(shader);
+		g.render(shader);
 
 		lampShader.activate();
 		lampShader.setMat4("view", view);
@@ -163,7 +164,7 @@ int main() {
 		glfwPollEvents();
 	}
 
-	m.cleanup();
+	g.cleanup();
 
 	for (unsigned int i = 0; i < 4; i++) {
 		lamps[i].cleanup();
