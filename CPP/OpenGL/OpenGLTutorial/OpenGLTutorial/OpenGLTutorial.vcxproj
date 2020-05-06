@@ -162,6 +162,7 @@
     <ClInclude Include="src\graphics\mesh.h" />
     <ClInclude Include="src\graphics\model.h" />
     <ClInclude Include="src\graphics\models\cube.hpp" />
+    <ClInclude Include="src\graphics\models\gun.hpp" />
     <ClInclude Include="src\graphics\models\lamp.hpp" />
     <ClInclude Include="src\io\camera.h" />
     <ClInclude Include="src\io\joystick.h" />
