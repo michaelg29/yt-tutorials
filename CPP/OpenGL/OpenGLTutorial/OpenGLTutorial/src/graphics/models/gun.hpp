@@ -5,15 +5,15 @@
 class Gun : public Model {
 public:
 	Gun()
-		: Model(glm::vec3(0.0f), glm::vec3(0.05f), true) {}
+		: Model(glm::vec3(0.0f), glm::vec3(1 / 300.0f), true) {}
 
-	void render(Shader shader, bool setModel = false) {
+	void render(Shader shader, float dt, bool setModel = false) {
 		glm::mat4 model = glm::mat4(1.0f);
 
 		// set position
 		// multiply offset by unit vector in 2 directions
-		pos = Camera::defaultCamera.cameraPos + glm::vec3(Camera::defaultCamera.cameraFront * 8.0f) - glm::vec3(Camera::defaultCamera.cameraUp * 3.15f);
-		model = glm::translate(model, pos);
+		rb.pos = Camera::defaultCamera.cameraPos + glm::vec3(Camera::defaultCamera.cameraFront * 0.5f) - glm::vec3(Camera::defaultCamera.cameraUp * 0.205f);
+		model = glm::translate(model, rb.pos);
 
 		float theta;
 
@@ -32,6 +32,6 @@ public:
 
 		shader.setMat4("model", model);
 
-		Model::render(shader, false);
+		Model::render(shader, dt, false);
 	}
 };
