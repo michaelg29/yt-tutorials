@@ -20,6 +20,9 @@
     <None Include="assets\object.vs" />
     <None Include="assets\object.fs" />
     <None Include="assets\lamp.fs" />
+    <None Include="assets\instanced\instanced.vs" />
+    <None Include="assets\instanced\box.vs" />
+    <None Include="assets\instanced\box.fs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -121,6 +124,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\graphics\models\modelarray.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\models\box.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
