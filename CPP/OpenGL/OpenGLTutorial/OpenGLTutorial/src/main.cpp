@@ -86,9 +86,6 @@ int main() {
 	launchObjects.init();
 	box.init();
 
-	Model m(glm::vec3(0.0f), glm::vec3(0.05f));
-	m.loadModel("assets/models/lotr_troll/scene.gltf");
-
 	// LIGHTS
 	DirLight dirLight = { glm::vec3(-0.2f, -1.0f, -0.3f), glm::vec4(0.1f, 0.1f, 0.1f, 1.0f), glm::vec4(0.4f, 0.4f, 0.4f, 1.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f) };
 
@@ -130,6 +127,10 @@ int main() {
 	}*/
 
 	while (!screen.shouldClose()) {
+		// clear existing list to prevent duplicates
+		box.offsets.clear();
+		box.sizes.clear();
+
 		// calculate dt
 		double currentTime = glfwGetTime();
 		dt = currentTime - lastFrame;
@@ -182,7 +183,6 @@ int main() {
 
 		shader.setMat4("view", view);
 		shader.setMat4("projection", projection);
-		m.render(shader, dt);
 
 		// launch objects
 		std::stack<int> removeObjects;
@@ -200,14 +200,14 @@ int main() {
 		if (launchObjects.instances.size() > 0) {
 			launchShader.setMat4("view", view);
 			launchShader.setMat4("projection", projection);
-			launchObjects.render(launchShader, dt);
+			launchObjects.render(launchShader, dt, &box);
 		}
 
 		// lamps
 		lampShader.activate();
 		lampShader.setMat4("view", view);
 		lampShader.setMat4("projection", projection);
-		lamps.render(lampShader, dt);
+		lamps.render(lampShader, dt, &box);
 
 		// render boxes
 		if (box.offsets.size() > 0) {
@@ -227,7 +227,6 @@ int main() {
 	lamps.cleanup();
 	box.cleanup();
 	launchObjects.cleanup();
-	m.cleanup();
 
 	glfwTerminate();
 	return 0;
@@ -271,10 +270,5 @@ void processInput(double dt) {
 
 	if (Keyboard::keyWentDown(GLFW_KEY_F)) {
 		launchItem(dt);
-	}
-
-	if (Keyboard::keyWentDown(GLFW_KEY_I)) {
-		box.offsets.push_back(glm::vec3(box.offsets.size() * 1.0f));
-		box.sizes.push_back(glm::vec3(box.sizes.size() * 0.5f));
 	}
 }
