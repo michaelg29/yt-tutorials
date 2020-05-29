@@ -46,7 +46,7 @@ public:
 		}
 	}
 
-	void render(Shader shader, float dt, bool setLists = true) {
+	void render(Shader shader, float dt, Box *box, bool setLists = true) {
 		if (setLists) {
 			positions.clear();
 			sizes.clear();
@@ -60,7 +60,7 @@ public:
 
 		shader.setMat4("model", glm::mat4(1.0f));
 
-		model.render(shader, dt, false, false);
+		model.render(shader, dt, nullptr, false, false);
 
 		int size = std::min(UPPER_BOUND, (int)positions.size()); // if more than 100 instances, only render 100
 
@@ -79,6 +79,11 @@ public:
 
 		// render instanced data
 		for (unsigned int i = 0, length = model.meshes.size(); i < length; i++) {
+			for (int j = 0; j < size; j++) {
+				box->offsets.push_back(positions[j] + model.meshes[i].br.calculateCenter());
+				box->sizes.push_back(sizes[j] * model.meshes[i].br.calculateDimensions());
+			}
+
 			glBindVertexArray(model.meshes[i].VAO);
 			glDrawElementsInstanced(GL_TRIANGLES, model.meshes[i].indices.size(), GL_UNSIGNED_INT, 0, size);
 			glBindVertexArray(0);

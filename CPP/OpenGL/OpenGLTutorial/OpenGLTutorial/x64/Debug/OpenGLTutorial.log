@@ -1,5 +1,4 @@
 ﻿  C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\
-  mesh.cpp
-C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\mesh.cpp(78,78): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  keyboard.cpp
   OpenGLTutorial.vcxproj -> C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\x64\Debug\OpenGLTutorial.exe
   C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\
