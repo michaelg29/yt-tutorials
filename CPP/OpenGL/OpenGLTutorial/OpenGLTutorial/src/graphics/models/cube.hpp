@@ -7,7 +7,7 @@
 class Cube : public Model {
 public:
 	Cube(glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 size = glm::vec3(1.0f, 1.0f, 1.0f))
-		: Model(BoundTypes::AABB, pos, size) {}
+		: Model(pos, size) {}
 
 	void init() {
 		int noVertices = 36;
@@ -62,9 +62,12 @@ public:
 			indices[i] = i;
 		}
 
-        BoundingRegion br(glm::vec3(-0.5f), glm::vec3(0.5f));
+        /*Texture tex("assets/flag.png", "material.diffuse");
+        tex.load();
+        Texture tex_specular("assets/flag_specular.png", "material.specular");
+        tex_specular.load();*/
 
-        meshes.push_back(Mesh(br, Vertex::genList(vertices, noVertices), indices));
+        meshes.push_back(Mesh(Vertex::genList(vertices, noVertices), indices));
 	}
 };
 
