@@ -3,6 +3,8 @@
 
 #include "../model.h"
 
+#include "box.hpp"
+
 #define UPPER_BOUND 100
 
 template <class T>
@@ -46,7 +48,7 @@ public:
 		}
 	}
 
-	void render(Shader shader, float dt, bool setLists = true) {
+	void render(Shader shader, float dt, Box *box, bool setLists = true) {
 		if (setLists) {
 			positions.clear();
 			sizes.clear();
@@ -60,27 +62,31 @@ public:
 
 		shader.setMat4("model", glm::mat4(1.0f));
 
-		model.render(shader, dt, false, false);
+		model.render(shader, dt, nullptr, false, false);
 
-		int size = std::min(UPPER_BOUND, (int)positions.size()); // if more than 100 instances, only render 100
+		int instances = std::min(UPPER_BOUND, (int)positions.size()); // if more than 100 instances, only render 100
 
 		// update data
-		if (size != 0) {
+		if (instances != 0) {
 			// if instances exist
 
 			glBindBuffer(GL_ARRAY_BUFFER, posVBO);
-			glBufferSubData(GL_ARRAY_BUFFER, 0, size * 3 * sizeof(float), &positions[0]);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, instances * 3 * sizeof(float), &positions[0]);
 
 			glBindBuffer(GL_ARRAY_BUFFER, sizeVBO);
-			glBufferSubData(GL_ARRAY_BUFFER, 0, size * 3 * sizeof(float), &sizes[0]);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, instances * 3 * sizeof(float), &sizes[0]);
 
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 
 		// render instanced data
 		for (unsigned int i = 0, length = model.meshes.size(); i < length; i++) {
+			for (unsigned int j = 0; j < instances; j++) {
+				box->addInstance(model.meshes[i].br, positions[j], sizes[j]);
+			}
+
 			glBindVertexArray(model.meshes[i].VAO);
-			glDrawElementsInstanced(GL_TRIANGLES, model.meshes[i].indices.size(), GL_UNSIGNED_INT, 0, size);
+			glDrawElementsInstanced(GL_TRIANGLES, model.meshes[i].indices.size(), GL_UNSIGNED_INT, 0, instances);
 			glBindVertexArray(0);
 		}
 	}

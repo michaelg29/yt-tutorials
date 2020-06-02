@@ -1,5 +1,21 @@
 ﻿  C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\
-  mesh.cpp
-C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\mesh.cpp(78,78): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  main.cpp
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\box.hpp(123,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\cube.hpp(61,30): warning C4018: '<': signed/unsigned mismatch
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(202,20): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(221,39): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(228,28): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(47,7): warning C4101: 'infoLog': unreferenced local variable
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(46,6): warning C4101: 'success': unreferenced local variable
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(291,14): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\modelarray.hpp(83,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\modelarray.hpp(51): message : while compiling class template member function 'void ModelArray<Sphere>::render(Shader,float,Box *,bool)'
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(221): message : see reference to function template instantiation 'void ModelArray<Sphere>::render(Shader,float,Box *,bool)' being compiled
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\sphere.hpp(19): message : see reference to class template instantiation 'ModelArray<Sphere>' being compiled
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\modelarray.hpp(84,2): warning C4018: '<': signed/unsigned mismatch
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\modelarray.hpp(89,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\modelarray.hpp(31,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\modelarray.hpp(15): message : while compiling class template member function 'void ModelArray<Sphere>::init(void)'
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\sphere.hpp(23): message : see reference to function template instantiation 'void ModelArray<Sphere>::init(void)' being compiled
   OpenGLTutorial.vcxproj -> C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\x64\Debug\OpenGLTutorial.exe
   C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\

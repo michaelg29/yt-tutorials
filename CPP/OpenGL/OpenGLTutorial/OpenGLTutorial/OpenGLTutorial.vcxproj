@@ -145,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\stb.cpp" />
+    <ClCompile Include="src\algorithms\bounds.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\graphics\light.cpp" />
     <ClCompile Include="src\graphics\material.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="src\physics\rigidbody.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\algorithms\bounds.h" />
     <ClInclude Include="src\graphics\light.h" />
     <ClInclude Include="src\graphics\material.h" />
     <ClInclude Include="src\graphics\mesh.h" />
