@@ -29,17 +29,17 @@ std::vector<Vertex> Vertex::genList(float* vertices, int noVertices) {
 	return ret;
 }
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
-	: vertices(vertices), indices(indices), textures(textures), noTex(false) {
+Mesh::Mesh(BoundingRegion br, std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
+	: br(br), vertices(vertices), indices(indices), textures(textures), noTex(false) {
 	setup();
 }
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, aiColor4D diffuse, aiColor4D specular)
-	: vertices(vertices), indices(indices), diffuse(diffuse), specular(specular), noTex(true) {
+Mesh::Mesh(BoundingRegion br, std::vector<Vertex> vertices, std::vector<unsigned int> indices, aiColor4D diffuse, aiColor4D specular)
+	: br(br), vertices(vertices), indices(indices), diffuse(diffuse), specular(specular), noTex(true) {
 	setup();
 }
 
-void Mesh::render(Shader shader, bool doRender) {
+void Mesh::render(Shader shader, glm::vec3 pos, glm::vec3 size, Box* box, bool doRender) {
 	if (noTex) {
 		// materials
 		shader.set4Float("material.diffuse", diffuse);
@@ -74,6 +74,8 @@ void Mesh::render(Shader shader, bool doRender) {
 	}
 	
 	if (doRender) {
+		box->addInstance(br, pos, size);
+
  		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);

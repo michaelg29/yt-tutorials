@@ -38,8 +38,6 @@ Camera Camera::defaultCamera(glm::vec3(0.0f, 0.0f, 0.0f));
 double dt = 0.0f; // tme btwn frames
 double lastFrame = 0.0f; // time of last frame
 
-Box box;
-
 bool flashlightOn = false;
 
 SphereArray launchObjects;
@@ -84,9 +82,11 @@ int main() {
 
 	// MODELS==============================
 	launchObjects.init();
+
+	Box box;
 	box.init();
 
-	Model m(glm::vec3(0.0f), glm::vec3(0.05f));
+	Model m(BoundTypes::AABB, glm::vec3(0.0f), glm::vec3(0.05f));
 	m.loadModel("assets/models/lotr_troll/scene.gltf");
 
 	// LIGHTS
@@ -130,6 +130,9 @@ int main() {
 	}*/
 
 	while (!screen.shouldClose()) {
+		box.offsets.clear();
+		box.sizes.clear();
+
 		// calculate dt
 		double currentTime = glfwGetTime();
 		dt = currentTime - lastFrame;
@@ -146,29 +149,42 @@ int main() {
 		launchShader.activate();
 
 		// camera view position
+		shader.activate();
 		shader.set3Float("viewPos", Camera::defaultCamera.cameraPos);
+		launchShader.activate();
 		launchShader.set3Float("viewPos", Camera::defaultCamera.cameraPos);
 
 		// render lights in shader
+		shader.activate();
 		dirLight.render(shader);
+		launchShader.activate();
 		dirLight.render(launchShader);
 
 		for (unsigned int i = 0; i < 4; i++) {
+			shader.activate();
 			lamps.lightInstances[i].render(shader, i);
+			launchShader.activate();
 			lamps.lightInstances[i].render(launchShader, i);
 		}
+		shader.activate();
 		shader.setInt("noPointLights", 4);
+		launchShader.activate();
 		launchShader.setInt("noPointLights", 4);
 
 		if (flashlightOn) {
 			s.position = Camera::defaultCamera.cameraPos;
 			s.direction = Camera::defaultCamera.cameraFront;
+			shader.activate();
 			s.render(shader, 0);
 			shader.setInt("noSpotLights", 1);
+			launchShader.activate();
+			s.render(launchShader, 0);
 			launchShader.setInt("noSpotLights", 1);
 		}
 		else {
+			shader.activate();
 			shader.setInt("noSpotLights", 0);
+			launchShader.activate();
 			launchShader.setInt("noSpotLights", 0);
 		}
 
@@ -180,9 +196,10 @@ int main() {
 			glm::radians(Camera::defaultCamera.zoom), 
 			(float)Screen::SCR_WIDTH / (float)Screen::SCR_HEIGHT, 0.1f, 100.0f);
 
+		shader.activate();
 		shader.setMat4("view", view);
 		shader.setMat4("projection", projection);
-		m.render(shader, dt);
+		m.render(shader, dt, &box);
 
 		// launch objects
 		std::stack<int> removeObjects;
@@ -198,16 +215,17 @@ int main() {
 		}
 
 		if (launchObjects.instances.size() > 0) {
+			launchShader.activate();
 			launchShader.setMat4("view", view);
 			launchShader.setMat4("projection", projection);
-			launchObjects.render(launchShader, dt);
+			launchObjects.render(launchShader, dt, &box);
 		}
 
 		// lamps
 		lampShader.activate();
 		lampShader.setMat4("view", view);
 		lampShader.setMat4("projection", projection);
-		lamps.render(lampShader, dt);
+		lamps.render(lampShader, dt, &box);
 
 		// render boxes
 		if (box.offsets.size() > 0) {
@@ -271,10 +289,5 @@ void processInput(double dt) {
 
 	if (Keyboard::keyWentDown(GLFW_KEY_F)) {
 		launchItem(dt);
-	}
-
-	if (Keyboard::keyWentDown(GLFW_KEY_I)) {
-		box.offsets.push_back(glm::vec3(box.offsets.size() * 1.0f));
-		box.sizes.push_back(glm::vec3(box.sizes.size() * 0.5f));
 	}
 }

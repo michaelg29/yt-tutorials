@@ -15,21 +15,25 @@
 
 #include "mesh.h"
 
+#include "models/box.hpp"
+
 #include "../physics/rigidbody.h"
+#include "../algorithms/bounds.h"
 
 class Model {
 public:
 	RigidBody rb;
 	glm::vec3 size;
 
+	BoundTypes boundType;
+
 	std::vector<Mesh> meshes;
 
-	Model() {}
-	Model(glm::vec3 pos = glm::vec3(0.0f), glm::vec3 size = glm::vec3(1.0f), bool noTex = false);
+	Model(BoundTypes boundType = BoundTypes::AABB, glm::vec3 pos = glm::vec3(0.0f), glm::vec3 size = glm::vec3(1.0f), bool noTex = false);
 
 	void loadModel(std::string path);
 
-	void render(Shader shader, float dt, bool setModel = true, bool doRender = true);
+	void render(Shader shader, float dt, Box *box, bool setModel = true, bool doRender = true);
 
 	void cleanup();
 
