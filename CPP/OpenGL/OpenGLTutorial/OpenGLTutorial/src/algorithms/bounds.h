@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 
-enum class BoundTypes {
+enum class BoundTypes : unsigned char {
 	AABB = 0x00,	// 0x00 = 0	// Axis-aligned bounding box
 	SPHERE = 0x01	// 0x01 = 1
 };
