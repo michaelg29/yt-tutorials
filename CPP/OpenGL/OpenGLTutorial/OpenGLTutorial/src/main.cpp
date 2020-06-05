@@ -25,12 +25,13 @@
 #include "io/keyboard.h"
 #include "io/mouse.h"
 #include "io/joystick.h"
-#include "io/screen.h"
 #include "io/camera.h"
 
-void processInput(double dt);
+#include "scene.h"
 
-Screen screen;
+Scene scene;
+
+void processInput(double dt);
 
 Joystick mainJ(0);
 Camera Camera::defaultCamera(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -43,36 +44,14 @@ bool flashlightOn = false;
 SphereArray launchObjects;
 
 int main() {
-	int success;
-	char infoLog[512];
-
 	std::cout << "Hello, OpenGL!" << std::endl;
 
-	glfwInit();
-
-	// openGL version 3.3
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-# ifdef __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COPMPAT, GL_TRUE);
-#endif
-
-	if (!screen.init()) {
+	scene = Scene(3, 3, "OpenGL Tutorial", 800, 600);
+	if (!scene.init()) {
 		std::cout << "Could not open window" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
-
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-
-	screen.setParameters();
 
 	// SHADERS===============================
 	Shader shader("assets/object.vs", "assets/object.fs");
@@ -130,7 +109,7 @@ int main() {
 	}*/
 
 	while (!screen.shouldClose()) {
-		box.offsets.clear();
+		box.positions.clear();
 		box.sizes.clear();
 
 		// calculate dt
@@ -228,7 +207,7 @@ int main() {
 		lamps.render(lampShader, dt, &box);
 
 		// render boxes
-		if (box.offsets.size() > 0) {
+		if (box.positions.size() > 0) {
 			// instances exist
 			boxShader.activate();
 			boxShader.setMat4("view", view);
