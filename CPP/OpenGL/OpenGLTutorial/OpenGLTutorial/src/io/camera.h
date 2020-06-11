@@ -18,8 +18,6 @@ enum class CameraDirection {
 
 class Camera {
 public:
-	static Camera defaultCamera;
-
 	glm::vec3 cameraPos;
 
 	glm::vec3 cameraFront;
@@ -34,7 +32,7 @@ public:
 	float sensitivity;
 	float zoom;
 
-	Camera(glm::vec3 position);
+	Camera(glm::vec3 position = glm::vec3(0.0f));
 
 	void updateCameraDirection(double dx, double dy); // moving mouse
 	void updateCameraPos(CameraDirection direction, double dt); // keyboard input
