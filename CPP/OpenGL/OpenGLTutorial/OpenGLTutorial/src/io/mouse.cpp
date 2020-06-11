@@ -10,6 +10,9 @@ double Mouse::lastY = 0;
 double Mouse::dx = 0;
 double Mouse::dy = 0;
 
+double Mouse::scrollDx = 0;
+double Mouse::scrollDy = 0;
+
 bool Mouse::firstMouse = true;
 
 bool Mouse::buttons[GLFW_MOUSE_BUTTON_LAST] = { 0 };
@@ -29,8 +32,6 @@ void Mouse::cursorPosCallback(GLFWwindow* window, double _x, double _y) {
 	dy = lastY - y; // y coordinates are inverted
 	lastX = x;
 	lastY = y;
-
-	Camera::defaultCamera.updateCameraDirection(dx, dy);
 }
 
 void Mouse::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
@@ -46,7 +47,8 @@ void Mouse::mouseButtonCallback(GLFWwindow* window, int button, int action, int 
 }
 
 void Mouse::mouseWheelCallback(GLFWwindow* window, double dx, double dy) {
-	Camera::defaultCamera.updateCameraZoom(dy);
+	scrollDx = dx;
+	scrollDy = dy;
 }
 
 double Mouse::getMouseX() {
@@ -58,11 +60,27 @@ double Mouse::getMouseY() {
 }
 
 double Mouse::getDX() {
-	return dx;
+	double _dx = dx;
+	dx = 0;
+	return _dx;
 }
 
 double Mouse::getDY() {
-	return dy;
+	double _dy = dy;
+	dy = 0;
+	return _dy;
+}
+
+double Mouse::getScrollDX() {
+	double _scrollDx = scrollDx;
+	scrollDx = 0;
+	return _scrollDx;
+}
+
+double Mouse::getScrollDY() {
+	double _scrollDy = scrollDy;
+	scrollDy = 0;
+	return _scrollDy;
 }
 
 bool Mouse::button(int button) {

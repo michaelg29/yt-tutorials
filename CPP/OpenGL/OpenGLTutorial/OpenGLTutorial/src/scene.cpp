@@ -21,7 +21,8 @@ Scene::Scene(int glfwVersionMajor, int glfwVersionMinor,
 	const char* title, unsigned int scrWidth, unsigned int scrHeight)
 	: glfwVersionMajor(glfwVersionMajor), glfwVersionMinor(glfwVersionMinor),
 	title(title),
-	activeCamera(-1) {
+	activeCamera(-1),
+	activePointLights(0), activeSpotLights(0) {
 	
 	Scene::scrWidth = scrWidth;
 	Scene::scrHeight = scrHeight;
@@ -89,32 +90,131 @@ bool Scene::init() {
 	main loop methods
 */
 // process input
-void processInput(float dt);
+void Scene::processInput(float dt) {
+	if (activeCamera != -1 && activeCamera < cameras.size()) {
+		// active camera exists
+
+		// set camera direction
+		cameras[activeCamera]->updateCameraDirection(Mouse::getDX(), Mouse::getDY());
+
+		// set camera zoom
+		cameras[activeCamera]->updateCameraZoom(Mouse::getScrollDY());
+
+		// set camera pos
+		if (Keyboard::key(GLFW_KEY_W)) {
+			cameras[activeCamera]->updateCameraPos(CameraDirection::FORWARD, dt);
+		}
+		if (Keyboard::key(GLFW_KEY_S)) {
+			cameras[activeCamera]->updateCameraPos(CameraDirection::BACKWARD, dt);
+		}
+		if (Keyboard::key(GLFW_KEY_D)) {
+			cameras[activeCamera]->updateCameraPos(CameraDirection::RIGHT, dt);
+		}
+		if (Keyboard::key(GLFW_KEY_A)) {
+			cameras[activeCamera]->updateCameraPos(CameraDirection::LEFT, dt);
+		}
+		if (Keyboard::key(GLFW_KEY_SPACE)) {
+			cameras[activeCamera]->updateCameraPos(CameraDirection::UP, dt);
+		}
+		if (Keyboard::key(GLFW_KEY_LEFT_SHIFT)) {
+			cameras[activeCamera]->updateCameraPos(CameraDirection::DOWN, dt);
+		}
+
+		// set matrices
+		view = cameras[activeCamera]->getViewMatrix();
+		projection = glm::perspective(
+			glm::radians(cameras[activeCamera]->getZoom()),	// FOV
+			(float)scrWidth / (float)scrHeight,					// aspect ratio
+			0.1f, 100.0f										// near and far bounds
+		);
+
+		// set pos at end
+		cameraPos = cameras[activeCamera]->cameraPos;
+	}
+}
 
 // update screen before each frame
-void update();
+void Scene::update() {
+	glClearColor(bg[0], bg[1], bg[2], bg[4]);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
 
 // update screen after frame
-void newFrame();
+void Scene::newFrame() {
+	// send new frame to window
+	glfwSwapBuffers(window);
+	glfwPollEvents();
+}
 
 // set uniform shader varaibles (lighting, etc)
-void render(Shader shader, bool applyLighting = true);
+void Scene::render(Shader shader, bool applyLighting) {
+	// activate shader
+	shader.activate();
+
+	// set camera values
+	shader.setMat4("view", view);
+	shader.setMat4("projection", projection);
+	shader.set3Float("viewPos", cameraPos);
+
+	// lighting
+	if (applyLighting) {
+		// point lights
+ 		unsigned int noLights = pointLights.size();
+		unsigned int noActiveLights = 0;
+		for (unsigned int i = 0; i < noLights; i++) {
+			if (States::isActive(&activePointLights, i)) {
+				// i'th light is active
+				pointLights[i]->render(shader, noActiveLights);
+				noActiveLights++;
+			}
+		}
+		shader.setInt("noPointLights", noActiveLights);
+
+		// spot lights
+		noLights = spotLights.size();
+		noActiveLights = 0;
+		for (unsigned int i = 0; i < noLights; i++) {
+			if (States::isActive(&activeSpotLights, i)) {
+				// i'th spot light active
+				spotLights[i]->render(shader, noActiveLights);
+				noActiveLights++;
+			}
+		}
+		shader.setInt("noSpotLights", noActiveLights);
+
+		// directional light
+		dirLight->render(shader);
+	}
+}
 
 /*
 	cleanup method
 */
-void cleanup();
+void Scene::cleanup() {
+	glfwTerminate();
+}
 
 /*
 	accessors
 */
-bool shouldClose();
+bool Scene::shouldClose() {
+	return glfwWindowShouldClose(window);
+}
 
-Camera* getActiveCamera();
+Camera* Scene::getActiveCamera() {
+	return (activeCamera >= 0 && activeCamera < cameras.size()) ? cameras[activeCamera] : nullptr;
+}
 
 /*
 	modifiers
 */
-void setShouldClose(bool shouldClose);
+void Scene::setShouldClose(bool shouldClose) {
+	glfwSetWindowShouldClose(window, shouldClose);
+}
 
-void setWindowColor(float r, float g, float b, float a);
+void Scene::setWindowColor(float r, float g, float b, float a) {
+	bg[0] = r;
+	bg[1] = g;
+	bg[2] = b;
+	bg[3] = a;
+}

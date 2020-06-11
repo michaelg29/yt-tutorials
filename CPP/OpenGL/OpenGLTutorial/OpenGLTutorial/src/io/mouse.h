@@ -16,6 +16,9 @@ public:
 	static double getDX();
 	static double getDY();
 
+	static double getScrollDX();
+	static double getScrollDY();
+
 	static bool button(int button);
 	static bool buttonChanged(int button);
 	static bool buttonWentUp(int button);
@@ -30,6 +33,9 @@ private:
 
 	static double dx;
 	static double dy;
+
+	static double scrollDx;
+	static double scrollDy;
 
 	static bool firstMouse;
 
