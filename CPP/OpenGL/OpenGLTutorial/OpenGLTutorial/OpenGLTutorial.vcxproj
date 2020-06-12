@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClCompile Include="lib\stb.cpp" />
     <ClCompile Include="src\algorithms\bounds.cpp" />
+    <ClCompile Include="src\algorithms\octree.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\graphics\light.cpp" />
     <ClCompile Include="src\graphics\material.cpp" />
@@ -164,6 +165,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\algorithms\bounds.h" />
+    <ClInclude Include="src\algorithms\list.hpp" />
+    <ClInclude Include="src\algorithms\octree.h" />
     <ClInclude Include="src\algorithms\states.hpp" />
     <ClInclude Include="src\graphics\glmemory.hpp" />
     <ClInclude Include="src\graphics\light.h" />
