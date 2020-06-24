@@ -177,7 +177,6 @@
     <ClInclude Include="src\graphics\models\cube.hpp" />
     <ClInclude Include="src\graphics\models\gun.hpp" />
     <ClInclude Include="src\graphics\models\lamp.hpp" />
-    <ClInclude Include="src\graphics\models\modelarray.hpp" />
     <ClInclude Include="src\graphics\models\sphere.hpp" />
     <ClInclude Include="src\io\camera.h" />
     <ClInclude Include="src\io\joystick.h" />

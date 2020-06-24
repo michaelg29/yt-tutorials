@@ -5,11 +5,13 @@
 #include <GLFW/glfw3.h>
 
 #include <vector>
+#include <map>
 
 #include <glm/glm.hpp>
 
 #include "graphics/light.h"
 #include "graphics/shader.h"
+#include "graphics/model.h"
 
 #include "io/camera.h"
 #include "io/keyboard.h"
@@ -17,8 +19,13 @@
 
 #include "algorithms/states.hpp"
 
+class Model;
+
 class Scene {
 public:
+	std::map<std::string, Model*> models;
+	std::map<std::string, std::pair<std::string, unsigned int>> instances;
+
 	/*
 		callbacks
 	*/
@@ -50,7 +57,9 @@ public:
 	void newFrame();
 
 	// set uniform shader varaibles (lighting, etc)
-	void render(Shader shader, bool applyLighting = true);
+	void renderShader(Shader shader, bool applyLighting = true);
+
+	void renderInstances(std::string modelId, Shader shader, float dt);
 
 	/*
 		cleanup method
@@ -70,6 +79,22 @@ public:
 	void setShouldClose(bool shouldClose);
 
 	void setWindowColor(float r, float g, float b, float a);
+
+	/*
+		Model/instance methods
+	*/
+	void registerModel(Model* model);
+
+	std::string generateInstance(std::string modelId, glm::vec3 size, float mass, glm::vec3 pos);
+
+	void initInstances();
+
+	void loadModels();
+
+	void removeInstance(std::string instanceId);
+
+	std::string currentId;
+	std::string generateId();
 
 	/*
 		lights

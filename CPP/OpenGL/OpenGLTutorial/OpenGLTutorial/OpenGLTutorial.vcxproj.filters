@@ -126,9 +126,6 @@
     <ClInclude Include="src\physics\environment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\models\modelarray.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\graphics\models\box.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

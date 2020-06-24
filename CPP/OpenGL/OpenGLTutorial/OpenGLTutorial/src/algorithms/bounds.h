@@ -55,6 +55,9 @@ public:
 
 	// determine if region intersects (partial containment)
 	bool intersectsWith(BoundingRegion br);
+
+	// operator overload
+	bool operator==(BoundingRegion br);
 };
 
 #endif

@@ -99,7 +99,7 @@ void Octree::node::build() {
         if (octLists[i].size() != 0) {
             // if children go into this octant
             children[i] = new node(octants[i], octLists[i]);
-            States::activate(&activeOctants, i); // activate octant
+            States::activateIndex(&activeOctants, i); // activate octant
             children[i]->build();
             hasChildren = true;
         }
@@ -129,7 +129,7 @@ void Octree::node::update() {
             for (unsigned char flags = activeOctants, i = 0;
                 flags > 0;
                 flags >>= 1, i++) {
-                if (States::isActive(&flags, 0)) {
+                if (States::isIndexActive(&flags, 0)) {
                     // active octant
                     if (children[i] != nullptr) {
                         // child not null
@@ -243,7 +243,7 @@ bool Octree::node::insert(BoundingRegion obj) {
             else {
                 // create node for child
                 children[i] = new node(octants[i], { obj });
-                States::activate(&activeOctants, i);
+                States::activateIndex(&activeOctants, i);
                 return true;
             }
         }
@@ -261,7 +261,7 @@ void Octree::node::destroy() {
         for (int flags = activeOctants, i = 0;
             flags > 0;
             flags >> 1, i++) {
-            if (States::isActive(&flags, 0)) {
+            if (States::isIndexActive(&flags, 0)) {
                 // active
                 if (children[i] != nullptr) {
                     children[i]->destroy();
