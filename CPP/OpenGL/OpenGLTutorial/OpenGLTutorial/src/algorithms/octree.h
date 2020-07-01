@@ -11,6 +11,9 @@
 #include "list.hpp"
 #include "states.hpp"
 #include "bounds.h"
+#include "trie.hpp"
+
+#include "../graphics/model.h"
 
 namespace Octree {
 	/*
@@ -49,6 +52,9 @@ namespace Octree {
 		bool treeReady = false; // if tree is ready
 		bool treeBuilt = false; // if tree is built
 
+		short maxLifespan = 8;
+		short currentLifespan = -1;
+
 		std::vector<BoundingRegion> objects; // list of objects in node
 		std::queue<BoundingRegion> queue; // queue of objects to be dynamically inserted
 
@@ -62,6 +68,8 @@ namespace Octree {
 
 		// initialize with bounds and list of objects
 		node(BoundingRegion bounds, std::vector<BoundingRegion> objectList);
+
+		void addToPending(RigidBody* instance, trie::Trie<Model*> models);
 
 		// build tree (called during initialization)
 		void build();
