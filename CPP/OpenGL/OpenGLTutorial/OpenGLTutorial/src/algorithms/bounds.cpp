@@ -10,15 +10,29 @@ BoundingRegion::BoundingRegion(BoundTypes type)
 
 // initialize as sphere
 BoundingRegion::BoundingRegion(glm::vec3 center, float radius) 
-	: type(BoundTypes::SPHERE), center(center), radius(radius) {}
+	: type(BoundTypes::SPHERE), center(center), ogCenter(center), radius(radius), ogRadius(radius) {}
 
 // initialize as AABB
 BoundingRegion::BoundingRegion(glm::vec3 min, glm::vec3 max) 
-	: type(BoundTypes::AABB), min(min), max(max) {}
+	: type(BoundTypes::AABB), min(min), ogMin(min), max(max), ogMax(max) {}
 
 /*
 	Calculating values for the region
 */
+
+// transform for instance
+void BoundingRegion::transform() {
+	if (instance) {
+		if (type == BoundTypes::AABB) {
+			min = ogMin * instance->size + instance->pos;
+			max = ogMax * instance->size + instance->pos;
+		}
+		else {
+			center = ogCenter * instance->size + instance->pos;
+			radius = ogRadius * instance->size.x;
+		}
+	}
+}
 
 // center
 glm::vec3 BoundingRegion::calculateCenter() {

@@ -1,14 +1,56 @@
 ﻿  C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\
-  main.cpp
+  bounds.cpp
+  scene.cpp
 C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\glmemory.hpp(98,1): warning C4312: 'type cast': conversion from 'GLint' to 'void *' of greater size
 C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\box.hpp(62,1): warning C4267: 'argument': conversion from 'size_t' to 'GLuint', possible loss of data
 C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\box.hpp(68,1): warning C4267: 'argument': conversion from 'size_t' to 'GLuint', possible loss of data
 C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\box.hpp(109,1): warning C4267: 'argument': conversion from 'size_t' to 'GLuint', possible loss of data
-C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\graphics\models\cube.hpp(61,30): warning C4018: '<': signed/unsigned mismatch
-C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(144,21): warning C4018: '<': signed/unsigned mismatch
-C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(157,45): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(162,46): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(183,21): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\main.cpp(200,14): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\scene.cpp(7,37): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\scene.cpp(184,46): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\scene.cpp(196,31): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\algorithms\trie.hpp(102,2): warning C4018: '<': signed/unsigned mismatch
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\algorithms\trie.hpp(88): message : while compiling class template member function 'bool trie::Trie<RigidBody *>::insert(std::string,T)'
+          with
+          [
+              T=RigidBody *
+          ]
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\scene.cpp(265): message : see reference to function template instantiation 'bool trie::Trie<RigidBody *>::insert(std::string,T)' being compiled
+          with
+          [
+              T=RigidBody *
+          ]
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\scene.h(28): message : see reference to class template instantiation 'trie::Trie<RigidBody *>' being compiled
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\algorithms\trie.hpp(78,2): warning C4018: '<': signed/unsigned mismatch
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\algorithms\trie.hpp(67): message : while compiling class template member function 'trie::Trie<RigidBody *>::Trie(trie::charset)'
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\scene.cpp(33): message : see reference to function template instantiation 'trie::Trie<RigidBody *>::Trie(trie::charset)' being compiled
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\algorithms\trie.hpp(49,2): warning C4018: '<': signed/unsigned mismatch
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\algorithms\trie.hpp(42): message : while compiling class template member function 'void trie::node<T>::traverse(void (__cdecl *)(T),unsigned int)'
+          with
+          [
+              T=Model *
+          ]
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\algorithms\trie.hpp(172): message : see reference to function template instantiation 'void trie::node<T>::traverse(void (__cdecl *)(T),unsigned int)' being compiled
+          with
+          [
+              T=Model *
+          ]
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\algorithms\trie.hpp(172): message : see reference to class template instantiation 'trie::node<T>' being compiled
+          with
+          [
+              T=Model *
+          ]
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\algorithms\trie.hpp(170): message : while compiling class template member function 'void trie::Trie<Model *>::traverse(void (__cdecl *)(T))'
+          with
+          [
+              T=Model *
+          ]
+C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\OpenGLTutorial\src\scene.cpp(220): message : see reference to function template instantiation 'void trie::Trie<Model *>::traverse(void (__cdecl *)(T))' being compiled
+          with
+          [
+              T=Model *
+          ]
+  Generating Code...
+  LINK : C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\x64\Debug\OpenGLTutorial.exe not found or not built by the last incremental link; performing full link
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   OpenGLTutorial.vcxproj -> C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\x64\Debug\OpenGLTutorial.exe
   C:\src\yt-tutorials\CPP\OpenGL\OpenGLTutorial\

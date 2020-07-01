@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 
+#include "../physics/rigidbody.h"
+
 enum class BoundTypes : unsigned char {
 	AABB = 0x00,	// 0x00 = 0	// Axis-aligned bounding box
 	SPHERE = 0x01	// 0x01 = 1
@@ -12,13 +14,21 @@ class BoundingRegion {
 public:
 	BoundTypes type;
 
+	RigidBody* instance;
+
 	// sphere values
 	glm::vec3 center;
 	float radius;
 
+	glm::vec3 ogCenter;
+	float ogRadius;
+
 	// bounding box values
 	glm::vec3 min;
 	glm::vec3 max;
+
+	glm::vec3 ogMin;
+	glm::vec3 ogMax;
 
 	/*
 		Constructors
@@ -36,6 +46,9 @@ public:
 	/*
 		Calculating values for the region
 	*/
+
+	// transform for instance
+	void transform();
 
 	// center
 	glm::vec3 calculateCenter();

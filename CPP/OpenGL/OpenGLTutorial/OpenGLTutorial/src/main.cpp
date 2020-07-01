@@ -14,7 +14,6 @@
 #include <stack>
 
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include "graphics/shader.h"
 #include "graphics/texture.h"
@@ -140,15 +139,10 @@ int main() {
 		processInput(dt);
 
 		// remove launch objects if too far
-		std::stack<unsigned int> removeObjects;
 		for (int i = 0; i < sphere.currentNoInstances; i++) {
-			if (glm::length(cam.cameraPos - sphere.instances[i].pos) > 250.0f) {
-				removeObjects.push(i);
+			if (glm::length(cam.cameraPos - sphere.instances[i]->pos) > 250.0f) {
+				scene.markForDeletion(sphere.instances[i]->instanceId);
 			}
-		}
-		while (removeObjects.size() != 0) {
-			sphere.removeInstance(removeObjects.top());
-			removeObjects.pop();
 		}
 
 		// render launch objects
@@ -162,6 +156,7 @@ int main() {
 		scene.renderInstances(lamp.id, lampShader, dt);
 
 		// send new frame to window
+		scene.clearDeadInstances();
 		scene.newFrame();
 	}
 
@@ -171,11 +166,11 @@ int main() {
 }
 
 void launchItem(float dt) {
-	std::string id = scene.generateInstance(sphere.id, glm::vec3(1.0f), 1.0f, cam.cameraPos);
-	if (id != "") {
+	RigidBody* rb = scene.generateInstance(sphere.id, glm::vec3(1.0f), 1.0f, cam.cameraPos);
+	if (rb) {
 		// instance generated
-		sphere.instances[scene.instances[id].second].transferEnergy(100.0f, cam.cameraFront);
-		sphere.instances[scene.instances[id].second].applyAcceleration(Environment::gravitationalAcceleration);
+		rb->transferEnergy(100.0f, cam.cameraFront);
+		rb->applyAcceleration(Environment::gravitationalAcceleration);
 	}
 }
 

@@ -10,8 +10,8 @@ bool RigidBody::operator==(std::string id) {
 
 RigidBody::RigidBody() {}
 
-RigidBody::RigidBody(std::string* modelId, glm::vec3 size, float mass, glm::vec3 pos)
-	: modelId(modelId), size(size), mass(mass), pos(pos), velocity(0.0f), acceleration(0.0f) {}
+RigidBody::RigidBody(std::string modelId, glm::vec3 size, float mass, glm::vec3 pos)
+	: modelId(modelId), size(size), mass(mass), pos(pos), velocity(0.0f), acceleration(0.0f), state(0) {}
 
 void RigidBody::update(float dt) {
 	pos += velocity * dt + 0.5f * acceleration * (dt * dt);

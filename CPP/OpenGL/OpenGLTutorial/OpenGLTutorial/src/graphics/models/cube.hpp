@@ -73,6 +73,7 @@ public:
         ret.loadData(Vertex::genList(vertices, noVertices), indices);
 
         meshes.push_back(ret);
+        boundingRegions.push_back(br);
 	}
 };
 
