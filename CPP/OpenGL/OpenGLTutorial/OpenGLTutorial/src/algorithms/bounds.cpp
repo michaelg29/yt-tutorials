@@ -54,7 +54,7 @@ bool BoundingRegion::containsPoint(glm::vec3 pt) {
 		// box - point must be larger than man and smaller than max
 		return (pt.x >= min.x) && (pt.x <= max.x) &&
 			(pt.y >= min.y) && (pt.y <= max.y) &&
-			(pt.z >= min.z) && (pt.z <= min.z);
+			(pt.z >= min.z) && (pt.z <= max.z);
 	}
 	else {
 		// sphere - distance must be less than radius
