@@ -140,6 +140,7 @@
     <None Include="assets\lamp.fs" />
     <None Include="assets\object.fs" />
     <None Include="assets\object.vs" />
+    <None Include="assimp-vc142-mtd.dll" />
     <None Include="glfw3.dll" />
     <None Include="src\graphics\texture.h" />
   </ItemGroup>

@@ -23,6 +23,7 @@
     <None Include="assets\instanced\instanced.vs" />
     <None Include="assets\instanced\box.vs" />
     <None Include="assets\instanced\box.fs" />
+    <None Include="assimp-vc142-mtd.dll" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">

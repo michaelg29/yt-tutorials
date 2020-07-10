@@ -12,6 +12,7 @@
 #include "graphics/light.h"
 #include "graphics/shader.h"
 #include "graphics/model.h"
+#include "graphics/models/box.hpp"
 
 #include "io/camera.h"
 #include "io/keyboard.h"
@@ -19,6 +20,12 @@
 
 #include "algorithms/states.hpp"
 #include "algorithms/trie.hpp"
+#include "algorithms/octree.h"
+
+// forward declarations
+namespace Octree {
+	class node;
+}
 
 class Model;
 
@@ -28,6 +35,8 @@ public:
 	trie::Trie<RigidBody*> instances;
 
 	std::vector<RigidBody*> instancesToDelete;
+
+	Octree::node* octree;
 
 	/*
 		callbacks
@@ -47,6 +56,8 @@ public:
 	*/
 	bool init();
 
+	void prepare(Box &box);
+
 	/*
 		main loop methods
 	*/
@@ -57,7 +68,7 @@ public:
 	void update();
 
 	// update screen after frame
-	void newFrame();
+	void newFrame(Box &box);
 
 	// set uniform shader varaibles (lighting, etc)
 	void renderShader(Shader shader, bool applyLighting = true);

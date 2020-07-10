@@ -74,6 +74,9 @@ int main() {
 
 	scene.registerModel(&sphere);
 
+	Box box;
+	box.init();
+
 	// load all model data
 	scene.loadModels();
 
@@ -126,6 +129,8 @@ int main() {
 		std::cout << mainJ.getName() << " is present." << std::endl;
 	}*/
 
+	scene.prepare(box);
+
 	while (!scene.shouldClose()) {
 		// calculate dt
 		double currentTime = glfwGetTime();
@@ -152,12 +157,16 @@ int main() {
 		}
 
 		// render lamps
-		scene.renderShader(lampShader);
+		scene.renderShader(lampShader, false);
 		scene.renderInstances(lamp.id, lampShader, dt);
 
+		// render boxes
+		scene.renderShader(boxShader, false);
+		box.render(boxShader);
+
 		// send new frame to window
+		scene.newFrame(box);
 		scene.clearDeadInstances();
-		scene.newFrame();
 	}
 
 	// clean up objects
