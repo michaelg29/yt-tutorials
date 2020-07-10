@@ -11,3 +11,7 @@
 /Dart/Flutter/yt_tutorial/android/*
 /Dart/Flutter/yt_tutorial/ios/*
 /Dart/Flutter/yt_tutorial/build/*
+*.tlog
+*.obj
+*.idb
+*.pdb

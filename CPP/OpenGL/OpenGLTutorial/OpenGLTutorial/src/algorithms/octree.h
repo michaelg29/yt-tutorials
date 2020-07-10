@@ -14,6 +14,10 @@
 #include "trie.hpp"
 
 #include "../graphics/model.h"
+#include "../graphics/models/box.hpp"
+
+// forward declaration
+class Model;
 
 namespace Octree {
 	/*
@@ -35,7 +39,7 @@ namespace Octree {
 	*/
 
 	// calculate bounds of specified quadrant in bounding region
-	void calculateBounds(BoundingRegion* out, Octant octant, BoundingRegion parentRegion);
+	void calculateBounds(BoundingRegion &out, Octant octant, BoundingRegion parentRegion);
 
 	/*
 		class to represent each node in the octree
@@ -75,7 +79,7 @@ namespace Octree {
 		void build();
 
 		// update objects in tree (called during each iteration of main loop)
-		void update();
+		void update(Box &box);
 
 		// process pending queue
 		void processPending();

@@ -99,7 +99,17 @@ bool Scene::init() {
 	glEnable(GL_DEPTH_TEST); // doesn't show vertices not visible to camera (back of object)
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // disable cursor
 
+	/*
+		init octree
+	*/
+	octree = new Octree::node(BoundingRegion(glm::vec3(-16.0f), glm::vec3(16.0f)));
+
 	return true;
+}
+
+// prepare for main loop (after object generation, etc)
+void Scene::prepare(Box &box) {
+	octree->update(box);
 }
 
 /*
@@ -162,7 +172,14 @@ void Scene::update() {
 }
 
 // update screen after frame
-void Scene::newFrame() {
+void Scene::newFrame(Box &box) {
+	box.positions.clear();
+	box.sizes.clear();
+
+	// process pending
+	octree->processPending();
+	octree->update(box);
+
 	// send new frame to window
 	glfwSwapBuffers(window);
 	glfwPollEvents();
@@ -263,6 +280,7 @@ RigidBody* Scene::generateInstance(std::string modelId, glm::vec3 size, float ma
 		std::string id = generateId();
 		rb->instanceId = id;
 		instances.insert(id, rb);
+		octree->addToPending(rb, models);
 		return rb;
 	}
 	return nullptr;
