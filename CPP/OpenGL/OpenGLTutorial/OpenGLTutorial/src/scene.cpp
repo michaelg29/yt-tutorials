@@ -238,6 +238,8 @@ void Scene::cleanup() {
 		model->cleanup();
 	});
 
+	octree->destroy();
+
 	glfwTerminate();
 }
 
