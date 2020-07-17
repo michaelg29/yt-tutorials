@@ -1,4 +1,5 @@
 #include "bounds.h"
+#include "octree.h"
 
 /*
 		Constructors
@@ -133,20 +134,12 @@ bool BoundingRegion::intersectsWith(BoundingRegion br) {
 	}
 	else if (type == BoundTypes::SPHERE) {
 		// this is a sphere, br is a box
-
-		// determine if sphere is above top, below bottom, etc
-		// find distance (squared) to the closest plane
 		float distSquared = 0.0f;
 		for (int i = 0; i < 3; i++) {
-			if (center[i] < br.min[i]) {
-				// beyond min
-				distSquared += (br.min[i] - center[i]) * (br.min[i] * center[i]);
-			}
-			else if (center[i] > br.max[i]) {
-				// beyond max
-				distSquared += (center[i] - br.max[i]) * (center[i] - br.max[i]);
-			}
-			// else inside
+			// determine closest side
+			float closestPt = std::max(br.min[i], std::min(center[i], br.max[i]));
+			// add distance
+			distSquared += (closestPt - center[i]) * (closestPt - center[i]);
 		}
 
 		return distSquared < (radius * radius);

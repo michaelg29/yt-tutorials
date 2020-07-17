@@ -175,10 +175,10 @@ int main() {
 }
 
 void launchItem(float dt) {
-	RigidBody* rb = scene.generateInstance(sphere.id, glm::vec3(1.0f), 1.0f, cam.cameraPos);
+	RigidBody* rb = scene.generateInstance(sphere.id, glm::vec3(0.1f), 1.0f, cam.cameraPos);
 	if (rb) {
 		// instance generated
-		rb->transferEnergy(100.0f, cam.cameraFront);
+		rb->transferEnergy(1000.0f, cam.cameraFront);
 		rb->applyAcceleration(Environment::gravitationalAcceleration);
 	}
 }

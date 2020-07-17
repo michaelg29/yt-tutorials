@@ -14,10 +14,11 @@
 #include "trie.hpp"
 
 #include "../graphics/model.h"
-#include "../graphics/models/box.hpp"
 
 // forward declaration
 class Model;
+class BoundingRegion;
+class Box;
 
 namespace Octree {
 	/*
@@ -86,6 +87,12 @@ namespace Octree {
 
 		// dynamically insert object into node
 		bool insert(BoundingRegion obj);
+
+		// check collisions with all objects in node
+		void checkCollisionsSelf(BoundingRegion obj);
+
+		// check collisions with all objects in child nodes
+		void checkCollisionsChildren(BoundingRegion obj);
 
 		// destroy object (free memory)
 		void destroy();
