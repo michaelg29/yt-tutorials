@@ -1,56 +1,70 @@
 #include "joystick.h"
 
+/*
+    constructor
+*/
+
+// generate an instance for joystick with id i
 Joystick::Joystick(int i) {
-	id = getId(i);
+    id = getId(i);
 
-	update();
+    update();
 }
 
+// update the joystick's states
 void Joystick::update() {
-	present = glfwJoystickPresent(id);
+    present = glfwJoystickPresent(id);
 
-	if (present) {
-		name = glfwGetJoystickName(id);
-		axes = glfwGetJoystickAxes(id, &axesCount);
-		buttons = glfwGetJoystickButtons(id, &buttonCount);
-	}
+    if (present) {
+        name = glfwGetJoystickName(id);
+        axes = glfwGetJoystickAxes(id, &axesCount);
+        buttons = glfwGetJoystickButtons(id, &buttonCount);
+    }
 }
 
+/*
+    accessors
+*/
+
+// get axis value
 float Joystick::axesState(int axis) {
-	if (present) {
-		return axes[axis];
-	}
+    if (present) {
+        return axes[axis];
+    }
 
-	return -1;
+    return -1;
 }
 
+// get button state
 unsigned char Joystick::buttonState(int button) {
-	if (present) {
-		return buttons[button];
-	}
+    if (present) {
+        return buttons[button];
+    }
 
-	return GLFW_RELEASE;
+    return GLFW_RELEASE;
 }
 
+// get number of axes
 int Joystick::getAxesCount() {
-	return axesCount;
+    return axesCount;
 }
 
+// get number of buttons
 int Joystick::getButtonCount() {
-	return buttonCount;
+    return buttonCount;
 }
 
+// return if joystick present
 bool Joystick::isPresent() {
-	return present;
+    return present;
 }
 
+// get name of joystick
 const char* Joystick::getName() {
-	return name;
+    return name;
 }
 
+// static method to get enum value for joystick
 int Joystick::getId(int i) {
-	switch (i) {
-	case 0: return GLFW_JOYSTICK_1;
-	default: return -1;
-	};
+    return GLFW_JOYSTICK_1 + i;
 }

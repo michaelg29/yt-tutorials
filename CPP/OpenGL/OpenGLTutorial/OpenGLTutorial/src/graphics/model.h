@@ -23,66 +23,109 @@
 #include "../scene.h"
 
 // model switches
-#define DYNAMIC				(unsigned int)1
-#define CONST_INSTANCES		(unsigned int)2 //  10
-#define NO_TEX				(unsigned int)4	// 100
+#define DYNAMIC				(unsigned int)1 // 0b00000001
+#define CONST_INSTANCES		(unsigned int)2 // 0b00000010
+#define NO_TEX				(unsigned int)4	// 0b00000100
 
-class Scene; // forward declaration
+// forward declaration
+class Scene;
+
+/*
+    class to represent model
+*/
 
 class Model {
 public:
-	std::string id;
+    // id of model in scene
+    std::string id;
 
-	RigidBody rb;
-	glm::vec3 size;
+    // type of bounding region for all meshes
+    BoundTypes boundType;
 
-	BoundTypes boundType;
+    // list of meshes
+    std::vector<Mesh> meshes;
+    // list of bounding regions (1 for each mesh)
+    std::vector<BoundingRegion> boundingRegions;
 
-	std::vector<Mesh> meshes;
-	std::vector<BoundingRegion> boundingRegions;
+    // list of instances
+    std::vector<RigidBody*> instances;
 
-	std::vector<RigidBody*> instances;
+    // maximum number of instances
+    unsigned int maxNoInstances;
+    // current number of instances
+    unsigned int currentNoInstances;
 
-	unsigned int maxNoInstances;
-	unsigned int currentNoInstances;
+    // combination of switches above
+    unsigned int switches;
 
-	unsigned int switches;
+    /*
+        constructor
+    */
 
-	Model(std::string id, BoundTypes boundType, unsigned int maxNoInstances, unsigned int flags = 0);
+    // initialize with parameters
+    Model(std::string id, BoundTypes boundType, unsigned int maxNoInstances, unsigned int flags = 0);
 
-	// initialize method
-	virtual void init();
+    /*
+        process functions
+    */
 
-	RigidBody* generateInstance(glm::vec3 size, float mass, glm::vec3 pos);
+    // initialize method (to be overriden)
+    virtual void init();
 
-	void initInstances();
+    // load model from path
+    void loadModel(std::string path);
 
-	void loadModel(std::string path);
+    // render instance(s)
+    virtual void render(Shader shader, float dt, Scene *scene, bool setModel = true);
 
-	virtual void render(Shader shader, float dt, Scene *scene, bool setModel = true);
+    // free up memory
+    void cleanup();
 
-	void cleanup();
+    /*
+        instance methods
+    */
 
-	void removeInstance(unsigned int idx);
+    // generate instance with parameters
+    RigidBody* generateInstance(glm::vec3 size, float mass, glm::vec3 pos);
 
-	void removeInstance(std::string instanceId);
+    // initialize memory for instances
+    void initInstances();
 
-	unsigned int getIdx(std::string id);
+    // remove instance at idx
+    void removeInstance(unsigned int idx);
+
+    // remove instance with id
+    void removeInstance(std::string instanceId);
+
+    // get index of instance with id
+    unsigned int getIdx(std::string id);
 
 protected:
-	bool noTex;
-	
-	std::string directory;
+    // true if doesn't have textures
+    bool noTex;
+    
+    // directory containing object file
+    std::string directory;
 
-	std::vector<Texture> textures_loaded;
+    // list of loaded textures
+    std::vector<Texture> textures_loaded;
 
-	void processNode(aiNode* node, const aiScene* scene);
-	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-	std::vector<Texture> loadTextures(aiMaterial* mat, aiTextureType type);
+    /*
+        model loading functions (ASSIMP)
+    */
 
-	// VBOs for positions and sizes
-	BufferObject posVBO;
-	BufferObject sizeVBO;
+    // process node in object file
+    void processNode(aiNode* node, const aiScene* scene);
+
+    // process mesh in object file
+    Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+
+    // load list of textures
+    std::vector<Texture> loadTextures(aiMaterial* mat, aiTextureType type);
+
+    // VBOs for positions and sizes
+    BufferObject posVBO;
+    BufferObject sizeVBO;
 };
 
 #endif

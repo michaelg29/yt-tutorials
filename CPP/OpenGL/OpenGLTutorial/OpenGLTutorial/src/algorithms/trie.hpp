@@ -5,242 +5,275 @@
 #include <vector>
 #include <stdexcept>
 
+/*
+    trie namespace to hold together all classes related to trie
+*/
+
 namespace trie {
-	struct Range {
-		int lower;
-		int upper;
+    /*
+        range structure to represent bounded range
+    */
+    struct Range {
+        int lower;
+        int upper;
 
-		int calculateRange() {
-			return upper - lower + 1;
-		}
+        int calculateRange() {
+            return upper - lower + 1;
+        }
 
-		bool contains(int i) {
-			return i >= lower && i <= upper;
-		}
-	};
+        bool contains(int i) {
+            return i >= lower && i <= upper;
+        }
+    };
 
-	typedef std::vector<Range> charset;
+    // typedef for list of ranges
+    typedef std::vector<Range> charset;
 
-	// charsets for keys
-	const charset ascii_letters = { { 'A', 'Z' }, { 'a', 'z' } };
-	const charset ascii_lowercase = { { 'a', 'z' } };
-	const charset ascii_uppercase = { { 'A', 'Z' } };
-	const charset digits = { { '0', '9' } };
-	const charset alpha_numeric = { { '0', '9' }, { 'A', 'Z' }, { 'a', 'z' } };
+    // charsets for keys
+    const charset ascii_letters = { { 'A', 'Z' }, { 'a', 'z' } };
+    const charset ascii_lowercase = { { 'a', 'z' } };
+    const charset ascii_uppercase = { { 'A', 'Z' } };
+    const charset digits = { { '0', '9' } };
+    const charset alpha_numeric = { { '0', '9' }, { 'A', 'Z' }, { 'a', 'z' } };
 
-	/*
-		trie node structure
-	*/
-	template <typename T>
-	struct node {
-		bool exists;				// if data exists
-		T data;						// data
-		struct node<T>** children;	// array of children
+    /*
+        trie node structure
+    */
 
-		// traverse into this node and its children
-		// send data to callback if data exists
-		void traverse(void(*itemViewer)(T data), unsigned int noChildren) {
-			if (exists) {
-				itemViewer(data);
-			}
+    template <typename T>
+    struct node {
+        /*
+            trie values
+        */
 
-			// iterate through children
-			if (children) {
-				for (int i = 0; i < noChildren; i++) {
-					if (children[i]) {
-						children[i]->traverse(itemViewer, noChildren);
-					}
-				}
-			}
-		}
-	};
+        // if data exists
+        bool exists;
+        // data at node
+        T data;
+        // array of children
+        struct node<T>** children;
 
-	/*
-		trie class
-	*/
-	template <typename T>
-	class Trie {
-	public:
-		/*
-			constructor
-		*/
-		Trie(charset chars = alpha_numeric)
-			: chars(chars), noChars(0), root(nullptr) {
-			// set number of chars
-			for (Range r : chars) {
-				noChars += r.calculateRange();
-			}
+        /*
+            accessor
+        */
 
-			// initialize root memory
-			root = new node<T>;
-			root->exists = false;
-			root->children = new node<T> * [noChars];
-			for (int i = 0; i < noChars; i++) {
-				root->children[i] = NULL;
-			}
-		}
+        // traverse into this node and its children
+        // send data to callback if data exists
+        void traverse(void(*itemViewer)(T data), unsigned int noChildren) {
+            // if has data, call callback
+            if (exists) {
+                itemViewer(data);
+            }
 
-		/*
-			modifiers
-		*/
+            // iterate through children
+            if (children) {
+                for (int i = 0; i < noChildren; i++) {
+                    if (children[i]) {
+                        children[i]->traverse(itemViewer, noChildren);
+                    }
+                }
+            }
+        }
+    };
 
-		// insertion (can also use to change data)
-		bool insert(std::string key, T element) {
-			int idx;
-			node<T>* current = root;
+    /*
+        trie class
+    */
+    template <typename T>
+    class Trie {
+    public:
+        /*
+            constructor
+        */
 
-			for (char c : key) {
-				idx = getIdx(c);
-				if (idx == -1) {
-					return false;
-				}
-				if (!current->children[idx]) {
-					// child doesn't exist yet
-					current->children[idx] = new node<T>;
-					current->children[idx]->exists = false;
-					current->children[idx]->children = new node<T> * [noChars];
-					for (int i = 0; i < noChars; i++) {
-						current->children[idx]->children[i] = NULL;
-					}
-				}
-				current = current->children[idx];
-			}
+        // default and give specific charset
+        Trie(charset chars = alpha_numeric)
+            : chars(chars), noChars(0), root(nullptr) {
+            // set number of chars
+            for (Range r : chars) {
+                noChars += r.calculateRange();
+            }
 
-			// set data
-			current->data = element;
-			current->exists = true;
+            // initialize root memory
+            root = new node<T>;
+            root->exists = false;
+            root->children = new node<T> * [noChars];
+            for (int i = 0; i < noChars; i++) {
+                root->children[i] = NULL;
+            }
+        }
 
-			return true;
-		}
+        /*
+            modifiers
+        */
 
-		// deletion method
-		bool erase(std::string key) {
-			if (!root) {
-				return false;
-			}
+        // insertion (can also use to change data)
+        bool insert(std::string key, T element) {
+            int idx;
+            node<T>* current = root;
 
-			// pass lambda function that sets target element->exists to false
-			return findKey<bool>(key, [](node<T>* element) -> bool {
-				if (!element) {
-					// element is nullptr
-					return false;
-				}
+            // iterate through sequential key
+            for (char c : key) {
+                // convert to index
+                idx = getIdx(c);
+                if (idx == -1) {
+                    // not found
+                    return false;
+                }
 
-				element->exists = false;
-				return true;
-			});
-		}
+                // if child doesn't exist, create
+                if (!current->children[idx]) {
+                    current->children[idx] = new node<T>;
+                    current->children[idx]->exists = false;
+                    current->children[idx]->children = new node<T> * [noChars];
+                    for (int i = 0; i < noChars; i++) {
+                        current->children[idx]->children[i] = NULL;
+                    }
+                }
 
-		// release root note
-		void cleanup() {
-			unloadNode(root);
-		}
+                // go to child
+                current = current->children[idx];
+            }
 
-		/*
-			accessors
-		*/
+            // set data
+            current->data = element;
+            current->exists = true;
 
-		// determine if key is contained in trie
-		bool containsKey(std::string key) {
-			// pass lambda function that obtains if found element exists
-			return findKey<bool>(key, [](node<T>* element) -> bool {
-				if (!element) {
-					// element is nullptr
-					return false;
-				}
+            return true;
+        }
 
-				return element->exists;
-			});
-		}
+        // deletion method
+        bool erase(std::string key) {
+            if (!root) {
+                // no data exists
+                return false;
+            }
 
-		// obtain data element
-		T& operator[](std::string key) {
-			// pass lambda function that returns data if element exists
-			return findKey<T&>(key, [](node<T>* element) -> T& {
-				if (!element || !element->exists) {
-					// element is nullptr
-					throw std::invalid_argument("key not found");
-				}
+            // pass lambda function that sets target element->exists to false
+            return findKey<bool>(key, [](node<T>* element) -> bool {
+                if (!element) {
+                    // element is nullptr
+                    return false;
+                }
 
-				return element->data;
-			});
-		}
+                // tell compiler this node has no data
+                element->exists = false;
+                return true;
+            });
+        }
 
-		// traverse through all keys
-		void traverse(void(*itemViewer)(T data)) {
-			if (root) {
-				root->traverse(itemViewer, noChars);
-			}
-		}
+        // release root note
+        void cleanup() {
+            unloadNode(root);
+        }
 
-	private:
-		// character set
-		charset chars;
-		// length of set
-		unsigned int noChars;
+        /*
+            accessors
+        */
 
-		// root node
-		node<T>* root;
+        // determine if key is contained in trie
+        bool containsKey(std::string key) {
+            // pass lambda function that obtains if found element exists
+            return findKey<bool>(key, [](node<T>* element) -> bool {
+                if (!element) {
+                    // element is nullptr
+                    return false;
+                }
 
-		// find element at key and process it
-		template <typename V>
-		V findKey(std::string key, V(*process)(node<T>* element)) {
-			// placeholders
-			int idx;
-			node<T>* current = root;
-			for (char c : key) {
-				idx = getIdx(c);
+                return element->exists;
+            });
+        }
 
-				if (idx == -1) {
-					// leave to parameter function to deal with nullptr
-					return process(nullptr);
-				}
+        // obtain data element
+        T& operator[](std::string key) {
+            // pass lambda function that returns data if element exists
+            return findKey<T&>(key, [](node<T>* element) -> T& {
+                if (!element || !element->exists) {
+                    // element is nullptr
+                    throw std::invalid_argument("key not found");
+                }
 
-				// update current
-				current = current->children[idx];
-				if (!current) {
-					// leave to parameter function to deal with nullptr
-					return process(nullptr);
-				}
-			}
-			return process(current);
-		}
+                return element->data;
+            });
+        }
 
-		// get index at specific character in character set
-		// return -1 if not found
-		int getIdx(char c) {
-			int ret = 0;
+        // traverse through all keys
+        void traverse(void(*itemViewer)(T data)) {
+            if (root) {
+                root->traverse(itemViewer, noChars);
+            }
+        }
 
-			for (Range r : chars) {
-				if (r.contains((int)c)) {
-					ret += (int)c - r.lower;
-					break;
-				}
-				else {
-					ret += r.calculateRange();
-				}
-			}
+    private:
+        // character set
+        charset chars;
+        // length of set
+        unsigned int noChars;
 
-			// went through all ranges and found nothing, return -1
-			return ret == noChars ? -1 : ret;
-		}
+        // root node
+        node<T>* root;
 
-		// unload node and its children
-		void unloadNode(node<T>* top) {
-			if (!top) {
-				return;
-			}
+        // find element at key and process it
+        template <typename V>
+        V findKey(std::string key, V(*process)(node<T>* element)) {
+            // placeholders
+            int idx;
+            node<T>* current = root;
+            for (char c : key) {
+                idx = getIdx(c);
 
-			for (int i = 0; i < noChars; i++) {
-				if (top->children[i]) {
-					// child exists, deallocate it
-					unloadNode(top->children[i]);
-				}
-			}
+                if (idx == -1) {
+                    // leave to parameter function to deal with nullptr
+                    return process(nullptr);
+                }
 
-			top = nullptr;
-		}
-	};
+                // update current
+                current = current->children[idx];
+                if (!current) {
+                    // leave to parameter function to deal with nullptr
+                    return process(nullptr);
+                }
+            }
+            return process(current);
+        }
+
+        // get index at specific character in character set
+        // return -1 if not found
+        int getIdx(char c) {
+            int ret = 0;
+
+            for (Range r : chars) {
+                if (r.contains((int)c)) {
+                    // found character in range
+                    ret += (int)c - r.lower;
+                    break;
+                }
+                else {
+                    ret += r.calculateRange();
+                }
+            }
+
+            // went through all ranges and found nothing, return -1
+            return ret == noChars ? -1 : ret;
+        }
+
+        // unload node and its children
+        void unloadNode(node<T>* top) {
+            if (!top) {
+                return;
+            }
+
+            for (int i = 0; i < noChars; i++) {
+                if (top->children[i]) {
+                    // child exists, deallocate it
+                    unloadNode(top->children[i]);
+                }
+            }
+
+            // set node to nullptr
+            top = nullptr;
+        }
+    };
 }
 
 #endif

@@ -3,11 +3,20 @@
 
 #include <glm/glm.hpp>
 
+/*
+    material structure to contain lighting values for different materials
+*/
+
 struct Material {
+    // lighting values
     glm::vec3 ambient;
     glm::vec3 diffuse;
     glm::vec3 specular;
     float shininess;
+
+    /*
+        static instances of common materials
+    */
 
     static Material emerald;
     static Material jade;
@@ -34,6 +43,7 @@ struct Material {
     static Material white_rubber;
     static Material yellow_rubber;
 
+    // function to mix two materials with a proportion
     static Material mix(Material m1, Material m2, float mix = 0.5f);
 };
 

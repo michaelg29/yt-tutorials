@@ -24,132 +24,180 @@
 
 // forward declarations
 namespace Octree {
-	class node;
+    class node;
 }
 
 class Model;
 
+/*
+    Scene class
+    - ties together the many functions in the program (rendering, physics, collision, etc)
+*/
+
 class Scene {
 public:
-	trie::Trie<Model*> models;
-	trie::Trie<RigidBody*> instances;
+    // tries to store models/instances
+    trie::Trie<Model*> models;
+    trie::Trie<RigidBody*> instances;
 
-	std::vector<RigidBody*> instancesToDelete;
+    // list of instances that should be deleted
+    std::vector<RigidBody*> instancesToDelete;
 
-	Octree::node* octree;
+    // pointer to root node in octree
+    Octree::node* octree;
 
-	/*
-		callbacks
-	*/
-	// window resize
-	static void framebufferSizeCallback(GLFWwindow* widnow, int width, int height);
+    /*
+        callbacks
+    */
+    
+    // window resize
+    static void framebufferSizeCallback(GLFWwindow* widnow, int width, int height);
 
-	/*
-		constructor
-	*/
-	Scene();
-	Scene(int glfwVersionMajor, int glfwVersionMinor,
-		const char* title, unsigned int scrWidth, unsigned int scrHeight);
+    /*
+        constructors
+    */
+    
+    // default
+    Scene();
 
-	/*
-		initialization
-	*/
-	bool init();
+    // set with values
+    Scene(int glfwVersionMajor, int glfwVersionMinor,
+        const char* title, unsigned int scrWidth, unsigned int scrHeight);
 
-	void prepare(Box &box);
+    /*
+        initialization
+    */
 
-	/*
-		main loop methods
-	*/
-	// process input
-	void processInput(float dt);
+    // to be called after constructor
+    bool init();
 
-	// update screen before each frame
-	void update();
+    // to be called after instances have been generated/registered
+    void prepare(Box &box);
 
-	// update screen after frame
-	void newFrame(Box &box);
+    /*
+        main loop methods
+    */
 
-	// set uniform shader varaibles (lighting, etc)
-	void renderShader(Shader shader, bool applyLighting = true);
+    // process input
+    void processInput(float dt);
 
-	void renderInstances(std::string modelId, Shader shader, float dt);
+    // update screen before each frame
+    void update();
 
-	/*
-		cleanup method
-	*/
-	void cleanup();
+    // update screen after frame
+    void newFrame(Box &box);
 
-	/*
-		accessors
-	*/
-	bool shouldClose();
+    // set uniform shader varaibles (lighting, etc)
+    void renderShader(Shader shader, bool applyLighting = true);
 
-	Camera* getActiveCamera();
+    // render specified model's instances
+    void renderInstances(std::string modelId, Shader shader, float dt);
 
-	/*
-		modifiers
-	*/
-	void setShouldClose(bool shouldClose);
+    /*
+        cleanup method
+    */
 
-	void setWindowColor(float r, float g, float b, float a);
+    // called after main loop
+    void cleanup();
 
-	/*
-		Model/instance methods
-	*/
-	void registerModel(Model* model);
+    /*
+        accessors
+    */
 
-	RigidBody* generateInstance(std::string modelId, glm::vec3 size, float mass, glm::vec3 pos);
+    // determine if window should close
+    bool shouldClose();
 
-	void initInstances();
+    // get current active camera in scene
+    Camera* getActiveCamera();
 
-	void loadModels();
+    /*
+        modifiers
+    */
 
-	void removeInstance(std::string instanceId);
+    // set if the window should close
+    void setShouldClose(bool shouldClose);
 
-	void markForDeletion(std::string instanceId);
+    // set window background color
+    void setWindowColor(float r, float g, float b, float a);
 
-	void clearDeadInstances();
+    /*
+        Model/instance methods
+    */
 
-	std::string currentId;
-	std::string generateId();
+    // register model into model trie
+    void registerModel(Model* model);
 
-	/*
-		lights
-	*/
-	// list of point lights
-	std::vector<PointLight*> pointLights;
-	unsigned int activePointLights;
-	// list of spot lights
-	std::vector<SpotLight*> spotLights;
-	unsigned int activeSpotLights;
-	// direction light
-	DirLight* dirLight;
-	bool dirLightActive;
+    // generate instance of specified model with physical parameters
+    RigidBody* generateInstance(std::string modelId, glm::vec3 size, float mass, glm::vec3 pos);
 
-	/*
-		camera
-	*/
-	std::vector<Camera*> cameras;
-	unsigned int activeCamera;
-	glm::mat4 view;
-	glm::mat4 projection;
-	glm::vec3 cameraPos;
+    // initialize model instances
+    void initInstances();
+
+    // load model data
+    void loadModels();
+
+    // delete instance
+    void removeInstance(std::string instanceId);
+
+    // mark instance for deletion
+    void markForDeletion(std::string instanceId);
+
+    // clear all instances marked for deletion
+    void clearDeadInstances();
+
+    // current instance id
+    std::string currentId;
+
+    // generate next instance id
+    std::string generateId();
+
+    /*
+        lights
+    */
+
+    // list of point lights
+    std::vector<PointLight*> pointLights;
+    // acts as array of switches for point lights
+    unsigned int activePointLights;
+
+    // list of spot lights
+    std::vector<SpotLight*> spotLights;
+    // acts as array of switches for spot lights
+    unsigned int activeSpotLights;
+
+    // direction light
+    DirLight* dirLight;
+    // switch for directional light
+    bool dirLightActive;
+
+    /*
+        camera
+    */
+
+    // list of cameras
+    std::vector<Camera*> cameras;
+    // index of active camera
+    unsigned int activeCamera;
+
+    // camera position/matrices
+    glm::mat4 view;
+    glm::mat4 projection;
+    glm::vec3 cameraPos;
 
 protected:
-	// window object
-	GLFWwindow* window;
+    // window object
+    GLFWwindow* window;
 
-	// window vals
-	const char* title;
-	static unsigned int scrWidth;
-	static unsigned int scrHeight;
+    // window vals
+    const char* title;
+    static unsigned int scrWidth;
+    static unsigned int scrHeight;
 
-	float bg[4]; // background color
+    float bg[4]; // background color
 
-	// GLFW info
-	int glfwVersionMajor;
-	int glfwVersionMinor;
+    // GLFW info
+    int glfwVersionMajor;
+    int glfwVersionMinor;
 };
 
 #endif

@@ -32,7 +32,11 @@ void Octree::calculateBounds(BoundingRegion &out, Octant octant, BoundingRegion 
     }
 }
 
-// default constructor
+/*
+    constructors
+*/
+
+// default
 Octree::node::node()
     : region(BoundTypes::AABB) {}
 
@@ -43,11 +47,17 @@ Octree::node::node(BoundingRegion bounds)
 // initialize with bounds and list of objects
 Octree::node::node(BoundingRegion bounds, std::vector<BoundingRegion> objectList)
     : region(bounds) {
+    // insert entire list of objects
     objects.insert(objects.end(), objectList.begin(), objectList.end());
 }
 
+/*
+    functionality
+*/
+
+// add instance to pending queue
 void Octree::node::addToPending(RigidBody* instance, trie::Trie<Model*> models) {
-    // get all bounding regions of model
+    // get all bounding regions of model and put them in queue
     for (BoundingRegion br : models[instance->modelId]->boundingRegions) {
         br.instance = instance;
         br.transform();
@@ -75,7 +85,6 @@ void Octree::node::build() {
     }
 
     // too small
-    
     for (int i = 0; i < 3; i++) {
         if (dimensions[i] < MIN_BOUNDS) {
             // set state variables
@@ -96,6 +105,8 @@ void Octree::node::build() {
                 // octant contains region
                 octLists[j].push_back(br);
                 objects.erase(objects.begin() + i);
+
+                // offset because removed object from list
                 i--;
                 len--;
                 break;
@@ -106,7 +117,7 @@ void Octree::node::build() {
     // populate octants
     for (int i = 0; i < NO_CHILDREN; i++) {
         if (octLists[i].size() != 0) {
-            // if children go into this octant
+            // if children go into this octant, generate new child
             children[i] = new node(octants[i], octLists[i]);
             States::activateIndex(&activeOctants, i); // activate octant
             children[i]->parent = this;
@@ -120,6 +131,7 @@ setVars:
     treeBuilt = true;
     treeReady = true;
 
+    // set pointer to current cell of each object
     for (int i = 0; i < objects.size(); i++) {
         objects[i].cell = this;
     }
@@ -155,12 +167,11 @@ void Octree::node::update(Box &box) {
         }
 
         // remove objects that don't exist anymore
-
         for (int i = 0, listSize = objects.size(); i < listSize; i++) {
-            // remove if on list of dead objects
+            // remove if kill switch active
             if (States::isActive(&objects[i].instance->state, INSTANCE_DEAD)) {
                 objects.erase(objects.begin() + i);
-                // update counter/size accordingly
+                // offset because removed item from list
                 i--;
                 listSize--;
             }
@@ -170,6 +181,7 @@ void Octree::node::update(Box &box) {
         std::stack<int> movedObjects;
         for (int i = 0, listSize = objects.size(); i < listSize; i++) {
             if (States::isActive(&objects[i].instance->state, INSTANCE_MOVED)) {
+                // if moved switch active, transform region and push to list
                 objects[i].transform();
                 movedObjects.push(i);
             }

@@ -3,7 +3,7 @@
 
 #include <GLFW/glfw3.h>
 
-// analog input									//		PS		|		XBOX
+// analog input	button values					//		PS		|		XBOX
 #define GLFW_JOYSTICK_BTN_LEFT 0				//	Square		|	X
 #define GLFW_JOYSTICK_BTN_DOWN 1				//	X			|	A
 #define GLFW_JOYSTICK_BTN_RIGHT 2				//	Circle		|	B
@@ -31,31 +31,67 @@
 #define GLFW_JOYSTICK_AXES_RIGHT_TRIGGER 4
 #define GLFW_JOYSTICK_AXES_RIGHT_STICK_Y 5
 
+/*
+    joystick class to handle input from joystick controller
+*/
+
 class Joystick {
 public:
-	Joystick(int i);
-	void update();
+    /*
+        constructor
+    */
 
-	float axesState(int axis);
-	unsigned char buttonState(int button);
+    // generate an instance for joystick with id i
+    Joystick(int i);
 
-	int getAxesCount();
-	int getButtonCount();
+    // update the joystick's states
+    void update();
 
-	bool isPresent();
-	const char* getName();
+    /*
+        accessors
+    */
 
-	static int getId(int i);
+    // get axis value
+    float axesState(int axis);
+    // get button state
+    unsigned char buttonState(int button);
+
+    // get number of axes
+    int getAxesCount();
+    // get number of buttons
+    int getButtonCount();
+
+    // return if joystick present
+    bool isPresent();
+    // get name of joystick
+    const char* getName();
+
+    // static method to get enum value for joystick
+    static int getId(int i);
 
 private:
-	int present;
+    /*
+        joystick values
+    */
 
-	int id;
-	const char* name;
-	int axesCount;
-	const float* axes;
-	int buttonCount;
-	const unsigned char* buttons;
+    // 1 if present, 0 if not
+    int present;
+
+    // joystick id
+    int id;
+
+    // joystick name
+    const char* name;
+
+    // number of axes on joystick
+    int axesCount;
+    // array of axes values
+    const float* axes;
+
+    // number of buttons
+    int buttonCount;
+    // array of button states
+    const unsigned char* buttons;
 };
 
 #endif

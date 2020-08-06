@@ -19,7 +19,7 @@ public:
     std::vector<glm::vec3> positions;
     std::vector<glm::vec3> sizes;
 
-	void init() {
+    void init() {
         vertices = {
             // position             x   y   z   i
              0.5f,  0.5f,  0.5f, // +   +   +   0
@@ -123,8 +123,8 @@ public:
 private:
     ArrayObject VAO;
 
-	std::vector<float> vertices;
-	std::vector<unsigned int> indices;
+    std::vector<float> vertices;
+    std::vector<unsigned int> indices;
 };
 
 #endif
