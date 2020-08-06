@@ -5,48 +5,72 @@
 
 #include "shader.h"
 
-struct DirLight {
-	glm::vec3 direction;
+/*
+    directional light (eg sun)
+*/
 
-	glm::vec4 ambient;
-	glm::vec4 diffuse;
-	glm::vec4 specular;
-	
-	void render(Shader shader);
+struct DirLight {
+    // direction (constant for all parallel rays)
+    glm::vec3 direction;
+
+    // light values
+    glm::vec4 ambient;
+    glm::vec4 diffuse;
+    glm::vec4 specular;
+    
+    // render light into shader
+    void render(Shader shader);
 };
+
+/*
+    point light (eg light bulb)
+*/
 
 struct PointLight {
-	glm::vec3 position;
+    // position
+    glm::vec3 position;
 
-	// attenuation constants
-	float k0;
-	float k1;
-	float k2;
+    // attenuation constants
+    float k0;
+    float k1;
+    float k2;
 
-	glm::vec4 ambient;
-	glm::vec4 diffuse;
-	glm::vec4 specular;
+    // light values
+    glm::vec4 ambient;
+    glm::vec4 diffuse;
+    glm::vec4 specular;
 
-	void render(Shader shader, int idx);
+    // render light into shader
+    void render(Shader shader, int idx);
 };
 
+/*
+    spot light (flashlight)
+*/
+
 struct SpotLight {
-	glm::vec3 position;
-	glm::vec3 direction;
+    // position
+    glm::vec3 position;
+    // direction
+    glm::vec3 direction;
 
-	float cutOff;
-	float outerCutOff;
+    // first level cut off
+    float cutOff;
+    // second level cut off
+    float outerCutOff;
 
-	// attenuation constants
-	float k0;
-	float k1;
-	float k2;
+    // attenuation constants
+    float k0;
+    float k1;
+    float k2;
 
-	glm::vec4 ambient;
-	glm::vec4 diffuse;
-	glm::vec4 specular;
+    // light values
+    glm::vec4 ambient;
+    glm::vec4 diffuse;
+    glm::vec4 specular;
 
-	void render(Shader shader, int idx);
+    // render light into shader
+    void render(Shader shader, int idx);
 };
 
 #endif

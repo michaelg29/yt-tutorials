@@ -4,43 +4,83 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+/*
+    mouse class to handle mouse callbacks
+*/
+
 class Mouse {
 public:
-	static void cursorPosCallback(GLFWwindow* window, double _x, double _y);
-	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-	static void mouseWheelCallback(GLFWwindow* window, double dx, double dy);
+    /*
+        callbacks
+    */
 
-	static double getMouseX();
-	static double getMouseY();
+    // cursor position changed
+    static void cursorPosCallback(GLFWwindow* window, double _x, double _y);
+    // mouse button state changed
+    static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+    // scroll wheel moved
+    static void mouseWheelCallback(GLFWwindow* window, double dx, double dy);
 
-	static double getDX();
-	static double getDY();
+    /*
+        accessors
+    */
 
-	static double getScrollDX();
-	static double getScrollDY();
+    // get mouse x position
+    static double getMouseX();
+    // get mouse y position
+    static double getMouseY();
 
-	static bool button(int button);
-	static bool buttonChanged(int button);
-	static bool buttonWentUp(int button);
-	static bool buttonWentDown(int button);
+    // get mouse change in x
+    static double getDX();
+    // get mouse change in y
+    static double getDY();
+
+    // get scroll value in x
+    static double getScrollDX();
+    // get scroll value in y
+    static double getScrollDY();
+
+    // get button state
+    static bool button(int button);
+    // return if button changed then reset it in the changed array
+    static bool buttonChanged(int button);
+    // return if button changed and is now up
+    static bool buttonWentUp(int button);
+    // return if button changed and is now down
+    static bool buttonWentDown(int button);
 
 private:
-	static double x;
-	static double y;
+    /*
+        static mouse values
+    */
 
-	static double lastX;
-	static double lastY;
+    // x posiiton
+    static double x;
+    // y position
+    static double y;
 
-	static double dx;
-	static double dy;
+    // previous x position
+    static double lastX;
+    // previous y position
+    static double lastY;
 
-	static double scrollDx;
-	static double scrollDy;
+    // change in x position from lastX
+    static double dx;
+    // change in y position from lastY
+    static double dy;
 
-	static bool firstMouse;
+    // change in scroll x
+    static double scrollDx;
+    // change in scroll y
+    static double scrollDy;
 
-	static bool buttons[];
-	static bool buttonsChanged[];
+    // if this is the first change in the mouse position
+    static bool firstMouse;
+
+    // button state array (true for down, false for up)
+    static bool buttons[];
+    // button changed array (true if changed)
+    static bool buttonsChanged[];
 };
 
 #endif

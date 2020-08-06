@@ -7,79 +7,88 @@
 
 // forward declaration
 namespace Octree {
-	class node;
+    class node;
 }
 
+/*
+    enum for possible Bound Types
+*/
+
 enum class BoundTypes : unsigned char {
-	AABB = 0x00,	// 0x00 = 0	// Axis-aligned bounding box
-	SPHERE = 0x01	// 0x01 = 1
+    AABB    = 0x00,	// 0x00 = 0	// Axis-aligned bounding box
+    SPHERE  = 0x01	// 0x01 = 1
 };
+
+/*
+    class to represent bounding region
+*/
 
 class BoundingRegion {
 public:
-	BoundTypes type;
+    // type of region
+    BoundTypes type;
 
-	// pointer for quick access to instance
-	RigidBody* instance;
+    // pointer for quick access to instance
+    RigidBody* instance;
 
-	// pointer for quick access to current octree node
-	Octree::node* cell;
+    // pointer for quick access to current octree node
+    Octree::node* cell;
 
-	// sphere values
-	glm::vec3 center;
-	float radius;
+    // sphere values
+    glm::vec3 center;
+    float radius;
 
-	glm::vec3 ogCenter;
-	float ogRadius;
+    glm::vec3 ogCenter;
+    float ogRadius;
 
-	// bounding box values
-	glm::vec3 min;
-	glm::vec3 max;
+    // bounding box values
+    glm::vec3 min;
+    glm::vec3 max;
 
-	glm::vec3 ogMin;
-	glm::vec3 ogMax;
+    glm::vec3 ogMin;
+    glm::vec3 ogMax;
 
-	/*
-		Constructors
-	*/
+    /*
+        Constructors
+    */
 
-	// initialize with type
-	BoundingRegion(BoundTypes type = BoundTypes::AABB);
+    // initialize with type
+    BoundingRegion(BoundTypes type = BoundTypes::AABB);
 
-	// initialize as sphere
-	BoundingRegion(glm::vec3 center, float radius);
+    // initialize as sphere
+    BoundingRegion(glm::vec3 center, float radius);
 
-	// initialize as AABB
-	BoundingRegion(glm::vec3 min, glm::vec3 max);
+    // initialize as AABB
+    BoundingRegion(glm::vec3 min, glm::vec3 max);
 
-	/*
-		Calculating values for the region
-	*/
+    /*
+        Calculating values for the region
+    */
 
-	// transform for instance
-	void transform();
+    // transform for instance
+    void transform();
 
-	// center
-	glm::vec3 calculateCenter();
+    // center
+    glm::vec3 calculateCenter();
 
-	// calculate dimensions
-	glm::vec3 calculateDimensions();
+    // calculate dimensions
+    glm::vec3 calculateDimensions();
 
-	/*
-		testing methods
-	*/
+    /*
+        testing methods
+    */
 
-	// determine if point inside
-	bool containsPoint(glm::vec3 pt);
+    // determine if point inside
+    bool containsPoint(glm::vec3 pt);
 
-	// determine if region completely inside
-	bool containsRegion(BoundingRegion br);
+    // determine if region completely inside
+    bool containsRegion(BoundingRegion br);
 
-	// determine if region intersects (partial containment)
-	bool intersectsWith(BoundingRegion br);
+    // determine if region intersects (partial containment)
+    bool intersectsWith(BoundingRegion br);
 
-	// operator overload
-	bool operator==(BoundingRegion br);
+    // operator overload
+    bool operator==(BoundingRegion br);
 };
 
 #endif

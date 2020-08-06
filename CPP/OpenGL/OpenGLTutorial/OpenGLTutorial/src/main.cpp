@@ -1,8 +1,8 @@
 /*
-	CODE
-	ENGINE (Scene)
-	OPENGL
-	GPU
+    CODE
+    ENGINE (Scene)
+    OPENGL
+    GPU
 */
 
 #include <iostream>
@@ -51,162 +51,179 @@ double lastFrame = 0.0f; // time of last frame
 Sphere sphere(10);
 
 int main() {
-	std::cout << "Hello, OpenGL!" << std::endl;
+    std::cout << "Hello, OpenGL!" << std::endl;
 
-	scene = Scene(3, 3, "OpenGL Tutorial", 800, 600);
-	if (!scene.init()) {
-		std::cout << "Could not open window" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
+    // construct scene
+    scene = Scene(3, 3, "OpenGL Tutorial", 800, 600);
+    // test if GLFW successfully started and created window
+    if (!scene.init()) {
+        std::cout << "Could not open window" << std::endl;
+        scene.cleanup();
+        return -1;
+    }
 
-	scene.cameras.push_back(&cam);
-	scene.activeCamera = 0;
+    // set camera
+    scene.cameras.push_back(&cam);
+    scene.activeCamera = 0;
 
-	// SHADERS===============================
-	Shader lampShader("assets/instanced/instanced.vs", "assets/lamp.fs");
-	Shader shader("assets/instanced/instanced.vs", "assets/object.fs");
-	Shader boxShader("assets/instanced/box.vs", "assets/instanced/box.fs");
+    // SHADERS===============================
+    Shader lampShader("assets/instanced/instanced.vs", "assets/lamp.fs");
+    Shader shader("assets/instanced/instanced.vs", "assets/object.fs");
+    Shader boxShader("assets/instanced/box.vs", "assets/instanced/box.fs");
 
-	// MODELS==============================
-	Lamp lamp(4);
-	scene.registerModel(&lamp);
+    // MODELS==============================
+    Lamp lamp(4);
+    scene.registerModel(&lamp);
 
-	scene.registerModel(&sphere);
+    scene.registerModel(&sphere);
 
-	Box box;
-	box.init();
+    Box box;
+    box.init();
 
-	// load all model data
-	scene.loadModels();
+    // load all model data
+    scene.loadModels();
 
-	// LIGHTS
-	DirLight dirLight = { glm::vec3(-0.2f, -1.0f, -0.3f), glm::vec4(0.1f, 0.1f, 0.1f, 1.0f), glm::vec4(0.4f, 0.4f, 0.4f, 1.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f) };
-	scene.dirLight = &dirLight;
+    // LIGHTS==============================
 
-	glm::vec3 pointLightPositions[] = {
-		glm::vec3(0.7f,  0.2f,  2.0f),
-		glm::vec3(2.3f, -3.3f, -4.0f),
-		glm::vec3(-4.0f,  2.0f, -12.0f),
-		glm::vec3(0.0f,  0.0f, -3.0f)
-	};
+    // directional light
+    DirLight dirLight = { glm::vec3(-0.2f, -1.0f, -0.3f), glm::vec4(0.1f, 0.1f, 0.1f, 1.0f), glm::vec4(0.4f, 0.4f, 0.4f, 1.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f) };
+    scene.dirLight = &dirLight;
 
-	glm::vec4 ambient = glm::vec4(0.05f, 0.05f, 0.05f, 1.0f);
-	glm::vec4 diffuse = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
-	glm::vec4 specular = glm::vec4(1.0f);
-	float k0 = 1.0f;
-	float k1 = 0.09f;
-	float k2 = 0.032f;
+    // point lights
+    glm::vec3 pointLightPositions[] = {
+        glm::vec3(0.7f,  0.2f,  2.0f),
+        glm::vec3(2.3f, -3.3f, -4.0f),
+        glm::vec3(-4.0f,  2.0f, -12.0f),
+        glm::vec3(0.0f,  0.0f, -3.0f)
+    };
 
-	PointLight pointLights[4];
+    glm::vec4 ambient = glm::vec4(0.05f, 0.05f, 0.05f, 1.0f);
+    glm::vec4 diffuse = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
+    glm::vec4 specular = glm::vec4(1.0f);
+    float k0 = 1.0f;
+    float k1 = 0.09f;
+    float k2 = 0.032f;
 
-	for (unsigned int i = 0; i < 4; i++) {
-		pointLights[i] = {
-			pointLightPositions[i],
-			k0, k1, k2,
-			ambient, diffuse, specular
-		};
-		scene.generateInstance(lamp.id, glm::vec3(0.25f), 0.25f, pointLightPositions[i]);
-		scene.pointLights.push_back(&pointLights[i]);
-		States::activate(&scene.activePointLights, i);
-	}
+    PointLight pointLights[4];
 
-	SpotLight spotLight = {
-		cam.cameraPos, cam.cameraFront,
-		glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.0f)),
-		1.0f, 0.07f, 0.032f,
-		glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec4(1.0f), glm::vec4(1.0f)
-	};
-	scene.spotLights.push_back(&spotLight);
-	scene.activeSpotLights = 1;	// 0b00000001
+    for (unsigned int i = 0; i < 4; i++) {
+        pointLights[i] = {
+            pointLightPositions[i],
+            k0, k1, k2,
+            ambient, diffuse, specular
+        };
+        // create physical model for each lamp
+        scene.generateInstance(lamp.id, glm::vec3(0.25f), 0.25f, pointLightPositions[i]);
+        // add lamp to scene's light source
+        scene.pointLights.push_back(&pointLights[i]);
+        // activate lamp in scene
+        States::activate(&scene.activePointLights, i);
+    }
 
-	// instantiate instances
-	scene.initInstances();
+    // spot light
+    SpotLight spotLight = {
+        cam.cameraPos, cam.cameraFront,
+        glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.0f)),
+        1.0f, 0.07f, 0.032f,
+        glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec4(1.0f), glm::vec4(1.0f)
+    };
+    scene.spotLights.push_back(&spotLight);
+    scene.activeSpotLights = 1;	// 0b00000001
 
-	// joystick recognition
-	/*mainJ.update();
-	if (mainJ.isPresent()) {
-		std::cout << mainJ.getName() << " is present." << std::endl;
-	}*/
+    // instantiate instances
+    scene.initInstances();
 
-	scene.prepare(box);
+    // finish preparations (octree, etc)
+    scene.prepare(box);
 
-	while (!scene.shouldClose()) {
-		// calculate dt
-		double currentTime = glfwGetTime();
-		dt = currentTime - lastFrame;
-		lastFrame = currentTime;
+    // joystick recognition
+    /*mainJ.update();
+    if (mainJ.isPresent()) {
+        std::cout << mainJ.getName() << " is present." << std::endl;
+    }*/
 
-		// update screen values
-		scene.update();
+    while (!scene.shouldClose()) {
+        // calculate dt
+        double currentTime = glfwGetTime();
+        dt = currentTime - lastFrame;
+        lastFrame = currentTime;
 
-		// process input
-		processInput(dt);
+        // update screen values
+        scene.update();
 
-		// remove launch objects if too far
-		for (int i = 0; i < sphere.currentNoInstances; i++) {
-			if (glm::length(cam.cameraPos - sphere.instances[i]->pos) > 250.0f) {
-				scene.markForDeletion(sphere.instances[i]->instanceId);
-			}
-		}
+        // process input
+        processInput(dt);
 
-		// render launch objects
-		if (sphere.currentNoInstances > 0) {
-			scene.renderShader(shader);
-			scene.renderInstances(sphere.id, shader, dt);
-		}
+        // remove launch objects if too far
+        for (int i = 0; i < sphere.currentNoInstances; i++) {
+            if (glm::length(cam.cameraPos - sphere.instances[i]->pos) > 250.0f) {
+                scene.markForDeletion(sphere.instances[i]->instanceId);
+            }
+        }
 
-		// render lamps
-		scene.renderShader(lampShader, false);
-		scene.renderInstances(lamp.id, lampShader, dt);
+        // render launch objects
+        if (sphere.currentNoInstances > 0) {
+            scene.renderShader(shader);
+            scene.renderInstances(sphere.id, shader, dt);
+        }
 
-		// render boxes
-		scene.renderShader(boxShader, false);
-		box.render(boxShader);
+        // render lamps
+        scene.renderShader(lampShader, false);
+        scene.renderInstances(lamp.id, lampShader, dt);
 
-		// send new frame to window
-		scene.newFrame(box);
-		scene.clearDeadInstances();
-	}
+        // render boxes
+        scene.renderShader(boxShader, false);
+        box.render(boxShader);
 
-	// clean up objects
-	scene.cleanup();
-	return 0;
+        // send new frame to window
+        scene.newFrame(box);
+
+        // clear instances that have been marked for deletion
+        scene.clearDeadInstances();
+    }
+
+    // clean up objects
+    scene.cleanup();
+    return 0;
 }
 
 void launchItem(float dt) {
-	RigidBody* rb = scene.generateInstance(sphere.id, glm::vec3(0.1f), 1.0f, cam.cameraPos);
-	if (rb) {
-		// instance generated
-		rb->transferEnergy(1000.0f, cam.cameraFront);
-		rb->applyAcceleration(Environment::gravitationalAcceleration);
-	}
+    RigidBody* rb = scene.generateInstance(sphere.id, glm::vec3(0.1f), 1.0f, cam.cameraPos);
+    if (rb) {
+        // instance generated successfully
+        rb->transferEnergy(1000.0f, cam.cameraFront);
+        rb->applyAcceleration(Environment::gravitationalAcceleration);
+    }
 }
 
 void processInput(double dt) {
-	scene.processInput(dt);
+    // process input with cameras
+    scene.processInput(dt);
 
-	// update flash light
-	if (States::isIndexActive(&scene.activeSpotLights, 0)) {
-		scene.spotLights[0]->position = scene.getActiveCamera()->cameraPos;
-		scene.spotLights[0]->direction = scene.getActiveCamera()->cameraFront;
-	}
+    // close window
+    if (Keyboard::key(GLFW_KEY_ESCAPE)) {
+        scene.setShouldClose(true);
+    }
 
-	if (Keyboard::key(GLFW_KEY_ESCAPE)) {
-		scene.setShouldClose(true);
-	}
+    // update flash light
+    if (States::isIndexActive(&scene.activeSpotLights, 0)) {
+        scene.spotLights[0]->position = scene.getActiveCamera()->cameraPos;
+        scene.spotLights[0]->direction = scene.getActiveCamera()->cameraFront;
+    }
 
-	if (Keyboard::keyWentDown(GLFW_KEY_L)) {
-		States::toggleIndex(&scene.activeSpotLights, 0); // toggle spot light
-	}
+    if (Keyboard::keyWentDown(GLFW_KEY_L)) {
+        States::toggleIndex(&scene.activeSpotLights, 0); // toggle spot light
+    }
 
-	if (Keyboard::keyWentDown(GLFW_KEY_F)) {
-		launchItem(dt);
-	}
+    // launch sphere
+    if (Keyboard::keyWentDown(GLFW_KEY_F)) {
+        launchItem(dt);
+    }
 
-	for (int i = 0; i < 4; i++) {
-		if (Keyboard::keyWentDown(GLFW_KEY_1 + i)) {
-			States::toggleIndex(&scene.activePointLights, i);
-		}
-	}
+    // determine if each lamp should be toggled
+    for (int i = 0; i < 4; i++) {
+        if (Keyboard::keyWentDown(GLFW_KEY_1 + i)) {
+            States::toggleIndex(&scene.activePointLights, i);
+        }
+    }
 }
