@@ -1,13 +1,14 @@
 # OpenGL Installation Process
 
-Following instructions starting at [Learn OpenGL](https://learnopengl.com/Getting-started/OpenGL).  
-Make sure everything you configure is set for **_x64_** in your IDE.
+#### Some Pointers
+* Make sure everything you configure is set for **_x64_** in your IDE.
+* *$(SolutionDir)* is the directory containing the *.sln* file for the Visual Studio Solution
+* *$(ProjectDir)* is the directory containing the *.vcxproj* file for the Visual Studio Project
 
 ## Initial
 1. Create project in IDE (These directions are for Visual Studio 2019)
-2. Create directory named 'Linking' in Solution Directory
-    * eg. $(SolutionDir)\Linking
-3. Set Properties
+2. Create directory named 'Linking' in *$(SolutionDir)
+3. Set Project Properties
     * Linker -> Input
         * Additional Dependencies
             \+ opengl32.lib
@@ -16,38 +17,40 @@ Make sure everything you configure is set for **_x64_** in your IDE.
             \+ $(SolutionDir)\Linking\lib;
         * Include Directories
             \+ $(SolutionDir)\Linking\include;
-4. Create directories *src*, *lib*, and *assets* in Project Directory
+4. Create directories *src*, *lib*, and *assets* in *$(ProjectDir)*
 
 ## GLFW
-1. Download package from [GLFW](https://www.glfw.org/download.html)
+1. Download pre-compiled binaries from [GLFW](https://www.glfw.org/download.html)
 2. Unzip download and add files to linking directory
-    * GLFW\include -> Linking\include
-    * all .lib files from corresponding VS folder -> Linking\lib\GLFW
+    * *GLFW\include* -> *$(SolutionDir)\Linking\include*
+    * all *.lib* files from corresponding VS folder -> *Linking\lib\GLFW*
 3. Add files to project directory
-    * glfw3.dll from corresponding VS folder -> $(ProjectDir)
-4. Set Properties
+    * *glfw3.dll* from corresponding VS folder -> *$(ProjectDir)*
+4. Set Project Properties
     * Linker -> Input
         * Additional Dependencies
             \+ GLFW\glfw3.lib
 
 ## GLAD
-1. Download package from [GLAD](https://glad.dav1d.de/)
+1. Download package (*.zip* file) from [their site](https://glad.dav1d.de/)
     * Only change these default settings:
         * API -> gl: Version 3.3
         * Options -> Generate a Loader: checked **(required)**
-2. Drag include directory in download to Linking directory in solution
-    * This should add the *glad* and *KHR* directories to your *Linking\include* directory
-3. Drag *src/glad.c* file in download to *$(ProjectDir)\lib* directory
+2. Unzip download and add files to project
+	* *glad\include* -> *$(SolutionDir)\Linking\include*
+		* this should add two folders (*glad*, *KHR*) to your include directory
+	* *glad\src\glad.c* -> *$(ProjectDir)\lib*
 
 ## GLM
-1. Find latest package from [GLM](https://github.com/g-truc/glm/tags)
-    * Click on the package and download the .zip file
-2. Drag the *glm* directory that is next to the other directories like *doc* from the download folder to the *Linking\include* directory
+1. Download the latest package from [GLM](https://github.com/g-truc/glm/tags)
+    * Click on the package and download the .zip file named *glm-x.x.x.x.zip*
+2. Unzip download and add files to linking directory
+	* Drag the *glm\glm* directory (containing many *.hpp* files) to *$(SolutionDir)\Linking\include*
 
 ## stb_image.h
 1. Download raw file from [GitHub/nothings/stb](https://raw.githubusercontent.com/nothings/stb/master/stb_image.h)
-2. Create directory *stb* in *$(SolutionDir)\linking* directory
-3. Move *stb_image.h* file that was just downloaded to *$(SolutionDir)\Linking* directory
+2. Create directory *stb* in *$(SolutionDir)\Linking* directory
+3. Move *stb_image.h* file that was just downloaded to *$(SolutionDir)\Linking\stb* directory
 4. Create file *stb.cpp* in *$(ProjectDir)\lib* directory and add the following code:
 ```cpp
 #define STB_IMAGE_IMPLEMENTATION
@@ -69,19 +72,19 @@ Make sure everything you configure is set for **_x64_** in your IDE.
 6. Go to the build directory (*C:\src\libs\assimp-x.x.x\build*) and open the *Assimp.sln* file in the *build* folder in Visual Studio
 	* You should see several projects in the project explorer
 	* Make sure the ALL_BUILD project is set as the startup project (it will be highlighted)
-	* Click on Build > Build Solution (make sure you are in the x64 configuration)
-7. Adding the Library Files
-8. After this, go back to the build directory and go to *build/code/Debug* or *build/code/Release*
+	* Click on Build > Build Solution (make sure you are in the **_x64_** configuration)
+7. After this, go back to the build directory and go to *build/code/Debug* or *build/code/Release*
 	* *build\code\Debug\assimp-vcxxx-mtd.dll* -> *$(ProjectDir)*
 	* *build\code\Debug\assimp-vcxxx-mtd.lib* -> *$(SolutionDir)\linking\lib\assimp*
+8. Adding the include directory
 	* *assimp-x.x.x\include* -> *$(SolutionDir)\linking\include*
-	* *assimp-x.x.x\build/include* -> *$(SolutionDir)\linking\include*
-8. Configuring the OpenGL Project
+	* *assimp-x.x.x\build\include* -> *$(SolutionDir)\linking\include*
+9. Configuring the OpenGL Project Properties
 	* the include directory is already taken care of
 	* Linker -> Input
         * Additional Dependencies
             \+ assimp\assimp-vcxxx-mtd.lib
-
+            
 ## FreeType (Text Rendering Library)
 1. Download the latest release (.zip file) from [their site](https://www.freetype.org/download.html)
 2. Unzip the download to some location on your computer (eg. *C:\src\libs*)
