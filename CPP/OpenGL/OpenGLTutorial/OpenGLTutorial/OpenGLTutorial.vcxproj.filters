@@ -24,6 +24,8 @@
     <None Include="assets\instanced\box.vs" />
     <None Include="assets\instanced\box.fs" />
     <None Include="assimp-vc142-mtd.dll" />
+    <None Include="assets\text.fs" />
+    <None Include="assets\text.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -78,6 +80,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\algorithms\octree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\text.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -149,6 +154,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\algorithms\trie.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

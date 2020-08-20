@@ -96,12 +96,32 @@ bool Scene::init() {
         set rendering parameters
     */
     glEnable(GL_DEPTH_TEST); // doesn't show vertices not visible to camera (back of object)
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // disable cursor
 
     /*
         init octree
     */
     octree = new Octree::node(BoundingRegion(glm::vec3(-16.0f), glm::vec3(16.0f)));
+
+    /*
+        initialize freetype library
+    */
+    if (FT_Init_FreeType(&ft)) {
+        std::cout << "Could not init FreeType library" << std::endl;
+        return false;
+    }
+
+    // insert font
+    fonts.insert("comic", TextRenderer(32));
+    if (!fonts["comic"].loadFont(ft, "assets/fonts/comic.ttf")) {
+        std::cout << "Could not load font" << std::endl;
+        return false;
+    }
+
+    FT_Done_FreeType(ft);
 
     return true;
 }
@@ -156,10 +176,11 @@ void Scene::processInput(float dt) {
         // set matrices
         view = cameras[activeCamera]->getViewMatrix();
         projection = glm::perspective(
-            glm::radians(cameras[activeCamera]->getZoom()),	// FOV
+            glm::radians(cameras[activeCamera]->getZoom()),	    // FOV
             (float)scrWidth / (float)scrHeight,					// aspect ratio
             0.1f, 100.0f										// near and far bounds
         );
+        textProjection = glm::ortho(0.0f, (float)scrWidth, 0.0f, (float)scrHeight);
 
         // set pos at end
         cameraPos = cameras[activeCamera]->cameraPos;
@@ -235,6 +256,14 @@ void Scene::renderInstances(std::string modelId, Shader shader, float dt) {
     models[modelId]->render(shader, dt, this);
 }
 
+// render text
+void Scene::renderText(std::string font, Shader shader, std::string text, float x, float y, glm::vec2 scale, glm::vec3 color) {
+    shader.activate();
+    shader.setMat4("projection", textProjection);
+
+    fonts[font].render(shader, text, x, y, scale, color);
+}
+
 /*
     cleanup method
 */
@@ -246,9 +275,17 @@ void Scene::cleanup() {
         model->cleanup();
     });
 
-    // clean up tries
+    // clean up model and instances tries
     models.cleanup();
     instances.cleanup();
+
+    // cleanup fonts
+    fonts.traverse([](TextRenderer tr) -> void {
+        tr.cleanup();
+    });
+
+    // clean up fonts trie
+    fonts.cleanup();
 
     // destroy octree
     octree->destroy();

@@ -70,6 +70,7 @@ int main() {
     Shader lampShader("assets/instanced/instanced.vs", "assets/lamp.fs");
     Shader shader("assets/instanced/instanced.vs", "assets/object.fs");
     Shader boxShader("assets/instanced/box.vs", "assets/instanced/box.fs");
+    Shader textShader("assets/text.vs", "assets/text.fs");
 
     // MODELS==============================
     Lamp lamp(4);
@@ -142,17 +143,26 @@ int main() {
         std::cout << mainJ.getName() << " is present." << std::endl;
     }*/
 
+    scene.variableLog["time"] = (double)0.0;
+
     while (!scene.shouldClose()) {
         // calculate dt
         double currentTime = glfwGetTime();
         dt = currentTime - lastFrame;
         lastFrame = currentTime;
 
+        scene.variableLog["time"] += dt;
+        scene.variableLog["fps"] = 1 / dt;
+
         // update screen values
         scene.update();
 
         // process input
         processInput(dt);
+
+        scene.renderText("comic", textShader, "Hello, OpenGL!", 50.0f, 50.0f, glm::vec2(1.0f), glm::vec3(0.5f, 0.6f, 1.0f));
+        scene.renderText("comic", textShader, "Time: " + scene.variableLog["time"].dump(), 50.0f, 550.0f, glm::vec2(1.0f), glm::vec3(0.0f));
+        scene.renderText("comic", textShader, "FPS: " + scene.variableLog["fps"].dump(), 50.0f, 550.0f - 40.0f, glm::vec2(1.0f), glm::vec3(0.0f));
 
         // remove launch objects if too far
         for (int i = 0; i < sphere.currentNoInstances; i++) {

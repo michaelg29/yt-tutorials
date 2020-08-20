@@ -94,7 +94,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>GLFW\glfw3.lib;assimp\assimp-vc142-mtd.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype\freetype.lib;GLFW\glfw3.lib;assimp\assimp-vc142-mtd.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>echo $(SolutionDir)</Command>
@@ -140,6 +140,8 @@
     <None Include="assets\lamp.fs" />
     <None Include="assets\object.fs" />
     <None Include="assets\object.vs" />
+    <None Include="assets\text.fs" />
+    <None Include="assets\text.vs" />
     <None Include="assimp-vc142-mtd.dll" />
     <None Include="glfw3.dll" />
     <None Include="src\graphics\texture.h" />
@@ -153,6 +155,7 @@
     <ClCompile Include="src\graphics\material.cpp" />
     <ClCompile Include="src\graphics\mesh.cpp" />
     <ClCompile Include="src\graphics\model.cpp" />
+    <ClCompile Include="src\graphics\text.cpp" />
     <ClCompile Include="src\graphics\texture.cpp" />
     <ClCompile Include="src\io\camera.cpp" />
     <ClCompile Include="src\io\joystick.cpp" />
@@ -180,6 +183,7 @@
     <ClInclude Include="src\graphics\models\gun.hpp" />
     <ClInclude Include="src\graphics\models\lamp.hpp" />
     <ClInclude Include="src\graphics\models\sphere.hpp" />
+    <ClInclude Include="src\graphics\text.h" />
     <ClInclude Include="src\io\camera.h" />
     <ClInclude Include="src\io\joystick.h" />
     <ClInclude Include="src\io\keyboard.h" />
