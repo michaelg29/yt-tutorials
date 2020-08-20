@@ -9,9 +9,16 @@
 
 #include <glm/glm.hpp>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+#include <jsoncpp/json.hpp>
+
 #include "graphics/light.h"
 #include "graphics/shader.h"
 #include "graphics/model.h"
+#include "graphics/text.h"
+
 #include "graphics/models/box.hpp"
 
 #include "io/camera.h"
@@ -45,6 +52,13 @@ public:
 
     // pointer to root node in octree
     Octree::node* octree;
+
+    // map for logged variables
+    jsoncpp::json variableLog;
+
+    // freetype library
+    FT_Library ft;
+    trie::Trie<TextRenderer> fonts;
 
     /*
         callbacks
@@ -92,6 +106,9 @@ public:
 
     // render specified model's instances
     void renderInstances(std::string modelId, Shader shader, float dt);
+
+    // render text
+    void renderText(std::string font, Shader shader, std::string text, float x, float y, glm::vec2 scale, glm::vec3 color);
 
     /*
         cleanup method
@@ -182,6 +199,7 @@ public:
     // camera position/matrices
     glm::mat4 view;
     glm::mat4 projection;
+    glm::mat4 textProjection;
     glm::vec3 cameraPos;
 
 protected:
