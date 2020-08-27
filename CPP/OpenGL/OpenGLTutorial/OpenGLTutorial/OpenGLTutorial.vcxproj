@@ -140,6 +140,9 @@
     <None Include="assets\lamp.fs" />
     <None Include="assets\object.fs" />
     <None Include="assets\object.vs" />
+    <None Include="assets\skybox\skybox.fs" />
+    <None Include="assets\skybox\skybox.vs" />
+    <None Include="assets\skybox\sky.fs" />
     <None Include="assets\text.fs" />
     <None Include="assets\text.vs" />
     <None Include="assimp-vc142-mtd.dll" />
@@ -151,6 +154,7 @@
     <ClCompile Include="src\algorithms\bounds.cpp" />
     <ClCompile Include="src\algorithms\octree.cpp" />
     <ClCompile Include="src\glad.c" />
+    <ClCompile Include="src\graphics\cubemap.cpp" />
     <ClCompile Include="src\graphics\light.cpp" />
     <ClCompile Include="src\graphics\material.cpp" />
     <ClCompile Include="src\graphics\mesh.cpp" />
@@ -173,6 +177,7 @@
     <ClInclude Include="src\algorithms\octree.h" />
     <ClInclude Include="src\algorithms\states.hpp" />
     <ClInclude Include="src\algorithms\trie.hpp" />
+    <ClInclude Include="src\graphics\cubemap.h" />
     <ClInclude Include="src\graphics\glmemory.hpp" />
     <ClInclude Include="src\graphics\light.h" />
     <ClInclude Include="src\graphics\material.h" />
@@ -198,6 +203,13 @@
     <Image Include="assets\flag_specular.png" />
     <Image Include="assets\image1.jpg" />
     <Image Include="assets\image2.png" />
+    <Image Include="assets\skybox\back.png" />
+    <Image Include="assets\skybox\bottom.png" />
+    <Image Include="assets\skybox\front.png" />
+    <Image Include="assets\skybox\left.png" />
+    <Image Include="assets\skybox\right.png" />
+    <Image Include="assets\skybox\skybox_template.png" />
+    <Image Include="assets\skybox\top.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
