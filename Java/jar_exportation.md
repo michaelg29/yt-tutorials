@@ -14,7 +14,7 @@ This outlines the process of exporting a Java project through a .jar (Java Archi
 ## Execution Instructions
 
 #### Running through the filesystem
-1. Simply double click the file and it should run. *Note that you cannot add any arguments and any output to a console will not be shown.*
+Simply double click the file and it should run. *Note that you cannot add any arguments and any output to a console will not be shown.*
 
 #### Running through the command line
 The command is the same for all platforms, since Java is a WORA (Write Once Run Anywhere) language
