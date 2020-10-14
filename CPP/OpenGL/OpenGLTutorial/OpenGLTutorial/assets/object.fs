@@ -63,6 +63,7 @@ uniform Material material;
 
 uniform vec3 viewPos;
 uniform bool useBlinn;
+uniform bool useGamma;
 
 vec4 calcDirLight(vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap);
 vec4 calcPointLight(int idx, vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap);
@@ -97,6 +98,11 @@ void main() {
 	// spot lights
 	for (int i = 0; i < noSpotLights; i++) {
 		result += calcSpotLight(i, norm, viewDir, diffMap, specMap);
+	}
+
+	if (useGamma) {
+		float gamma = 2.2;
+		result.rgb = pow(result.rgb, vec3(1.0 / gamma));
 	}
 
 	FragColor = result;
