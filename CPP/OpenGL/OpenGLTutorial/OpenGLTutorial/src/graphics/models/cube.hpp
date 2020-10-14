@@ -3,6 +3,7 @@
 
 #include "../model.h"
 #include "../texture.h"
+#include "../material.h"
 
 class Cube : public Model {
 public:
@@ -69,7 +70,10 @@ public:
 
         BoundingRegion br(glm::vec3(-0.5f), glm::vec3(0.5f));
 
-        Mesh ret(br, {});
+        aiColor4D diff(Material::red_plastic.diffuse.r, Material::red_plastic.diffuse.g, Material::red_plastic.diffuse.b, 1.0f);
+        aiColor4D spec(Material::red_plastic.specular.r, Material::red_plastic.specular.g, Material::red_plastic.specular.b, 1.0f);
+
+        Mesh ret(br, diff, spec);
         ret.loadData(Vertex::genList(vertices, noVertices), indices);
 
         meshes.push_back(ret);
