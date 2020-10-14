@@ -65,7 +65,7 @@ public:
     */
     
     // window resize
-    static void framebufferSizeCallback(GLFWwindow* widnow, int width, int height);
+    static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
     /*
         constructors

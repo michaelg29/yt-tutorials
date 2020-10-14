@@ -88,6 +88,9 @@ int main() {
 
     scene.registerModel(&sphere);
 
+    Cube cube(1);
+    scene.registerModel(&cube);
+
     Box box;
     box.init();
 
@@ -135,11 +138,13 @@ int main() {
     SpotLight spotLight = {
         cam.cameraPos, cam.cameraFront,
         glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.0f)),
-        1.0f, 0.07f, 0.032f,
+        1.0f, 0.0014f, 0.000007f,
         glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec4(1.0f), glm::vec4(1.0f)
     };
     scene.spotLights.push_back(&spotLight);
     scene.activeSpotLights = 1;	// 0b00000001
+
+    scene.generateInstance(cube.id, glm::vec3(20.0f, 0.1f, 20.0f), 100.0f, glm::vec3(0.0f, -3.0f, 0.0f));
 
     // instantiate instances
     scene.initInstances();
@@ -187,10 +192,11 @@ int main() {
         }
 
         // render launch objects
+        scene.renderShader(shader);
         if (sphere.currentNoInstances > 0) {
-            scene.renderShader(shader);
             scene.renderInstances(sphere.id, shader, dt);
         }
+        scene.renderInstances(cube.id, shader, dt);
 
         // render lamps
         scene.renderShader(lampShader, false);
