@@ -225,7 +225,7 @@ void Scene::renderShader(Shader shader, bool applyLighting) {
         unsigned int noLights = pointLights.size();
         unsigned int noActiveLights = 0;
         for (unsigned int i = 0; i < noLights; i++) {
-            if (States::isActive(&activePointLights, i)) {
+            if (States::isIndexActive(&activePointLights, i)) {
                 // i'th light is active
                 pointLights[i]->render(shader, noActiveLights);
                 noActiveLights++;
@@ -237,7 +237,7 @@ void Scene::renderShader(Shader shader, bool applyLighting) {
         noLights = spotLights.size();
         noActiveLights = 0;
         for (unsigned int i = 0; i < noLights; i++) {
-            if (States::isActive(&activeSpotLights, i)) {
+            if (States::isIndexActive(&activeSpotLights, i)) {
                 // i'th spot light active
                 spotLights[i]->render(shader, noActiveLights);
                 noActiveLights++;
