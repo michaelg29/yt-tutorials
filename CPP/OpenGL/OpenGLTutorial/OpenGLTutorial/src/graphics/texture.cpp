@@ -6,6 +6,11 @@
     constructor
 */
 
+Texture::Texture(std::string name)
+    : name(name), type(aiTextureType_NONE) {
+    generate();
+}
+
 // initialize with image path and type
 Texture::Texture(std::string dir, std::string path, aiTextureType type) 
     : dir(dir), path(path), type(type) {
