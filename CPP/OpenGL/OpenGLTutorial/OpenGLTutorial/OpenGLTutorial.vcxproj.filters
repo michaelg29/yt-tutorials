@@ -29,6 +29,10 @@
     <None Include="assets\skybox\skybox.fs" />
     <None Include="assets\skybox\skybox.vs" />
     <None Include="assets\skybox\sky.fs" />
+    <None Include="assets\outline.fs" />
+    <None Include="assets\outline.vs" />
+    <None Include="assets\buffer.fs" />
+    <None Include="assets\buffer.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -166,6 +170,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\graphics\cubemap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\models\plane.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

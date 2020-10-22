@@ -134,6 +134,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="assets\buffer.fs" />
+    <None Include="assets\buffer.vs" />
+    <None Include="assets\outline.vs" />
+    <None Include="assets\outline.fs" />
     <None Include="assets\instanced\box.vs" />
     <None Include="assets\instanced\instanced.vs" />
     <None Include="assets\instanced\box.fs" />
@@ -187,6 +191,7 @@
     <ClInclude Include="src\graphics\models\cube.hpp" />
     <ClInclude Include="src\graphics\models\gun.hpp" />
     <ClInclude Include="src\graphics\models\lamp.hpp" />
+    <ClInclude Include="src\graphics\models\plane.hpp" />
     <ClInclude Include="src\graphics\models\sphere.hpp" />
     <ClInclude Include="src\graphics\text.h" />
     <ClInclude Include="src\io\camera.h" />

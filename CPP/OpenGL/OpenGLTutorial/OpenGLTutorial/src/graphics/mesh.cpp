@@ -106,6 +106,9 @@ void Mesh::render(Shader shader, unsigned int noInstances) {
             case aiTextureType_SPECULAR:
                 name = "specular" + std::to_string(specularIdx++);
                 break;
+            default:
+                name = textures[i].name;
+                break;
             }
 
             // set the shader value

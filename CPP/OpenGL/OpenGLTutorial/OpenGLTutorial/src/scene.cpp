@@ -95,9 +95,18 @@ bool Scene::init() {
     /*
         set rendering parameters
     */
+
+    // depth testing
     glEnable(GL_DEPTH_TEST); // doesn't show vertices not visible to camera (back of object)
+
+    // blending for text textures
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // stencil testing
+    glEnable(GL_STENCIL_TEST);
+    // keep fragments if either stencil or depth fails, replace if both pass
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // disable cursor
 
@@ -125,7 +134,8 @@ bool Scene::init() {
 
     // setup lighting values
     variableLog["useBlinn"] = true;
-    variableLog["useGamma"] = false;
+    variableLog["useGamma"] = true;
+    variableLog["dispOutline"] = false;
 
     return true;
 }
@@ -192,13 +202,16 @@ void Scene::processInput(float dt) {
         // update blinn parameter if necessary
         if (Keyboard::keyWentDown(GLFW_KEY_B)) {
             variableLog["useBlinn"] = !variableLog["useBlinn"].val<bool>();
-            std::cout << variableLog["useBlinn"].val<bool>() << std::endl;
         }
 
         // update gamma parameter if necessary
         if (Keyboard::keyWentDown(GLFW_KEY_G)) {
             variableLog["useGamma"] = !variableLog["useGamma"].val<bool>();
-            std::cout << variableLog["useGamma"].val<bool>() << std::endl;
+        }
+
+        // update outline parameter if necessary
+        if (Keyboard::keyWentDown(GLFW_KEY_O)) {
+            variableLog["dispOutline"] = !variableLog["dispOutline"].val<bool>();
         }
     }
 }
@@ -208,7 +221,7 @@ void Scene::update() {
     // set background color
     glClearColor(bg[0], bg[1], bg[2], bg[4]);
     // clear occupied bits
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 // update screen after frame
@@ -272,6 +285,7 @@ void Scene::renderShader(Shader shader, bool applyLighting) {
 // render specified model's instances
 void Scene::renderInstances(std::string modelId, Shader shader, float dt) {
     // render each mesh in specified model
+    shader.activate();
     models[modelId]->render(shader, dt, this);
 }
 
