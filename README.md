@@ -3,7 +3,12 @@
 ## C++
 Name | Brief Description | Playlist Link
 ---- | ----------------- | -------------
-OpenGL | 3D graphics library that communicates with the GPU. | [YouTube](https://www.youtube.com/playlist?list=PLysLvOneEETPlOI_PI4mJnocqIpr2cSHS)
+OpenGL<sup>1</sup> | 3D graphics library that communicates with the GPU. | [YouTube](https://www.youtube.com/playlist?list=PLysLvOneEETPlOI_PI4mJnocqIpr2cSHS)
+
+<sup>1</sup> Models used in this project under the [CC BY 4.0 License](https://creativecommons.org/licenses/by/4.0/):
+* LOTR Troll by Ole Gunnar Isager on [Sketchfab](https://sketchfab.com/3d-models/lotr-troll-for-animatingrigging-f4d777fd41d045fb8692f19f07b998fe)
+* Low Poly M4A1 by TastyTony on [Sketchfab](https://sketchfab.com/3d-models/low-poly-m4a1-8cab1cbeb82c4396a154f9fc8771417b)
+* Sphere Model (deleted) on [Sketchfab](https://sketchfab.com/3d-models/sphere-cd4fa4a642a74c7ca6ee2e7b5340f76a)
 
 ## Java
 Name | Brief Description | Playlist Link
