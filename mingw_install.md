@@ -22,8 +22,9 @@ It provides many tools, but this outlines the process to download the GCC or GNU
 9. Click *Installation* and *continue*.
 10. This will open up the MinGW installation manager.
     1. Mark *mingw32-gcc-g++-bin* for installation.
-    2. Then in the toolbar, click *Installation* > *Apply Changes*.
-    3. Click *Apply*.
+    2. Go into *All Packages* on the left and scroll down to find *mingw32-gdb-bin* and mark it for installation too.
+    3. Then in the toolbar, click *Installation* > *Apply Changes*.
+    4. Click *Apply*.
 
 #### Setting System Variables
 11. Open up the control panel and search *environment variables* and click on *Edit the system environment variables*.
