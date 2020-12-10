@@ -33,6 +33,8 @@
     <None Include="assets\outline.vs" />
     <None Include="assets\buffer.fs" />
     <None Include="assets\buffer.vs" />
+    <None Include="freetype.dll" />
+    <None Include="assets\depth.fs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -148,9 +150,6 @@
     <ClInclude Include="src\algorithms\bounds.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\glmemory.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\algorithms\states.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -173,6 +172,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\graphics\models\plane.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\vertexmemory.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\framememory.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

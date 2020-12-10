@@ -12,7 +12,7 @@
 #include <string>
 #include <map>
 
-#include "glmemory.hpp"
+#include "vertexmemory.hpp"
 #include "shader.h"
 
 typedef struct {

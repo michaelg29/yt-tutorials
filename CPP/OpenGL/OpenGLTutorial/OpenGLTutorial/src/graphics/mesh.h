@@ -9,7 +9,7 @@
 
 #include "shader.h"
 #include "texture.h"
-#include "glmemory.hpp"
+#include "vertexmemory.hpp"
 
 #include "models/box.hpp"
 
@@ -71,7 +71,7 @@ public:
     Mesh(BoundingRegion br, aiColor4D diff, aiColor4D spec);
 
     // load vertex and index data
-    void loadData(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
+    void loadData(std::vector<Vertex> vertices, std::vector<unsigned int> indices, bool pad = false);
 
     // render number of instances using shader
     void render(Shader shader, unsigned int noInstances);

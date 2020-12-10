@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "shader.h"
-#include "glmemory.hpp"
+#include "vertexmemory.hpp"
 
 #include "../scene.h"
 

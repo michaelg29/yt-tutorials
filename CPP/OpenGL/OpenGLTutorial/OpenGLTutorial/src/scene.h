@@ -18,6 +18,7 @@
 #include "graphics/shader.h"
 #include "graphics/model.h"
 #include "graphics/text.h"
+#include "graphics/framememory.hpp"
 
 #include "graphics/models/box.hpp"
 
@@ -59,6 +60,8 @@ public:
     // freetype library
     FT_Library ft;
     trie::Trie<TextRenderer> fonts;
+
+    FramebufferObject defaultFBO;
 
     /*
         callbacks
