@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="assets\depth.fs" />
     <None Include="assets\buffer.fs" />
     <None Include="assets\buffer.vs" />
     <None Include="assets\outline.vs" />
@@ -150,6 +151,7 @@
     <None Include="assets\text.fs" />
     <None Include="assets\text.vs" />
     <None Include="assimp-vc142-mtd.dll" />
+    <None Include="freetype.dll" />
     <None Include="glfw3.dll" />
     <None Include="src\graphics\texture.h" />
   </ItemGroup>
@@ -182,7 +184,8 @@
     <ClInclude Include="src\algorithms\states.hpp" />
     <ClInclude Include="src\algorithms\trie.hpp" />
     <ClInclude Include="src\graphics\cubemap.h" />
-    <ClInclude Include="src\graphics\glmemory.hpp" />
+    <ClInclude Include="src\graphics\framememory.hpp" />
+    <ClInclude Include="src\graphics\vertexmemory.hpp" />
     <ClInclude Include="src\graphics\light.h" />
     <ClInclude Include="src\graphics\material.h" />
     <ClInclude Include="src\graphics\mesh.h" />

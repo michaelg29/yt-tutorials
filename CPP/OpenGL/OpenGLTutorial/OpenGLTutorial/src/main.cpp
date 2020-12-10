@@ -20,6 +20,7 @@
 #include "graphics/model.h"
 #include "graphics/light.h"
 #include "graphics/cubemap.h"
+#include "graphics/framememory.hpp"
 
 #include "graphics/models/cube.hpp"
 #include "graphics/models/lamp.hpp"
@@ -101,39 +102,23 @@ int main() {
 
     // FBO
     const GLuint BUFFER_WIDTH = 800, BUFFER_HEIGHT = 600;
-    GLuint fbo;
-    glGenFramebuffers(1, &fbo);
+    FramebufferObject fbo(BUFFER_WIDTH, BUFFER_HEIGHT, GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    fbo.generate();
+    fbo.bind();
 
-    // initialize texture
     Texture bufferTex("bufferTex");
-
-    // setup texture values
     bufferTex.bind();
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, BUFFER_WIDTH, BUFFER_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    bufferTex.allocate(GL_RGBA, BUFFER_WIDTH, BUFFER_HEIGHT, GL_UNSIGNED_BYTE);
+    Texture::setParams();
 
-    // attach texture to the FBO
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, bufferTex.id, 0);
-
-    // renderbuffer to store color buffer unformatted
-    unsigned int rbo;
-    glGenRenderbuffers(1, &rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-
-    // allocate memory for rbo
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, BUFFER_WIDTH, BUFFER_HEIGHT);
-    // attach renderbuffer to the FBO
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+    fbo.attachTexture(GL_COLOR_ATTACHMENT0, bufferTex);
+    fbo.allocateAndAttachRBO(GL_DEPTH_STENCIL_ATTACHMENT, GL_DEPTH24_STENCIL8);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "ERROR with framebuffer" << std::endl;
     }
 
-    glBindBuffer(GL_FRAMEBUFFER, 0); // rebind default framebuffer
+    scene.defaultFBO.bind(); // rebind default framebuffer
 
     // setup plane to display texture
     Plane map;
@@ -241,9 +226,7 @@ int main() {
         /*
             render scene to the custom framebuffer
         */
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        glViewport(0, 0, BUFFER_WIDTH, BUFFER_HEIGHT);
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        fbo.activate();
 
         // render skybox
         //skyboxShader.activate();
@@ -308,9 +291,7 @@ int main() {
         */
 
         // rebind default framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        glViewport(0, 0, 800, 600);
+        scene.defaultFBO.activate();
 
         // render quad
         scene.renderInstances(map.id, bufferShader, dt);
@@ -324,6 +305,7 @@ int main() {
 
     // clean up objects
     //skybox.cleanup();
+    fbo.cleanup();
     scene.cleanup();
     return 0;
 }

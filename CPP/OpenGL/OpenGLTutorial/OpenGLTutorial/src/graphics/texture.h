@@ -30,8 +30,17 @@ public:
     // load texture from path
     void load(bool flip = true);
 
+    void allocate(GLenum format, GLuint width, GLuint height, GLenum type);
+
+    static void setParams(GLenum texMinFilter = GL_NEAREST,
+        GLenum texMagFilter = GL_NEAREST,
+        GLenum wrapS = GL_REPEAT,
+        GLenum wrapT = GL_REPEAT);
+
     // bind texture id
     void bind();
+
+    void cleanup();
 
     /*
         texture object values
