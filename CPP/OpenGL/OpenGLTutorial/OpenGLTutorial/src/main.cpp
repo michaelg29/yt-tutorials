@@ -43,6 +43,7 @@
 Scene scene;
 
 void processInput(double dt);
+void renderScene(Shader shader);
 
 Camera cam;
 
@@ -52,6 +53,7 @@ double dt = 0.0f; // tme btwn frames
 double lastFrame = 0.0f; // time of last frame
 
 Sphere sphere(10);
+Cube cube(10);
 
 int main() {
     std::cout << "Hello, OpenGL!" << std::endl;
@@ -70,59 +72,34 @@ int main() {
     scene.activeCamera = 0;
 
     // SHADERS===============================
-    Shader lampShader("assets/instanced/instanced.vs", "assets/lamp.fs");
-    Shader shader("assets/instanced/instanced.vs", "assets/object.fs");
-    Shader boxShader("assets/instanced/box.vs", "assets/instanced/box.fs");
+    Shader lampShader("assets/shaders/instanced/instanced.vs", "assets/shaders/lamp.fs");
+    Shader shader("assets/shaders/instanced/instanced.vs", "assets/shaders/object.fs");
+    Shader boxShader("assets/shaders/instanced/box.vs", "assets/shaders/instanced/box.fs");
+    Shader dirLightShader("assets/shaders/shadows/directionalshadow.vs", "assets/shaders/shadows/shadow.fs");
     
-    Shader outlineShader("assets/outline.vs", "assets/outline.fs");
-    Shader bufferShader("assets/buffer.vs", "assets/buffer.fs");
+    Shader outlineShader("assets/shaders/outline.vs", "assets/shaders/outline.fs");
+    Shader bufferShader("assets/shaders/buffer.vs", "assets/shaders/buffer.fs");
     
-    //Shader textShader("assets/text.vs", "assets/text.fs");
-    //Shader skyboxShader("assets/skybox/skybox.vs", "assets/skybox/sky.fs");
-    //skyboxShader.activate();
-    //skyboxShader.set3Float("min", 0.047f, 0.016f, 0.239f);
-    //skyboxShader.set3Float("max", 0.945f, 1.000f, 0.682f);
-
-    // SKYBOX=============================
-    //Cubemap skybox;
-    //skybox.init();
-    //skybox.loadTextures("assets/skybox");
-
     // MODELS==============================
-    Lamp lamp(4);
-    scene.registerModel(&lamp);
+    //Lamp lamp(4);
+    //scene.registerModel(&lamp);
 
     scene.registerModel(&sphere);
 
-    Cube cube(10);
     scene.registerModel(&cube);
 
     Box box;
     box.init();
 
-    // FBO
-    const GLuint BUFFER_WIDTH = 800, BUFFER_HEIGHT = 600;
-    FramebufferObject fbo(BUFFER_WIDTH, BUFFER_HEIGHT, GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-    fbo.generate();
-    fbo.bind();
-
-    Texture bufferTex("bufferTex");
-    bufferTex.bind();
-    bufferTex.allocate(GL_RGBA, BUFFER_WIDTH, BUFFER_HEIGHT, GL_UNSIGNED_BYTE);
-    Texture::setParams();
-
-    fbo.attachTexture(GL_COLOR_ATTACHMENT0, bufferTex);
-    fbo.allocateAndAttachRBO(GL_DEPTH_STENCIL_ATTACHMENT, GL_DEPTH24_STENCIL8);
-
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        std::cout << "ERROR with framebuffer" << std::endl;
-    }
-
-    scene.defaultFBO.bind(); // rebind default framebuffer
-
     // setup plane to display texture
+    DirLight dirLight(glm::vec3(-0.2f, -0.9f, -0.2f),
+        glm::vec4(0.1f, 0.1f, 0.1f, 1.0f),
+        glm::vec4(0.6f, 0.6f, 0.6f, 1.0f),
+        glm::vec4(0.7f, 0.7f, 0.7f, 1.0f),
+        BoundingRegion(glm::vec3(-20.0f, -20.0f, 0.5f), glm::vec3(20.0f, 20.0f, 50.0f)));
+
     Plane map;
-    map.init(bufferTex);
+    map.init(dirLight.shadowFBO.textures[0]);
     scene.registerModel(&map);
 
     // load all model data
@@ -131,49 +108,48 @@ int main() {
     // LIGHTS==============================
 
     // directional light
-    DirLight dirLight = { glm::vec3(-0.2f, -1.0f, -0.3f), glm::vec4(0.1f, 0.1f, 0.1f, 1.0f), glm::vec4(0.4f, 0.4f, 0.4f, 1.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f) };
     scene.dirLight = &dirLight;
 
     // point lights
-    glm::vec3 pointLightPositions[] = {
-        glm::vec3(0.7f,  0.2f,  2.0f),
-        glm::vec3(2.3f, -3.3f, -4.0f),
-        glm::vec3(-4.0f,  2.0f, -12.0f),
-        glm::vec3(0.0f,  0.0f, -3.0f)
-    };
+    //glm::vec3 pointLightPositions[] = {
+    //    glm::vec3(0.7f,  0.2f,  2.0f),
+    //    glm::vec3(2.3f, -3.3f, -4.0f),
+    //    glm::vec3(-4.0f,  2.0f, -12.0f),
+    //    glm::vec3(0.0f,  0.0f, -3.0f)
+    //};
 
-    glm::vec4 ambient = glm::vec4(0.05f, 0.05f, 0.05f, 1.0f);
-    glm::vec4 diffuse = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
-    glm::vec4 specular = glm::vec4(1.0f);
-    float k0 = 1.0f;
-    float k1 = 0.09f;
-    float k2 = 0.032f;
+    //glm::vec4 ambient = glm::vec4(0.05f, 0.05f, 0.05f, 1.0f);
+    //glm::vec4 diffuse = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
+    //glm::vec4 specular = glm::vec4(1.0f);
+    //float k0 = 1.0f;
+    //float k1 = 0.09f;
+    //float k2 = 0.032f;
 
-    PointLight pointLights[4];
+    //PointLight pointLights[4];
 
-    for (unsigned int i = 0; i < 4; i++) {
-        pointLights[i] = {
-            pointLightPositions[i],
-            k0, k1, k2,
-            ambient, diffuse, specular
-        };
-        // create physical model for each lamp
-        scene.generateInstance(lamp.id, glm::vec3(0.25f), 0.25f, pointLightPositions[i]);
-        // add lamp to scene's light source
-        scene.pointLights.push_back(&pointLights[i]);
-        // activate lamp in scene
-        States::activateIndex(&scene.activePointLights, i);
-    }
+    //for (unsigned int i = 0; i < 4; i++) {
+    //    pointLights[i] = {
+    //        pointLightPositions[i],
+    //        k0, k1, k2,
+    //        ambient, diffuse, specular
+    //    };
+    //    // create physical model for each lamp
+    //    scene.generateInstance(lamp.id, glm::vec3(0.25f), 0.25f, pointLightPositions[i]);
+    //    // add lamp to scene's light source
+    //    scene.pointLights.push_back(&pointLights[i]);
+    //    // activate lamp in scene
+    //    States::activateIndex(&scene.activePointLights, i);
+    //}
 
-    // spot light
-    SpotLight spotLight = {
-        cam.cameraPos, cam.cameraFront,
-        glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.0f)),
-        1.0f, 0.0014f, 0.000007f,
-        glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec4(1.0f), glm::vec4(1.0f)
-    };
-    scene.spotLights.push_back(&spotLight);
-    scene.activeSpotLights = 1;	// 0b00000001
+    //// spot light
+    //SpotLight spotLight = {
+    //    cam.cameraPos, cam.cameraFront,
+    //    glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.0f)),
+    //    1.0f, 0.0014f, 0.000007f,
+    //    glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec4(1.0f), glm::vec4(1.0f)
+    //};
+    //scene.spotLights.push_back(&spotLight);
+    //scene.activeSpotLights = 1;	// 0b00000001
 
     scene.generateInstance(cube.id, glm::vec3(20.0f, 0.1f, 20.0f), 100.0f, glm::vec3(0.0f, -3.0f, 0.0f));
     glm::vec3 cubePositions[] = {
@@ -208,6 +184,8 @@ int main() {
 
     scene.variableLog["time"] = (double)0.0;
 
+    scene.defaultFBO.bind(); // bind default framebuffer
+
     while (!scene.shouldClose()) {
         // calculate dt
         double currentTime = glfwGetTime();
@@ -223,23 +201,7 @@ int main() {
         // process input
         processInput(dt);
 
-        /*
-            render scene to the custom framebuffer
-        */
-        fbo.activate();
-
-        // render skybox
-        //skyboxShader.activate();
-        //skyboxShader.setFloat("time", scene.variableLog["time"].val<float>());
-        //skybox.render(skyboxShader, &scene);
-
-        //scene.renderText("comic", textShader, "Hello, OpenGL!", 50.0f, 50.0f, glm::vec2(1.0f), glm::vec3(0.5f, 0.6f, 1.0f));
-        //scene.renderText("comic", textShader, "Time: " + scene.variableLog["time"].dump(), 50.0f, 550.0f, glm::vec2(1.0f), glm::vec3(0.0f));
-        //scene.renderText("comic", textShader, "FPS: " + scene.variableLog["fps"].dump(), 50.0f, 550.0f - 40.0f, glm::vec2(1.0f), glm::vec3(0.0f));
-
-        // render lamps
-        scene.renderShader(lampShader, false);
-        scene.renderInstances(lamp.id, lampShader, dt);
+        // activate the directional light's FBO
 
         // remove launch objects if too far
         for (int i = 0; i < sphere.currentNoInstances; i++) {
@@ -248,53 +210,19 @@ int main() {
             }
         }
 
-        if (scene.variableLog["dispOutline"].val<bool>()) {
-            glStencilMask(0x00); // disable writing to stencil buffer for spheres 
-        }
+        // render scene to dirlight FBO
+        dirLight.shadowFBO.activate();
+        scene.renderDirLightShader(dirLightShader);
+        renderScene(dirLightShader);
 
-        // render launch objects
+        // render scene normally
+        scene.defaultFBO.activate();
         scene.renderShader(shader);
-        if (sphere.currentNoInstances > 0) {
-            scene.renderInstances(sphere.id, shader, dt);
-        }
-        
-        if (scene.variableLog["dispOutline"].val<bool>()) {
-            // always write to stencil buffer with cubes
-            glStencilFunc(GL_ALWAYS, 1, 0xFF);
-            glStencilMask(0xFF); // always write to buffer
-            scene.renderInstances(cube.id, shader, dt);
-
-            glStencilFunc(GL_NOTEQUAL, 1, 0xFF); // render fragments if different than what is stored
-            glStencilMask(0x00); // disable writing
-            glDisable(GL_DEPTH_TEST); // disable depth test so outlines are displayed behind
-
-            // draw outlines of the cubes
-            scene.renderShader(outlineShader, false);
-            scene.renderInstances(cube.id, outlineShader, dt);
-
-            // reset values
-            glStencilFunc(GL_ALWAYS, 1, 0xFF); // every fragment written to stencil buffer
-            glStencilMask(0xFF); // write always
-            glEnable(GL_DEPTH_TEST); // re-enable depth testing
-        }
-        else {
-            // render cubes normally
-            scene.renderInstances(cube.id, shader, dt);
-        }
+        renderScene(shader);
 
         // render boxes
         //scene.renderShader(boxShader, false);
         //box.render(boxShader);
-
-        /*
-            render texture
-        */
-
-        // rebind default framebuffer
-        scene.defaultFBO.activate();
-
-        // render quad
-        scene.renderInstances(map.id, bufferShader, dt);
 
         // send new frame to window
         scene.newFrame(box);
@@ -304,14 +232,20 @@ int main() {
     }
 
     // clean up objects
-    //skybox.cleanup();
-    fbo.cleanup();
     scene.cleanup();
     return 0;
 }
 
+void renderScene(Shader shader) {
+    if (sphere.currentNoInstances > 0) {
+        scene.renderInstances(sphere.id, shader, dt);
+    }
+
+    scene.renderInstances(cube.id, shader, dt);
+}
+
 void launchItem(float dt) {
-    RigidBody* rb = scene.generateInstance(sphere.id, glm::vec3(0.1f), 1.0f, cam.cameraPos);
+    RigidBody* rb = scene.generateInstance(sphere.id, glm::vec3(0.5f), 1.0f, cam.cameraPos);
     if (rb) {
         // instance generated successfully
         rb->transferEnergy(50.0f, cam.cameraFront);

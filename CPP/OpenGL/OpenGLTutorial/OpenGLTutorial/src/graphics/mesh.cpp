@@ -122,6 +122,8 @@ void Mesh::render(Shader shader, unsigned int noInstances) {
             // bind texture
             textures[i].bind();
         }
+
+        shader.setInt("noTex", 0);
     }
     
     VAO.bind();

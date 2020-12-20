@@ -251,6 +251,11 @@ void Scene::renderShader(Shader shader, bool applyLighting) {
 
     // lighting
     if (applyLighting) {
+        unsigned int textureIdx = 31;
+
+        // directional light
+        dirLight->render(shader, textureIdx--);
+
         // point lights
         unsigned int noLights = pointLights.size();
         unsigned int noActiveLights = 0;
@@ -275,12 +280,14 @@ void Scene::renderShader(Shader shader, bool applyLighting) {
         }
         shader.setInt("noSpotLights", noActiveLights);
 
-        // directional light
-        dirLight->render(shader);
-
         shader.setBool("useBlinn", variableLog["useBlinn"].val<bool>());
         shader.setBool("useGamma", variableLog["useGamma"].val<bool>());
     }
+}
+
+void Scene::renderDirLightShader(Shader shader) {
+    shader.activate();
+    shader.setMat4("lightSpaceMatrix", dirLight->lightSpaceMatrix);
 }
 
 // render specified model's instances

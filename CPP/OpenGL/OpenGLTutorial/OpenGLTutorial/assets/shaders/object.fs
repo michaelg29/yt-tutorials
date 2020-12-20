@@ -16,6 +16,9 @@ struct DirLight {
 	vec4 ambient;
 	vec4 diffuse;
 	vec4 specular;
+
+	sampler2D depthBuffer;
+	mat4 lightSpaceMatrix;
 };
 uniform DirLight dirLight;
 
@@ -65,6 +68,7 @@ uniform vec3 viewPos;
 uniform bool useBlinn;
 uniform bool useGamma;
 
+float calcDirLightShadow();
 vec4 calcDirLight(vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap);
 vec4 calcPointLight(int idx, vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap);
 vec4 calcSpotLight(int idx, vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap);
@@ -118,6 +122,25 @@ void main() {
 	FragColor = result;
 }
 
+float calcDirLightShadow() {
+	vec4 fragPosLightSpace = dirLight.lightSpaceMatrix * vec4(FragPos, 1.0);
+
+	// perspective divide (transforming coordinates NDC)
+	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w; // [depth relative to light] => [-1, 1]
+
+	// NDC to depth range
+	projCoords = projCoords * 0.5 + 0.5; // [-1, 1] => [0, 1]
+
+	// get closest depth in depth buffer
+	float closestDepth = texture(dirLight.depthBuffer, projCoords.xy).r;
+
+	// get depth of fragment
+	float currentDepth = projCoords.z;
+
+	// if depth is greater (further), return 1
+	return currentDepth > closestDepth ? 1.0 : 0.0;
+}
+
 vec4 calcDirLight(vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap) {
 	// ambient
 	vec4 ambient = dirLight.ambient * diffMap;
@@ -148,7 +171,9 @@ vec4 calcDirLight(vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap) {
 		specular = dirLight.specular * (spec * specMap);
 	}
 
-	return vec4(ambient + diffuse + specular);
+	float shadow = calcDirLightShadow();
+
+	return vec4(ambient + (1.0 - shadow) * (diffuse + specular));
 }
 
 vec4 calcPointLight(int idx, vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap) {
