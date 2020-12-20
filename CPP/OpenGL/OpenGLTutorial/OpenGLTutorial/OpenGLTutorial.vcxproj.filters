@@ -17,24 +17,26 @@
   <ItemGroup>
     <None Include="glfw3.dll" />
     <None Include="src\graphics\texture.h" />
-    <None Include="assets\object.vs" />
-    <None Include="assets\object.fs" />
-    <None Include="assets\lamp.fs" />
-    <None Include="assets\instanced\instanced.vs" />
-    <None Include="assets\instanced\box.vs" />
-    <None Include="assets\instanced\box.fs" />
     <None Include="assimp-vc142-mtd.dll" />
-    <None Include="assets\text.fs" />
-    <None Include="assets\text.vs" />
     <None Include="assets\skybox\skybox.fs" />
     <None Include="assets\skybox\skybox.vs" />
     <None Include="assets\skybox\sky.fs" />
-    <None Include="assets\outline.fs" />
-    <None Include="assets\outline.vs" />
-    <None Include="assets\buffer.fs" />
-    <None Include="assets\buffer.vs" />
     <None Include="freetype.dll" />
-    <None Include="assets\depth.fs" />
+    <None Include="assets\shaders\instanced\box.fs" />
+    <None Include="assets\shaders\instanced\box.vs" />
+    <None Include="assets\shaders\instanced\instanced.vs" />
+    <None Include="assets\shaders\buffer.fs" />
+    <None Include="assets\shaders\buffer.vs" />
+    <None Include="assets\shaders\depth.fs" />
+    <None Include="assets\shaders\lamp.fs" />
+    <None Include="assets\shaders\object.fs" />
+    <None Include="assets\shaders\object.vs" />
+    <None Include="assets\shaders\outline.fs" />
+    <None Include="assets\shaders\outline.vs" />
+    <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\shadows\directionalshadow.vs" />
+    <None Include="assets\shaders\shadows\shadow.fs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -182,18 +184,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="assets\image1.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\image2.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\flag.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\flag_specular.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="assets\skybox\back.png">
       <Filter>Resource Files</Filter>
     </Image>
@@ -213,6 +203,18 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="assets\skybox\top.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\textures\flag.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\textures\flag_specular.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\textures\image1.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\textures\image2.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

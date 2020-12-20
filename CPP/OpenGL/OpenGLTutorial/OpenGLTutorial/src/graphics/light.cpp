@@ -1,7 +1,26 @@
 #include "light.h"
 
+// constructor
+DirLight::DirLight(glm::vec3 direction,
+    glm::vec4 ambient,
+    glm::vec4 diffuse,
+    glm::vec4 specular,
+    BoundingRegion br)
+    : direction(direction), 
+    ambient(ambient), diffuse(diffuse), specular(specular), 
+    shadowFBO(1024, 1024, GL_DEPTH_BUFFER_BIT), br(br) {
+    // setup FBO
+    shadowFBO.generate();
+
+    shadowFBO.bind();
+    shadowFBO.disableColorBuffer();
+    shadowFBO.allocateAndAttachTexture(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_FLOAT);
+
+    updateMatrices();
+}
+
 // render directional light into shader
-void DirLight::render(Shader shader) {
+void DirLight::render(Shader shader, unsigned int textureIdx) {
     // set direction
     shader.set3Float("dirLight.direction", direction);
 
@@ -9,6 +28,25 @@ void DirLight::render(Shader shader) {
     shader.set4Float("dirLight.ambient", ambient);
     shader.set4Float("dirLight.diffuse", diffuse);
     shader.set4Float("dirLight.specular", specular);
+
+    // set depth texture
+    glActiveTexture(GL_TEXTURE0 + textureIdx);
+    shadowFBO.textures[0].bind();
+    shader.setInt("dirLight.depthBuffer", textureIdx);
+
+    // set light space matrix
+    shader.setMat4("dirLight.lightSpaceMatrix", lightSpaceMatrix);
+}
+
+// update light space matrix
+void DirLight::updateMatrices() {
+    glm::mat4 proj = glm::ortho(br.min.x, br.max.x, br.min.y, br.max.y, br.min.z, br.max.z);
+
+    glm::vec3 pos = -2.0f * direction;
+
+    glm::mat4 lightView = glm::lookAt(pos, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    lightSpaceMatrix = proj * lightView;
 }
 
 // render point light into shader
