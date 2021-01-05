@@ -8,7 +8,7 @@ DirLight::DirLight(glm::vec3 direction,
     BoundingRegion br)
     : direction(direction), 
     ambient(ambient), diffuse(diffuse), specular(specular), 
-    shadowFBO(1024, 1024, GL_DEPTH_BUFFER_BIT), br(br) {
+    shadowFBO(2048, 2048, GL_DEPTH_BUFFER_BIT), br(br) {
     // setup FBO
     shadowFBO.generate();
 
