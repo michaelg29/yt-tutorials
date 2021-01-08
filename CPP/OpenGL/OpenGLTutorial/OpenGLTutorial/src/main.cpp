@@ -75,10 +75,12 @@ int main() {
     Shader lampShader("assets/shaders/instanced/instanced.vs", "assets/shaders/lamp.fs");
     Shader shader("assets/shaders/instanced/instanced.vs", "assets/shaders/object.fs");
     Shader boxShader("assets/shaders/instanced/box.vs", "assets/shaders/instanced/box.fs");
-    Shader dirLightShader("assets/shaders/shadows/directionalshadow.vs", "assets/shaders/shadows/shadow.fs");
+    Shader shadowShader("assets/shaders/shadows/shadow.vs", "assets/shaders/shadows/shadow.fs");
     
     Shader outlineShader("assets/shaders/outline.vs", "assets/shaders/outline.fs");
     Shader bufferShader("assets/shaders/buffer.vs", "assets/shaders/buffer.fs");
+
+    
     
     // MODELS==============================
     //Lamp lamp(4);
@@ -91,23 +93,17 @@ int main() {
     Box box;
     box.init();
 
-    // setup plane to display texture
-    DirLight dirLight(glm::vec3(-0.2f, -0.9f, -0.2f),
-        glm::vec4(0.1f, 0.1f, 0.1f, 1.0f),
-        glm::vec4(0.6f, 0.6f, 0.6f, 1.0f),
-        glm::vec4(0.7f, 0.7f, 0.7f, 1.0f),
-        BoundingRegion(glm::vec3(-20.0f, -20.0f, 0.5f), glm::vec3(20.0f, 20.0f, 50.0f)));
-
-    Plane map;
-    map.init(dirLight.shadowFBO.textures[0]);
-    scene.registerModel(&map);
-
     // load all model data
     scene.loadModels();
 
     // LIGHTS==============================
 
     // directional light
+    DirLight dirLight(glm::vec3(-0.2f, -0.9f, -0.2f),
+        glm::vec4(0.1f, 0.1f, 0.1f, 1.0f),
+        glm::vec4(0.6f, 0.6f, 0.6f, 1.0f),
+        glm::vec4(0.7f, 0.7f, 0.7f, 1.0f),
+        BoundingRegion(glm::vec3(-20.0f, -20.0f, 0.5f), glm::vec3(20.0f, 20.0f, 50.0f)));
     scene.dirLight = &dirLight;
 
     // point lights
@@ -141,15 +137,17 @@ int main() {
     //    States::activateIndex(&scene.activePointLights, i);
     //}
 
-    //// spot light
-    //SpotLight spotLight = {
-    //    cam.cameraPos, cam.cameraFront,
-    //    glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.0f)),
-    //    1.0f, 0.0014f, 0.000007f,
-    //    glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec4(1.0f), glm::vec4(1.0f)
-    //};
-    //scene.spotLights.push_back(&spotLight);
-    //scene.activeSpotLights = 1;	// 0b00000001
+    // spot light
+    SpotLight spotLight(
+        //glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f),
+        cam.cameraPos, cam.cameraFront, cam.cameraUp,
+        glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.0f)),
+        1.0f, 0.0014f, 0.000007f,
+        glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec4(1.0f), glm::vec4(1.0f),
+        0.1f, 100.0f
+    );
+    scene.spotLights.push_back(&spotLight);
+    scene.activeSpotLights = 1; // 0b00000001
 
     scene.generateInstance(cube.id, glm::vec3(20.0f, 0.1f, 20.0f), 100.0f, glm::vec3(0.0f, -3.0f, 0.0f));
     glm::vec3 cubePositions[] = {
@@ -160,15 +158,15 @@ int main() {
         { 2.8f, 1.9f, -6.2f },
         { 3.5f, 6.3f, -1.0f },
         { -3.4f, 10.9f, -5.5f },
-        { 10.0f, -2.0f, 13.2f },
-        { 2.1f, 7.9f, -8.3f }
+        { 0.0f, 11.0f, 0.0f },
+        { 0.0f, 5.0f, 0.0f }
     };
     for (unsigned int i = 0; i < 9; i++) {
         scene.generateInstance(cube.id, glm::vec3(0.5f), 1.0f, cubePositions[i]);
     }
 
     // instantiate texture quad
-    scene.generateInstance(map.id, glm::vec3(2.0f, 2.0f, 0.0f), 0.0f, glm::vec3(0.0f));
+    //scene.generateInstance(map.id, glm::vec3(2.0f, 2.0f, 0.0f), 0.0f, glm::vec3(0.0f));
 
     // instantiate instances
     scene.initInstances();
@@ -212,13 +210,24 @@ int main() {
 
         // render scene to dirlight FBO
         dirLight.shadowFBO.activate();
-        scene.renderDirLightShader(dirLightShader);
-        renderScene(dirLightShader);
+        scene.renderDirLightShader(shadowShader);
+        renderScene(shadowShader);
+
+        // render scene to spot light FBO
+        for (unsigned int i = 0, len = scene.spotLights.size(); i < len; i++) {
+            if (States::isIndexActive(&scene.activeSpotLights, i)) {
+                scene.spotLights[i]->shadowFBO.activate();
+                scene.renderSpotLightShader(shadowShader, i);
+                renderScene(shadowShader);
+            }
+        }
 
         // render scene normally
         scene.defaultFBO.activate();
         scene.renderShader(shader);
         renderScene(shader);
+        //scene.renderShader(bufferShader, false);
+        //scene.renderInstances(map.id, bufferShader, dt);
 
         // render boxes
         //scene.renderShader(boxShader, false);
@@ -266,6 +275,8 @@ void processInput(double dt) {
     if (States::isIndexActive(&scene.activeSpotLights, 0)) {
         scene.spotLights[0]->position = scene.getActiveCamera()->cameraPos;
         scene.spotLights[0]->direction = scene.getActiveCamera()->cameraFront;
+        scene.spotLights[0]->up = scene.getActiveCamera()->cameraUp;
+        scene.spotLights[0]->updateMatrices();
     }
 
     if (Keyboard::keyWentDown(GLFW_KEY_L)) {

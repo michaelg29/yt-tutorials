@@ -274,7 +274,7 @@ void Scene::renderShader(Shader shader, bool applyLighting) {
         for (unsigned int i = 0; i < noLights; i++) {
             if (States::isIndexActive(&activeSpotLights, i)) {
                 // i'th spot light active
-                spotLights[i]->render(shader, noActiveLights);
+                spotLights[i]->render(shader, noActiveLights, textureIdx--);
                 noActiveLights++;
             }
         }
@@ -284,10 +284,16 @@ void Scene::renderShader(Shader shader, bool applyLighting) {
         shader.setBool("useGamma", variableLog["useGamma"].val<bool>());
     }
 }
-
+// set uniform shader variables for directional light render
 void Scene::renderDirLightShader(Shader shader) {
     shader.activate();
     shader.setMat4("lightSpaceMatrix", dirLight->lightSpaceMatrix);
+}
+
+// set uniform shader variables for spot light render
+void Scene::renderSpotLightShader(Shader shader, unsigned int idx) {
+    shader.activate();
+    shader.setMat4("lightSpaceMatrix", spotLights[idx]->lightSpaceMatrix);
 }
 
 // render specified model's instances

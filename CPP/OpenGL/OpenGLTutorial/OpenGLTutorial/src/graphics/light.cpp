@@ -68,8 +68,29 @@ void PointLight::render(Shader shader, int idx) {
     shader.set4Float(name + ".specular", specular);
 }
 
-// render spot light into shader
-void SpotLight::render(Shader shader, int idx) {
+// constructor
+SpotLight::SpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 up,
+    float cutOff, float outerCutOff,
+    float k0, float k1, float k2,
+    glm::vec4 ambient, glm::vec4 diffuse, glm::vec4 specular,
+    float nearPlane, float farPlane)
+    : position(position), direction(direction), up(up),
+    cutOff(cutOff), outerCutOff(outerCutOff),
+    k0(k0), k1(k1), k2(k2),
+    ambient(ambient), diffuse(diffuse), specular(specular),
+    nearPlane(nearPlane), farPlane(farPlane),
+    shadowFBO(2048, 2048, GL_DEPTH_BUFFER_BIT) {
+    shadowFBO.generate();
+
+    shadowFBO.bind();
+    shadowFBO.disableColorBuffer();
+    shadowFBO.allocateAndAttachTexture(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_FLOAT);
+
+    updateMatrices();
+}
+
+// render light into shader
+void SpotLight::render(Shader shader, int idx, unsigned int textureIdx) {
     // get name with index in array
     std::string name = "spotLights[" + std::to_string(idx) + "]";
 
@@ -92,4 +113,23 @@ void SpotLight::render(Shader shader, int idx) {
     shader.set4Float(name + ".ambient", ambient);
     shader.set4Float(name + ".diffuse", diffuse);
     shader.set4Float(name + ".specular", specular);
+
+    // set depth texture
+    glActiveTexture(GL_TEXTURE0 + textureIdx);
+    shadowFBO.textures[0].bind();
+    shader.setInt(name + ".depthBuffer", textureIdx);
+
+    // set light space matrix
+    shader.setMat4(name + ".lightSpaceMatrix", lightSpaceMatrix);
+}
+
+// update light space matrix
+void SpotLight::updateMatrices() {
+    glm::mat4 proj = glm::perspective(glm::acos(outerCutOff) * 2.0f, // FOV
+        (float)shadowFBO.height / (float)shadowFBO.width, // aspect ratio
+        nearPlane, farPlane);
+
+    glm::mat4 lightView = glm::lookAt(position, position + direction, up);
+
+    lightSpaceMatrix = proj * lightView;
 }

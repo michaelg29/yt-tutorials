@@ -107,7 +107,11 @@ public:
     // set uniform shader varaibles (lighting, etc)
     void renderShader(Shader shader, bool applyLighting = true);
 
+    // set uniform shader variables for directional light render
     void renderDirLightShader(Shader shader);
+
+    // set uniform shader variables for spot light render
+    void renderSpotLightShader(Shader shader, unsigned int idx);
 
     // render specified model's instances
     void renderInstances(std::string modelId, Shader shader, float dt);
