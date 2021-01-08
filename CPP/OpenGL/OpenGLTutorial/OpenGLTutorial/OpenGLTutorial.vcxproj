@@ -146,7 +146,7 @@
     <None Include="assets\shaders\object.fs" />
     <None Include="assets\shaders\object.vs" />
     <None Include="assets\shaders\shadows\shadow.fs" />
-    <None Include="assets\shaders\shadows\directionalshadow.vs" />
+    <None Include="assets\shaders\shadows\shadow.vs" />
     <None Include="assets\skybox\skybox.fs" />
     <None Include="assets\skybox\skybox.vs" />
     <None Include="assets\skybox\sky.fs" />
