@@ -30,15 +30,19 @@ public:
     // default
     Shader();
 
-    // initialize with paths to vertex and fragment shaders
-    Shader(const char* vertexShaderPath, const char* fragShaderPath);
+    // initialize with paths to vertex, fragment, and optional geometry shaders
+    Shader(const char* vertexShaderPath, 
+        const char* fragShaderPath, 
+        const char* geoShaderPath = nullptr);
 
     /*
         process functions
     */
 
-    // generate using vertex and frag shaders
-    void generate(const char* vertexShaderPath, const char* fragShaderPath);
+    // generate using vertex, frag, and optional geometry shaders
+    void generate(const char* vertexShaderPath, 
+        const char* fragShaderPath, 
+        const char* geoShaderPath = nullptr);
 
     // activate shader
     void activate();

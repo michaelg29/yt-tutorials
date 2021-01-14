@@ -262,7 +262,7 @@ void Scene::renderShader(Shader shader, bool applyLighting) {
         for (unsigned int i = 0; i < noLights; i++) {
             if (States::isIndexActive(&activePointLights, i)) {
                 // i'th light is active
-                pointLights[i]->render(shader, noActiveLights);
+                pointLights[i]->render(shader, noActiveLights, textureIdx--);
                 noActiveLights++;
             }
         }
@@ -288,6 +288,22 @@ void Scene::renderShader(Shader shader, bool applyLighting) {
 void Scene::renderDirLightShader(Shader shader) {
     shader.activate();
     shader.setMat4("lightSpaceMatrix", dirLight->lightSpaceMatrix);
+}
+
+// set uniform shader variables for point light render
+void Scene::renderPointLightShader(Shader shader, unsigned int idx) {
+    shader.activate();
+
+    // light space matrices
+    for (unsigned int i = 0; i < 6; i++) {
+        shader.setMat4("lightSpaceMatrices[" + std::to_string(i) + "]", pointLights[idx]->lightSpaceMatrices[i]);
+    }
+
+    // light position
+    shader.set3Float("lightPos", pointLights[idx]->position);
+
+    // far plane
+    shader.setFloat("farPlane", pointLights[idx]->farPlane);
 }
 
 // set uniform shader variables for spot light render

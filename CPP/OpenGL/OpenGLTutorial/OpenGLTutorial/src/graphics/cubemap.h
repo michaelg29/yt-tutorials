@@ -12,11 +12,18 @@
 #include "shader.h"
 #include "vertexmemory.hpp"
 
-#include "../scene.h"
+class Scene;
 
 class Cubemap {
 public:
+	// texture object
+	unsigned int id;
+
 	Cubemap();
+
+	void generate();
+
+	void bind();
 
 	void loadTextures(std::string dir,
 		std::string right	= "right.png",
@@ -26,6 +33,8 @@ public:
 		std::string front	= "front.png",
 		std::string back	= "back.png");
 
+	void allocate(GLenum format, GLuint width, GLuint height, GLenum type);
+
 	void init();
 
 	void render(Shader shader, Scene* scene);
@@ -33,8 +42,6 @@ public:
 	void cleanup();
 
 private:
-	// texture object
-	unsigned int id;
 	std::string dir;
 	std::vector<std::string> faces;
 	bool hasTextures;

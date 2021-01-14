@@ -110,6 +110,9 @@ public:
     // set uniform shader variables for directional light render
     void renderDirLightShader(Shader shader);
 
+    // set uniform shader variables for point light render
+    void renderPointLightShader(Shader shader, unsigned int idx);
+
     // set uniform shader variables for spot light render
     void renderSpotLightShader(Shader shader, unsigned int idx);
 
