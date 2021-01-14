@@ -33,6 +33,10 @@ struct PointLight {
 	float k0;
 	float k1;
 	float k2;
+
+	float farPlane;
+
+	samplerCube depthBuffer;
 };
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform int noPointLights;
@@ -97,16 +101,16 @@ void main() {
 	vec4 result = vec4(0.0, 0.0, 0.0, 1.0);
 
 	// directional
-	result = calcDirLight(norm, viewDir, diffMap, specMap);
+	//result += calcDirLight(norm, viewDir, diffMap, specMap);
 
 	// point lights
 	for (int i = 0; i < noPointLights; i++) {
-		//result += calcPointLight(i, norm, viewDir, diffMap, specMap);
+		result += calcPointLight(i, norm, viewDir, diffMap, specMap);
 	}
 
 	// spot lights
 	for (int i = 0; i < noSpotLights; i++) {
-		result += calcSpotLight(i, norm, viewDir, diffMap, specMap);
+		//result += calcSpotLight(i, norm, viewDir, diffMap, specMap);
 	}
 
 	// gamma correction
@@ -201,6 +205,28 @@ vec4 calcDirLight(vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap) {
 	return vec4(ambient + (1.0 - shadow) * (diffuse + specular));
 }
 
+float calcPointLightShadow(int idx, vec3 norm, vec3 lightDir) {
+	// get vector from the light to the fragment
+	vec3 lightToFrag = FragPos - pointLights[idx].position;
+
+	// get depth from cubemap
+	float closestDepth = texture(pointLights[idx].depthBuffer, lightToFrag).r;
+
+	// [0, 1] => original depth value
+	closestDepth *= pointLights[idx].farPlane;
+
+	// get current depth
+	float currentDepth = length(lightToFrag);
+
+	// calculate bias
+	float minBias = 0.005;
+	float maxBias = 0.05;
+	float bias = max(maxBias * (1.0 - dot(norm, lightDir)), minBias);
+
+	//return currentDepth - bias > closestDepth ? 1.0 : 0.0;
+	return 0.0;
+}
+
 vec4 calcPointLight(int idx, vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap) {
 	// ambient
 	vec4 ambient = pointLights[idx].ambient * diffMap;
@@ -240,7 +266,9 @@ vec4 calcPointLight(int idx, vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap
 	diffuse *= attenuation;
 	specular *= attenuation;
 
-	return vec4(ambient + diffuse + specular);
+	float shadow = calcPointLightShadow(idx, norm, lightDir);
+
+	return vec4(ambient + (1.0 - shadow) * (diffuse + specular));
 }
 
 float calcSpotLightShadow(int idx, vec3 norm, vec3 lightDir) {

@@ -1,7 +1,17 @@
 #include "cubemap.h"
 
+#include "../scene.h"
+
 Cubemap::Cubemap()
     : hasTextures(false) {}
+
+void Cubemap::generate() {
+    glGenTextures(1, &id);
+}
+
+void Cubemap::bind() {
+    glBindTexture(GL_TEXTURE_CUBE_MAP, id);
+}
 
 void Cubemap::loadTextures(std::string _dir,
     std::string right,
@@ -13,9 +23,6 @@ void Cubemap::loadTextures(std::string _dir,
     dir = _dir;
     hasTextures = true;
     faces = { right, left, top, bottom, front, back };
-
-    glGenTextures(1, &id);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, id);
 
     int width, height, nChannels;
 
@@ -42,6 +49,21 @@ void Cubemap::loadTextures(std::string _dir,
         }
 
         stbi_image_free(data);
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+}
+
+void Cubemap::allocate(GLenum format, GLuint width, GLuint height, GLenum type) {
+    hasTextures = true;
+
+    for (unsigned int i = 0; i < 6; i++) {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+            0, format, width, height, 0, format, type, NULL);
     }
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -127,7 +149,7 @@ void Cubemap::render(Shader shader, Scene *scene) {
     shader.setMat4("projection", scene->projection);
 
     if (hasTextures) {
-        glBindTexture(GL_TEXTURE_CUBE_MAP, id);
+        bind();
     }
 
     VAO.bind();

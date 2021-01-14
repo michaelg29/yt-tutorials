@@ -1,5 +1,8 @@
 #include "light.h"
 
+// default constructor
+DirLight::DirLight() {}
+
 // constructor
 DirLight::DirLight(glm::vec3 direction,
     glm::vec4 ambient,
@@ -49,8 +52,50 @@ void DirLight::updateMatrices() {
     lightSpaceMatrix = proj * lightView;
 }
 
+// list of directions
+glm::vec3 PointLight::directions[6] = {
+    {  1.0f,  0.0f,  0.0f },
+    { -1.0f,  0.0f,  0.0f },
+    {  0.0f,  1.0f,  0.0f },
+    {  0.0f, -1.0f,  0.0f },
+    {  0.0f,  0.0f,  1.0f },
+    {  0.0f,  0.0f, -1.0f }
+};
+
+// list of up vectors
+glm::vec3 PointLight::ups[6] = {
+    {  0.0f, -1.0f,  0.0f },
+    {  0.0f, -1.0f,  0.0f },
+    {  0.0f,  0.0f,  1.0f },
+    {  0.0f,  0.0f, -1.0f },
+    {  0.0f, -1.0f,  0.0f },
+    {  0.0f, -1.0f,  0.0f }
+};
+
+// default constructor
+PointLight::PointLight() {}
+
+// constructor
+PointLight::PointLight(glm::vec3 position,
+    float k0, float k1, float k2,
+    glm::vec4 ambient, glm::vec4 diffuse, glm::vec4 specular,
+    float nearPlane, float farPlane)
+    : position(position),
+    k0(k0), k1(k1), k2(k2),
+    ambient(ambient), diffuse(diffuse), specular(specular),
+    nearPlane(nearPlane), farPlane(farPlane),
+    shadowFBO(2048, 2048, GL_DEPTH_BUFFER_BIT) {
+    shadowFBO.generate();
+
+    shadowFBO.bind();
+    shadowFBO.disableColorBuffer();
+    shadowFBO.allocateAndAttachCubemap(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_FLOAT);
+
+    updateMatrices();
+}
+
 // render point light into shader
-void PointLight::render(Shader shader, int idx) {
+void PointLight::render(Shader shader, int idx, unsigned int textureIdx) {
     // get name with index in array
     std::string name = "pointLights[" + std::to_string(idx) + "]";
 
@@ -66,7 +111,32 @@ void PointLight::render(Shader shader, int idx) {
     shader.set4Float(name + ".ambient", ambient);
     shader.set4Float(name + ".diffuse", diffuse);
     shader.set4Float(name + ".specular", specular);
+
+    // set near and far planes
+    shader.setFloat(name + ".nearPlane", nearPlane);
+    shader.setFloat(name + ".farPlane", farPlane);
+
+    // set depth texture
+    glActiveTexture(GL_TEXTURE0 + textureIdx);
+    shadowFBO.cubemap.bind();
+    shader.setInt(name + ".depthBuffer", textureIdx);
 }
+
+// update light space matrices
+void PointLight::updateMatrices() {
+    glm::mat4 proj = glm::perspective(glm::radians(90.0f), // FOV
+        (float)shadowFBO.height / (float)shadowFBO.width, // aspect ratio
+        nearPlane, farPlane); // near and far bounds
+
+    for (unsigned int i = 0; i < 6; i++) {
+        lightSpaceMatrices[i] = proj * glm::lookAt(position,
+            position + PointLight::directions[i],
+            PointLight::ups[i]);
+    }
+}
+
+// default constructor
+SpotLight::SpotLight() {}
 
 // constructor
 SpotLight::SpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 up,

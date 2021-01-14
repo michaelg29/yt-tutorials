@@ -8,8 +8,8 @@
 Shader::Shader() {}
 
 // initialize with paths to vertex and fragment shaders
-Shader::Shader(const char* vertexShaderPath, const char* fragShaderPath) {
-    generate(vertexShaderPath, fragShaderPath);
+Shader::Shader(const char* vertexShaderPath, const char* fragShaderPath, const char* geoShaderPath) {
+    generate(vertexShaderPath, fragShaderPath, geoShaderPath);
 }
 
 /*
@@ -17,7 +17,7 @@ Shader::Shader(const char* vertexShaderPath, const char* fragShaderPath) {
 */
 
 // generate using vertex and frag shaders
-void Shader::generate(const char* vertexShaderPath, const char* fragShaderPath) {
+void Shader::generate(const char* vertexShaderPath, const char* fragShaderPath, const char* geoShaderPath) {
     int success;
     char infoLog[512];
 
@@ -25,10 +25,18 @@ void Shader::generate(const char* vertexShaderPath, const char* fragShaderPath) 
     GLuint vertexShader = compileShader(vertexShaderPath, GL_VERTEX_SHADER);
     GLuint fragShader = compileShader(fragShaderPath, GL_FRAGMENT_SHADER);
 
+    GLuint geoShader = 0; // placeholder
+    if (geoShaderPath) {
+        geoShader = compileShader(geoShaderPath, GL_GEOMETRY_SHADER);
+    }
+
     // create program and attach shaders
     id = glCreateProgram();
     glAttachShader(id, vertexShader);
     glAttachShader(id, fragShader);
+    if (geoShaderPath) {
+        glAttachShader(id, geoShader);
+    }
     glLinkProgram(id);
 
     // linking errors
@@ -41,6 +49,9 @@ void Shader::generate(const char* vertexShaderPath, const char* fragShaderPath) 
     // delete shaders
     glDeleteShader(vertexShader);
     glDeleteShader(fragShader);
+    if (geoShaderPath) {
+        glDeleteShader(geoShader);
+    }
 }
 
 // activate shader

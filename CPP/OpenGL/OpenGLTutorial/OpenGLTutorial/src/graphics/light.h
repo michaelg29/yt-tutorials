@@ -29,6 +29,9 @@ struct DirLight {
     // FBO for shadows
     FramebufferObject shadowFBO;
 
+    // default constructor
+    DirLight();
+
     // constructor
     DirLight(glm::vec3 direction,
         glm::vec4 ambient,
@@ -61,8 +64,36 @@ struct PointLight {
     glm::vec4 diffuse;
     glm::vec4 specular;
 
+    // bounds
+    float nearPlane;
+    float farPlane;
+
+    // list of view matrices
+    glm::mat4 lightSpaceMatrices[6];
+
+    // FBO for shadows
+    FramebufferObject shadowFBO;
+
+    // default constructor
+    PointLight();
+
+    // constructor
+    PointLight(glm::vec3 position,
+        float k0, float k1, float k2,
+        glm::vec4 ambient, glm::vec4 diffuse, glm::vec4 specular,
+        float nearPlane, float farPlane);
+
     // render light into shader
-    void render(Shader shader, int idx);
+    void render(Shader shader, int idx, unsigned int textureIdx);
+
+    // update light space matrices
+    void updateMatrices();
+
+    // list of directions
+    static glm::vec3 directions[6];
+
+    // list of up vectors
+    static glm::vec3 ups[6];
 };
 
 /*
@@ -101,6 +132,9 @@ struct SpotLight {
 
     // FBO for shadows
     FramebufferObject shadowFBO;
+
+    // default constructor
+    SpotLight();
 
     // constructor
     SpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 up,

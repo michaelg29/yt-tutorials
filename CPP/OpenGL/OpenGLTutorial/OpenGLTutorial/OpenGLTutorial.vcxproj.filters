@@ -37,6 +37,9 @@
     <None Include="assets\shaders\text.vs" />
     <None Include="assets\shaders\shadows\shadow.fs" />
     <None Include="assets\shaders\shadows\shadow.vs" />
+    <None Include="assets\shaders\shadows\pointShadow.fs" />
+    <None Include="assets\shaders\shadows\pointShadow.gs" />
+    <None Include="assets\shaders\shadows\pointShadow.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
