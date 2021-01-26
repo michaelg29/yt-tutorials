@@ -17,6 +17,8 @@ struct DirLight {
 	vec4 diffuse;
 	vec4 specular;
 
+	float farPlane;
+
 	sampler2D depthBuffer;
 	mat4 lightSpaceMatrix;
 };
@@ -78,14 +80,26 @@ uniform vec3 viewPos;
 uniform bool useBlinn;
 uniform bool useGamma;
 
-vec4 calcDirLight(vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap);
-vec4 calcPointLight(int idx, vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap);
-vec4 calcSpotLight(int idx, vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap);
+vec4 calcDirLight(vec3 norm, vec3 viewVec, vec3 viewDir, vec4 diffMap, vec4 specMap);
+vec4 calcPointLight(int idx, vec3 norm, vec3 viewVec, vec3 viewDir, vec4 diffMap, vec4 specMap);
+vec4 calcSpotLight(int idx, vec3 norm, vec3 viewVec, vec3 viewDir, vec4 diffMap, vec4 specMap);
+
+#define NUM_SAMPLES 20
+#define NUM_SAMPLESF 20.0
+vec3 sampleOffsetDirections[NUM_SAMPLES] = vec3[]
+(
+   vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1), 
+   vec3( 1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),
+   vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
+   vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
+   vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  0,  0)
+);
 
 void main() {
 	// properties
 	vec3 norm = normalize(Normal);
-	vec3 viewDir = normalize(viewPos - FragPos);
+	vec3 viewVec = viewPos - FragPos;
+	vec3 viewDir = normalize(viewVec);
 
 	vec4 diffMap;
 	vec4 specMap;
@@ -101,16 +115,16 @@ void main() {
 	vec4 result = vec4(0.0, 0.0, 0.0, 1.0);
 
 	// directional
-	//result += calcDirLight(norm, viewDir, diffMap, specMap);
+	result += calcDirLight(norm, viewVec, viewDir, diffMap, specMap);
 
 	// point lights
 	for (int i = 0; i < noPointLights; i++) {
-		result += calcPointLight(i, norm, viewDir, diffMap, specMap);
+		result += calcPointLight(i, norm, viewVec, viewDir, diffMap, specMap);
 	}
 
 	// spot lights
 	for (int i = 0; i < noSpotLights; i++) {
-		//result += calcSpotLight(i, norm, viewDir, diffMap, specMap);
+		result += calcSpotLight(i, norm, viewVec, viewDir, diffMap, specMap);
 	}
 
 	// gamma correction
@@ -131,7 +145,7 @@ void main() {
 	FragColor = result;
 }
 
-float calcDirLightShadow(vec3 norm, vec3 lightDir) {
+float calcDirLightShadow(vec3 norm, vec3 viewVec, vec3 lightDir) {
 	vec4 fragPosLightSpace = dirLight.lightSpaceMatrix * vec4(FragPos, 1.0);
 
 	// perspective divide (transforming coordinates NDC)
@@ -145,9 +159,6 @@ float calcDirLightShadow(vec3 norm, vec3 lightDir) {
 		return 0.0;
 	}
 
-	// get closest depth in depth buffer
-	float closestDepth = texture(dirLight.depthBuffer, projCoords.xy).r;
-
 	// get depth of fragment
 	float currentDepth = projCoords.z;
 
@@ -159,9 +170,12 @@ float calcDirLightShadow(vec3 norm, vec3 lightDir) {
 	// PCF
 	float shadowSum = 0.0;
 	vec2 texelSize = 1.0 / textureSize(dirLight.depthBuffer, 0);
+	float viewDist = length(viewVec);
+	float diskRadius = (1.0 + (viewDist / dirLight.farPlane)) / 30.0;
 	for (int y = -1; y <= 1; y++) {
 		for (int x = -1; x <= 1; x++) {
-			float pcfDepth = texture(dirLight.depthBuffer, projCoords.xy + vec2(x, y) * texelSize).r;
+			float pcfDepth = texture(dirLight.depthBuffer,
+				projCoords.xy + vec2(x, y) * texelSize * diskRadius).r;
 			shadowSum += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
 		}
 	}
@@ -170,7 +184,7 @@ float calcDirLightShadow(vec3 norm, vec3 lightDir) {
 	return shadowSum / 9.0;
 }
 
-vec4 calcDirLight(vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap) {
+vec4 calcDirLight(vec3 norm, vec3 viewDir, vec3 viewVec, vec4 diffMap, vec4 specMap) {
 	// ambient
 	vec4 ambient = dirLight.ambient * diffMap;
 
@@ -200,12 +214,12 @@ vec4 calcDirLight(vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap) {
 		specular = dirLight.specular * (spec * specMap);
 	}
 
-	float shadow = calcDirLightShadow(norm, lightDir);
+	float shadow = calcDirLightShadow(norm, viewVec, lightDir);
 
 	return vec4(ambient + (1.0 - shadow) * (diffuse + specular));
 }
 
-float calcPointLightShadow(int idx, vec3 norm, vec3 lightDir) {
+float calcPointLightShadow(int idx, vec3 norm, vec3 viewVec, vec3 lightDir) {
 	// get vector from the light to the fragment
 	vec3 lightToFrag = FragPos - pointLights[idx].position;
 
@@ -223,11 +237,26 @@ float calcPointLightShadow(int idx, vec3 norm, vec3 lightDir) {
 	float maxBias = 0.05;
 	float bias = max(maxBias * (1.0 - dot(norm, lightDir)), minBias);
 
-	//return currentDepth - bias > closestDepth ? 1.0 : 0.0;
-	return 0.0;
+	// PCF
+	float shadow = 0.0;
+	float viewDist = length(viewVec);
+	float diskRadius = (1.0 + (viewDist / pointLights[idx].farPlane)) / 30.0;
+	for (int i = 0; i < NUM_SAMPLES; i++) {
+		float pcfDepth = texture(pointLights[idx].depthBuffer, 
+			lightToFrag + sampleOffsetDirections[i] * diskRadius).r;
+		pcfDepth *= pointLights[idx].farPlane;
+
+		if (currentDepth - bias > pcfDepth) {
+			shadow += 1.0;
+		}
+	}
+
+	shadow /= NUM_SAMPLESF;
+
+	return shadow;
 }
 
-vec4 calcPointLight(int idx, vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap) {
+vec4 calcPointLight(int idx, vec3 norm, vec3 viewVec, vec3 viewDir, vec4 diffMap, vec4 specMap) {
 	// ambient
 	vec4 ambient = pointLights[idx].ambient * diffMap;
 
@@ -266,12 +295,12 @@ vec4 calcPointLight(int idx, vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap
 	diffuse *= attenuation;
 	specular *= attenuation;
 
-	float shadow = calcPointLightShadow(idx, norm, lightDir);
+	float shadow = calcPointLightShadow(idx, norm, viewVec, lightDir);
 
 	return vec4(ambient + (1.0 - shadow) * (diffuse + specular));
 }
 
-float calcSpotLightShadow(int idx, vec3 norm, vec3 lightDir) {
+float calcSpotLightShadow(int idx, vec3 norm, vec3 viewVec, vec3 lightDir) {
 	vec4 fragPosLightSpace = spotLights[idx].lightSpaceMatrix * vec4(FragPos, 1.0);
 
 	// perspective divide (transform to NDC)
@@ -285,16 +314,6 @@ float calcSpotLightShadow(int idx, vec3 norm, vec3 lightDir) {
 		return 0.0;
 	}
 
-	// get closest depth in depth buffer
-	float closestDepth = texture(spotLights[idx].depthBuffer, projCoords.xy).r;
-
-	// linearize depth
-	float z = closestDepth * 2.0 - 1.0;
-	closestDepth = (2.0 * spotLights[idx].nearPlane * spotLights[idx].farPlane) /
-		(spotLights[idx].farPlane + spotLights[idx].nearPlane 
-		- z * (spotLights[idx].farPlane - spotLights[idx].nearPlane));
-	closestDepth /= spotLights[idx].farPlane;
-
 	// get depth of fragment
 	float currentDepth = projCoords.z;
 
@@ -306,9 +325,14 @@ float calcSpotLightShadow(int idx, vec3 norm, vec3 lightDir) {
 	// PCF
 	float shadowSum = 0.0;
 	vec2 texelSize = 1.0 / textureSize(spotLights[idx].depthBuffer, 0);
+	float viewDist = length(viewVec);
+	float diskRadius = (1.0 + (viewDist / spotLights[idx].farPlane)) / 30.0;
 	for (int y = -1; y <= 1; y++) {
 		for (int x = -1; x <= 1; x++) {
-			float pcfDepth = texture(spotLights[idx].depthBuffer, projCoords.xy + vec2(x, y) * texelSize).r;
+			float pcfDepth = texture(spotLights[idx].depthBuffer,
+				projCoords.xy + vec2(x, y) * texelSize * diskRadius).r;
+			pcfDepth *= spotLights[idx].farPlane;
+
 			shadowSum += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
 		}
 	}
@@ -317,7 +341,7 @@ float calcSpotLightShadow(int idx, vec3 norm, vec3 lightDir) {
 	return shadowSum / 9.0;
 }
 
-vec4 calcSpotLight(int idx, vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap) {
+vec4 calcSpotLight(int idx, vec3 norm, vec3 viewVec, vec3 viewDir, vec4 diffMap, vec4 specMap) {
 	vec3 lightDir = normalize(spotLights[idx].position - FragPos);
 	float theta = dot(lightDir, normalize(-spotLights[idx].direction));
 
@@ -367,7 +391,7 @@ vec4 calcSpotLight(int idx, vec3 norm, vec3 viewDir, vec4 diffMap, vec4 specMap)
 		diffuse *= attenuation;
 		specular *= attenuation;
 
-		float shadow = calcSpotLightShadow(idx, norm, lightDir);
+		float shadow = calcSpotLightShadow(idx, norm, viewVec, lightDir);
 
 		return vec4(ambient + (1.0 - shadow) * (diffuse + specular));
 	}

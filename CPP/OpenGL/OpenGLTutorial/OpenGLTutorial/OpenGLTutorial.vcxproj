@@ -145,11 +145,11 @@
     <None Include="assets\shaders\lamp.fs" />
     <None Include="assets\shaders\object.fs" />
     <None Include="assets\shaders\object.vs" />
-    <None Include="assets\shaders\shadows\pointShadow.fs" />
+    <None Include="assets\shaders\shadows\pointSpotShadow.fs" />
     <None Include="assets\shaders\shadows\pointShadow.gs" />
     <None Include="assets\shaders\shadows\pointShadow.vs" />
-    <None Include="assets\shaders\shadows\shadow.fs" />
-    <None Include="assets\shaders\shadows\shadow.vs" />
+    <None Include="assets\shaders\shadows\dirShadow.fs" />
+    <None Include="assets\shaders\shadows\dirSpotShadow.vs" />
     <None Include="assets\skybox\skybox.fs" />
     <None Include="assets\skybox\skybox.vs" />
     <None Include="assets\skybox\sky.fs" />
