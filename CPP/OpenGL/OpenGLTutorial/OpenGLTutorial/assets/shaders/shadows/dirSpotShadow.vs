@@ -5,7 +5,11 @@ layout (location = 4) in vec3 aSize;
 
 uniform mat4 lightSpaceMatrix;
 
+out vec4 FragPos;
+
 void main() {
 	// ~ projection * view * model * pos
-	gl_Position = lightSpaceMatrix * vec4(aSize * aPos + aOffset, 1.0);
+	FragPos = vec4(aSize * aPos + aOffset, 1.0);
+
+	gl_Position = lightSpaceMatrix * FragPos;
 }

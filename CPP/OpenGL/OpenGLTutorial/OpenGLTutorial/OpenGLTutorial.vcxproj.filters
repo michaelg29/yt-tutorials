@@ -35,11 +35,11 @@
     <None Include="assets\shaders\outline.vs" />
     <None Include="assets\shaders\text.fs" />
     <None Include="assets\shaders\text.vs" />
-    <None Include="assets\shaders\shadows\shadow.fs" />
-    <None Include="assets\shaders\shadows\shadow.vs" />
-    <None Include="assets\shaders\shadows\pointShadow.fs" />
     <None Include="assets\shaders\shadows\pointShadow.gs" />
     <None Include="assets\shaders\shadows\pointShadow.vs" />
+    <None Include="assets\shaders\shadows\dirSpotShadow.vs" />
+    <None Include="assets\shaders\shadows\pointSpotShadow.fs" />
+    <None Include="assets\shaders\shadows\dirShadow.fs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">

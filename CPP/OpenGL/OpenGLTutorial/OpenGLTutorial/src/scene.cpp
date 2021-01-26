@@ -3,14 +3,12 @@
 unsigned int Scene::scrWidth = 0;
 unsigned int Scene::scrHeight = 0;
 
-
-
 /*
     callbacks
 */
 
 // window resize
-void Scene::framebufferSizeCallback(GLFWwindow* widnow, int width, int height) {
+void Scene::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
     // update variables
     Scene::scrWidth = width;
@@ -309,7 +307,15 @@ void Scene::renderPointLightShader(Shader shader, unsigned int idx) {
 // set uniform shader variables for spot light render
 void Scene::renderSpotLightShader(Shader shader, unsigned int idx) {
     shader.activate();
+
+    // light space matrix
     shader.setMat4("lightSpaceMatrix", spotLights[idx]->lightSpaceMatrix);
+
+    // light position
+    shader.set3Float("lightPos", spotLights[idx]->position);
+
+    // far plane
+    shader.setFloat("farPlane", spotLights[idx]->farPlane);
 }
 
 // render specified model's instances
