@@ -8,15 +8,15 @@ public:
 	Plane()
 		: Model("plane", BoundTypes::AABB, 1, CONST_INSTANCES) {}
 
-	void init(Texture tex) {
+	void init(std::vector<Texture> textures) {
 		int noVertices = 4;
 
 		float quadVertices[] = {
-			// position				normal				texcoord
-			 0.5f,  0.5f,  0.0f,	0.0f, 0.0f, 1.0f,	1.0f, 1.0f, // top right
-			-0.5f,  0.5f,  0.0f,	0.0f, 0.0f, 1.0f,	0.0f, 1.0f, // top left
-			-0.5f, -0.5f,  0.0f,	0.0f, 0.0f, 1.0f,	0.0f, 0.0f, // bottom left
-			 0.5f, -0.5f,  0.0f,	0.0f, 0.0f, 1.0f,	1.0f, 0.0f  // bottom right
+			// position			normal				texcoord
+			 0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,	1.0f, 1.0f, // top right
+			-0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,	0.0f, 1.0f, // top left
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,	0.0f, 0.0f, // bottom left
+			 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,	1.0f, 0.0f  // bottom right
 		};
 
 		std::vector<unsigned int> indices = {
@@ -26,7 +26,7 @@ public:
 
 		BoundingRegion br(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.5f, 0.5f, 0.0f));
 
-		Mesh ret(br, { tex });
+		Mesh ret(br, textures);
 		ret.loadData(Vertex::genList(quadVertices, noVertices), indices, true);
 
 		meshes.push_back(ret);

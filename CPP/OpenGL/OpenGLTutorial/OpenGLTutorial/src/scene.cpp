@@ -131,10 +131,7 @@ bool Scene::init() {
 
     FT_Done_FreeType(ft);
 
-    // setup lighting values
-    variableLog["useBlinn"] = true;
-    variableLog["useGamma"] = true;
-    variableLog["dispOutline"] = false;
+    variableLog["skipNormalMapping"] = false;
 
     return true;
 }
@@ -198,19 +195,8 @@ void Scene::processInput(float dt) {
         // set pos
         cameraPos = cameras[activeCamera]->cameraPos;
 
-        // update blinn parameter if necessary
-        if (Keyboard::keyWentDown(GLFW_KEY_B)) {
-            variableLog["useBlinn"] = !variableLog["useBlinn"].val<bool>();
-        }
-
-        // update gamma parameter if necessary
-        if (Keyboard::keyWentDown(GLFW_KEY_G)) {
-            variableLog["useGamma"] = !variableLog["useGamma"].val<bool>();
-        }
-
-        // update outline parameter if necessary
-        if (Keyboard::keyWentDown(GLFW_KEY_O)) {
-            variableLog["dispOutline"] = !variableLog["dispOutline"].val<bool>();
+        if (Keyboard::keyWentDown(GLFW_KEY_N)) {
+            variableLog["skipNormalMapping"] = !variableLog["skipNormalMapping"].val<bool>();
         }
     }
 }
@@ -278,8 +264,7 @@ void Scene::renderShader(Shader shader, bool applyLighting) {
         }
         shader.setInt("noSpotLights", noActiveLights);
 
-        shader.setBool("useBlinn", variableLog["useBlinn"].val<bool>());
-        shader.setBool("useGamma", variableLog["useGamma"].val<bool>());
+        shader.setBool("skipNormalMapping", variableLog["skipNormalMapping"].val<bool>());
     }
 }
 // set uniform shader variables for directional light render

@@ -185,6 +185,9 @@
     <ClInclude Include="src\graphics\framememory.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\graphics\models\brickwall.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\skybox\back.png">
