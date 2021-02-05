@@ -1,0 +1,52 @@
+#version 330 core
+
+struct DirLight {
+	vec3 direction;
+
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
+
+	float farPlane;
+
+	sampler2D depthBuffer;
+	mat4 lightSpaceMatrix;
+};
+
+struct PointLight {
+	vec3 position;
+
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
+
+	float k0;
+	float k1;
+	float k2;
+
+	float farPlane;
+
+	samplerCube depthBuffer;
+};
+
+struct SpotLight {
+	vec3 position;
+	vec3 direction;
+
+	float cutOff;
+	float outerCutOff;
+
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
+
+	float k0;
+	float k1;
+	float k2;
+
+	float nearPlane;
+	float farPlane;
+
+	sampler2D depthBuffer;
+	mat4 lightSpaceMatrix;
+};

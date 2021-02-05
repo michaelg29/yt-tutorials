@@ -31,7 +31,8 @@ public:
     Shader();
 
     // initialize with paths to vertex, fragment, and optional geometry shaders
-    Shader(const char* vertexShaderPath, 
+    Shader(bool includeDefaultHeader,
+        const char* vertexShaderPath, 
         const char* fragShaderPath, 
         const char* geoShaderPath = nullptr);
 
@@ -40,7 +41,8 @@ public:
     */
 
     // generate using vertex, frag, and optional geometry shaders
-    void generate(const char* vertexShaderPath, 
+    void generate(bool includeDefaultHeader,
+        const char* vertexShaderPath, 
         const char* fragShaderPath, 
         const char* geoShaderPath = nullptr);
 
@@ -51,11 +53,8 @@ public:
         utility functions
     */
 
-    // load string from file
-    std::string loadShaderSrc(const char* filePath);
-
     // compile shader program
-    GLuint compileShader(const char* filePath, GLuint type);
+    GLuint compileShader(bool includeDefaultHeader, const char* filePath, GLuint type);
 
     /*
         set uniform variables
@@ -70,6 +69,25 @@ public:
     void set4Float(const std::string& name, aiColor4D color);
     void set4Float(const std::string& name, glm::vec4 v);
     void setMat4(const std::string& name, glm::mat4 val);
+
+    /*
+        static
+    */
+
+    // default directory
+    static std::string defaultDirectory;
+
+    // stream containing default header source
+    static std::stringstream defaultHeaders;
+
+    // load into default header
+    static void loadIntoDefault(const char* filepath);
+
+    // clear default header (after shader compilation)
+    static void clearDefault();
+
+    // load string from file
+    static std::string loadShaderSrc(bool includeDefaultHeader, const char* filePath);
 };
 
 #endif

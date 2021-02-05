@@ -58,6 +58,8 @@ double lastFrame = 0.0f; // time of last frame
 Lamp lamp(4);
 Brickwall wall;
 
+std::string Shader::defaultDirectory = "assets/shaders";
+
 int main() {
     std::cout << "Hello, OpenGL!" << std::endl;
 
@@ -75,16 +77,20 @@ int main() {
     scene.activeCamera = 0;
 
     // SHADERS===============================
-    Shader shader("assets/shaders/instanced/instanced.vs", "assets/shaders/object.fs");
-    Shader boxShader("assets/shaders/instanced/box.vs", "assets/shaders/instanced/box.fs");
+    Shader::loadIntoDefault("defaultHead.gh");
+
+    Shader shader(true, "instanced/instanced.vs", "object.fs");
+    Shader boxShader(false, "instanced/box.vs", "instanced/box.fs");
     
-    Shader dirShadowShader("assets/shaders/shadows/dirSpotShadow.vs",
-        "assets/shaders/shadows/dirShadow.fs");
-    Shader spotShadowShader("assets/shaders/shadows/dirSpotShadow.vs",
-        "assets/shaders/shadows/pointSpotShadow.fs");
-    Shader pointShadowShader("assets/shaders/shadows/pointShadow.vs",
-        "assets/shaders/shadows/pointSpotShadow.fs",
-        "assets/shaders/shadows/pointShadow.gs");
+    Shader dirShadowShader(false, "shadows/dirSpotShadow.vs",
+        "shadows/dirShadow.fs");
+    Shader spotShadowShader(false, "shadows/dirSpotShadow.vs",
+        "shadows/pointSpotShadow.fs");
+    Shader pointShadowShader(false, "shadows/pointShadow.vs",
+        "shadows/pointSpotShadow.fs",
+        "shadows/pointShadow.gs");
+
+    Shader::clearDefault();
     
     // MODELS==============================
     scene.registerModel(&lamp);
