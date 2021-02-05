@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="assets\shaders\defaultHead.gh" />
     <None Include="assets\shaders\depth.fs" />
     <None Include="assets\shaders\buffer.fs" />
     <None Include="assets\shaders\buffer.vs" />

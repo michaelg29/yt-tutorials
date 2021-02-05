@@ -40,6 +40,7 @@
     <None Include="assets\shaders\shadows\dirSpotShadow.vs" />
     <None Include="assets\shaders\shadows\pointSpotShadow.fs" />
     <None Include="assets\shaders\shadows\dirShadow.fs" />
+    <None Include="assets\shaders\defaultHead.gh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
