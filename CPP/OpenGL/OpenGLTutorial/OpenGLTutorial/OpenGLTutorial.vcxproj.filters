@@ -41,6 +41,7 @@
     <None Include="assets\shaders\shadows\pointSpotShadow.fs" />
     <None Include="assets\shaders\shadows\dirShadow.fs" />
     <None Include="assets\shaders\defaultHead.gh" />
+    <None Include="assets\shaders\test.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -187,6 +188,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\graphics\models\brickwall.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\uniformmemory.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
