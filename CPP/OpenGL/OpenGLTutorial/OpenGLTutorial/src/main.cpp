@@ -21,6 +21,7 @@
 #include "graphics/light.h"
 #include "graphics/cubemap.h"
 #include "graphics/framememory.hpp"
+#include "graphics/uniformmemory.hpp"
 
 #include "graphics/models/cube.hpp"
 #include "graphics/models/lamp.hpp"
@@ -62,6 +63,31 @@ std::string Shader::defaultDirectory = "assets/shaders";
 
 int main() {
     std::cout << "Hello, OpenGL!" << std::endl;
+
+    UBO::UBO ubo({
+        UBO::Type::SCALAR,
+        UBO::newStruct({
+            UBO::newArray(5, UBO::Type::SCALAR),
+            UBO::Type::SCALAR,
+            UBO::newArray(2, UBO::newVec(3))
+            }),
+        UBO::newArray(2, UBO::newStruct({
+            UBO::newColMat(4, 4),
+            UBO::newVec(3)
+            }))
+        });
+
+    ubo.startWrite();
+
+    while (true) {
+        UBO::Element e = ubo.getNextElement();
+        if (e.type == UBO::Type::INVALID) {
+            break;
+        }
+        std::cout << e.typeStr() << std::endl;
+    }
+
+    return 0;
 
     // construct scene
     scene = Scene(3, 3, "OpenGL Tutorial", 1200, 720);

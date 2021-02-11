@@ -151,6 +151,7 @@
     <None Include="assets\shaders\shadows\pointShadow.vs" />
     <None Include="assets\shaders\shadows\dirShadow.fs" />
     <None Include="assets\shaders\shadows\dirSpotShadow.vs" />
+    <None Include="assets\shaders\test.vs" />
     <None Include="assets\skybox\skybox.fs" />
     <None Include="assets\skybox\skybox.vs" />
     <None Include="assets\skybox\sky.fs" />
@@ -192,6 +193,7 @@
     <ClInclude Include="src\graphics\cubemap.h" />
     <ClInclude Include="src\graphics\framememory.hpp" />
     <ClInclude Include="src\graphics\models\brickwall.hpp" />
+    <ClInclude Include="src\graphics\uniformmemory.hpp" />
     <ClInclude Include="src\graphics\vertexmemory.hpp" />
     <ClInclude Include="src\graphics\light.h" />
     <ClInclude Include="src\graphics\material.h" />
