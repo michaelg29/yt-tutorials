@@ -61,33 +61,12 @@ Brickwall wall;
 
 std::string Shader::defaultDirectory = "assets/shaders";
 
+struct Color {
+    glm::vec3 c;
+};
+
 int main() {
     std::cout << "Hello, OpenGL!" << std::endl;
-
-    UBO::UBO ubo({
-        UBO::Type::SCALAR,
-        UBO::newStruct({
-            UBO::newArray(5, UBO::Type::SCALAR),
-            UBO::Type::SCALAR,
-            UBO::newArray(2, UBO::newVec(3))
-            }),
-        UBO::newArray(2, UBO::newStruct({
-            UBO::newColMat(4, 4),
-            UBO::newVec(3)
-            }))
-        });
-
-    ubo.startWrite();
-
-    while (true) {
-        UBO::Element e = ubo.getNextElement();
-        if (e.type == UBO::Type::INVALID) {
-            break;
-        }
-        std::cout << e.typeStr() << std::endl;
-    }
-
-    return 0;
 
     // construct scene
     scene = Scene(3, 3, "OpenGL Tutorial", 1200, 720);
@@ -117,6 +96,39 @@ int main() {
         "shadows/pointShadow.gs");
 
     Shader::clearDefault();
+
+    // UBO==============
+    UBO::UBO ubo(0, {
+        UBO::newColMatArray(3, 4, 4)
+    });
+
+    ubo.attachToShader(shader, "Colors");
+    ubo.generate();
+    ubo.bind();
+    ubo.initNullData(GL_STATIC_DRAW);
+    ubo.clear();
+
+    ubo.bindRange();
+
+    ubo.startWrite();
+
+    Color colorArray[3] = {
+        { { 1.0f, 0.0f, 0.0f } },
+        { { 0.0f, 1.0f, 0.0f } },
+        { { 0.0f, 0.0f, 1.0f } }
+    };
+
+    float fArr[3] = {
+        0.0f, 0.0f, 0.0f
+    };
+
+    ubo.bind();
+    ubo.advanceArray(2 * 4);
+
+    glm::mat4 m = glm::translate(glm::mat4(1.0f), { 3.0f, 0.0f, -5.0f });
+    ubo.writeArrayContainer<glm::mat4, glm::vec4>(&m, 4);
+
+    ubo.clear();
     
     // MODELS==============================
     scene.registerModel(&lamp);
