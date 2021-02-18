@@ -389,12 +389,15 @@ namespace UBO {
 				advanceCount = indexStack[currentDepth].second->length - indexStack[currentDepth].first;
 			}
 
+			// advance offset
 			offset += advanceCount * roundUpPow2(currentElement->list[0].calcSize(), currentElement->alignPow2());
+			// advance cursor in stack
+			indexStack[currentDepth].first += advanceCount;
 
 			// pop from stack
 			poppedOffset = offset;
 			if (pop()) {
-				// no items popped
+				// item(s) popped
 				offset = poppedOffset;
 			}
 		}
