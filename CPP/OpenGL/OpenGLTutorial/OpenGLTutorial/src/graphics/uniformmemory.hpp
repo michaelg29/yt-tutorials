@@ -24,7 +24,7 @@ namespace UBO {
 	};
 
 	// round up val to the next multiple of 2^n
-	unsigned int roundUpPow2(unsigned int val, unsigned char n) {
+	inline unsigned int roundUpPow2(unsigned int val, unsigned char n) {
 		unsigned int pow2n = 0b1 << n; // = 1 * 2^n = 2^n
 		unsigned int divisor = pow2n - 1; // = 0b0111...111 (n 1s)
 
@@ -121,11 +121,11 @@ namespace UBO {
 		}
 	} Element;
 
-	Element newScalar() {
+	inline Element newScalar() {
 		return Element();
 	}
 
-	Element newVec(unsigned char dim) {
+	inline Element newVec(unsigned char dim) {
 		switch (dim) {
 		case 2: return Type::VEC2;
 		case 3: return Type::VEC3;
@@ -135,7 +135,7 @@ namespace UBO {
 		};
 	}
 
-	Element newArray(unsigned int length, Element arrElement) {
+	inline Element newArray(unsigned int length, Element arrElement) {
 		Element ret(Type::ARRAY);
 		ret.length = length;
 		ret.list = { arrElement };
@@ -148,23 +148,23 @@ namespace UBO {
 		return ret;
 	}
 
-	Element newColMat(unsigned char cols, unsigned char rows) {
+	inline Element newColMat(unsigned char cols, unsigned char rows) {
 		return newArray(cols, newVec(rows));
 	}
 
-	Element newColMatArray(unsigned int noMatrices, unsigned char cols, unsigned char rows) {
+	inline Element newColMatArray(unsigned int noMatrices, unsigned char cols, unsigned char rows) {
 		return newArray(noMatrices * cols, newVec(rows));
 	}
 
-	Element newRowMat(unsigned char rows, unsigned char cols) {
+	inline Element newRowMat(unsigned char rows, unsigned char cols) {
 		return newArray(rows, newVec(cols));
 	}
 
-	Element newRowMatArray(unsigned int noMatrices, unsigned char rows, unsigned char cols) {
+	inline Element newRowMatArray(unsigned int noMatrices, unsigned char rows, unsigned char cols) {
 		return newArray(noMatrices * rows, newVec(cols));
 	}
 
-	Element newStruct(std::vector<Element> subelements) {
+	inline Element newStruct(std::vector<Element> subelements) {
 		Element ret(Type::STRUCT);
 		ret.list.insert(ret.list.end(), subelements.begin(), subelements.end());
 		ret.length = ret.list.size();
