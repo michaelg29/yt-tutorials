@@ -75,8 +75,11 @@ public:
         aiColor4D diff(m.diffuse.r, m.diffuse.g, m.diffuse.b, 1.0f);
         aiColor4D spec(m.specular.r, m.specular.g, m.diffuse.b, 1.0f);
 
+        std::vector<Vertex> vertexList = Vertex::genList(vertices, noVertices);
+        Vertex::calcTanVectors(vertexList, indices);
+
         Mesh ret(br, diff, spec);
-        ret.loadData(Vertex::genList(vertices, noVertices), indices);
+        ret.loadData(vertexList, indices);
 
         meshes.push_back(ret);
         boundingRegions.push_back(br);

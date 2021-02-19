@@ -76,7 +76,7 @@ public:
     void loadModel(std::string path);
 
     // render instance(s)
-    virtual void render(Shader shader, float dt, Scene *scene, bool setModel = true);
+    virtual void render(Shader shader, float dt, Scene *scene, glm::mat4 model = glm::mat4(1.0f));
 
     // free up memory
     void cleanup();

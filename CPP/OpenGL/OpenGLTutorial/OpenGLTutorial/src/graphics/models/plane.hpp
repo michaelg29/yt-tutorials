@@ -26,8 +26,11 @@ public:
 
 		BoundingRegion br(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.5f, 0.5f, 0.0f));
 
+		std::vector<Vertex> vertexList = Vertex::genList(quadVertices, noVertices);
+		Vertex::calcTanVectors(vertexList, indices);
+
 		Mesh ret(br, textures);
-		ret.loadData(Vertex::genList(quadVertices, noVertices), indices, true);
+		ret.loadData(vertexList, indices, true);
 
 		meshes.push_back(ret);
 		boundingRegions.push_back(br);
