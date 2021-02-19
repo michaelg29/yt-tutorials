@@ -61,10 +61,6 @@ Brickwall wall;
 
 std::string Shader::defaultDirectory = "assets/shaders";
 
-struct Color {
-    glm::vec3 c;
-};
-
 int main() {
     std::cout << "Hello, OpenGL!" << std::endl;
 
@@ -97,39 +93,6 @@ int main() {
 
     Shader::clearDefault();
 
-    // UBO==============
-    UBO::UBO ubo(0, {
-        UBO::newColMatArray(3, 4, 4)
-    });
-
-    ubo.attachToShader(shader, "Colors");
-    ubo.generate();
-    ubo.bind();
-    ubo.initNullData(GL_STATIC_DRAW);
-    ubo.clear();
-
-    ubo.bindRange();
-
-    ubo.startWrite();
-
-    Color colorArray[3] = {
-        { { 1.0f, 0.0f, 0.0f } },
-        { { 0.0f, 1.0f, 0.0f } },
-        { { 0.0f, 0.0f, 1.0f } }
-    };
-
-    float fArr[3] = {
-        0.0f, 0.0f, 0.0f
-    };
-
-    ubo.bind();
-    ubo.advanceArray(2 * 4);
-
-    glm::mat4 m = glm::translate(glm::mat4(1.0f), { 3.0f, 0.0f, -5.0f });
-    ubo.writeArrayContainer<glm::mat4, glm::vec4>(&m, 4);
-
-    ubo.clear();
-    
     // MODELS==============================
     scene.registerModel(&lamp);
 
@@ -222,7 +185,7 @@ int main() {
     scene.initInstances();
 
     // finish preparations (octree, etc)
-    scene.prepare(box);
+    scene.prepare(box, { shader });
 
     // joystick recognition
     /*mainJ.update();

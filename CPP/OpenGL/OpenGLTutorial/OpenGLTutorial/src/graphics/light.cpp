@@ -24,23 +24,10 @@ DirLight::DirLight(glm::vec3 direction,
 
 // render directional light into shader
 void DirLight::render(Shader shader, unsigned int textureIdx) {
-    // set direction
-    shader.set3Float("dirLight.direction", direction);
-
-    // set lighting values
-    shader.set4Float("dirLight.ambient", ambient);
-    shader.set4Float("dirLight.diffuse", diffuse);
-    shader.set4Float("dirLight.specular", specular);
-
-    shader.setFloat("dirLight.farPlane", br.max.z);
-
     // set depth texture
     glActiveTexture(GL_TEXTURE0 + textureIdx);
     shadowFBO.textures[0].bind();
-    shader.setInt("dirLight.depthBuffer", textureIdx);
-
-    // set light space matrix
-    shader.setMat4("dirLight.lightSpaceMatrix", lightSpaceMatrix);
+    shader.setInt("dirLightBuffer", textureIdx);
 }
 
 // update light space matrix
@@ -98,30 +85,10 @@ PointLight::PointLight(glm::vec3 position,
 
 // render point light into shader
 void PointLight::render(Shader shader, int idx, unsigned int textureIdx) {
-    // get name with index in array
-    std::string name = "pointLights[" + std::to_string(idx) + "]";
-
-    // set position
-    shader.set3Float(name + ".position", position);
-
-    // set attenuation constants
-    shader.setFloat(name + ".k0", k0);
-    shader.setFloat(name + ".k1", k1);
-    shader.setFloat(name + ".k2", k2);
-
-    // set lighting values
-    shader.set4Float(name + ".ambient", ambient);
-    shader.set4Float(name + ".diffuse", diffuse);
-    shader.set4Float(name + ".specular", specular);
-
-    // set near and far planes
-    shader.setFloat(name + ".nearPlane", nearPlane);
-    shader.setFloat(name + ".farPlane", farPlane);
-
     // set depth texture
     glActiveTexture(GL_TEXTURE0 + textureIdx);
     shadowFBO.cubemap.bind();
-    shader.setInt(name + ".depthBuffer", textureIdx);
+    shader.setInt("pointLightBuffers[" + std::to_string(idx) + "]", textureIdx);
 }
 
 // update light space matrices
@@ -163,36 +130,10 @@ SpotLight::SpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 up,
 
 // render light into shader
 void SpotLight::render(Shader shader, int idx, unsigned int textureIdx) {
-    // get name with index in array
-    std::string name = "spotLights[" + std::to_string(idx) + "]";
-
-    // set position
-    shader.set3Float(name + ".position", position);
-    // set direction
-    shader.set3Float(name + ".direction", direction);
-
-    // set first level cut off
-    shader.setFloat(name + ".cutOff", cutOff);
-    // set second level cut off
-    shader.setFloat(name + ".outerCutOff", outerCutOff);
-
-    // set attenuation constants
-    shader.setFloat(name + ".k0", k0);
-    shader.setFloat(name + ".k1", k1);
-    shader.setFloat(name + ".k2", k2);
-
-    // set lighting values
-    shader.set4Float(name + ".ambient", ambient);
-    shader.set4Float(name + ".diffuse", diffuse);
-    shader.set4Float(name + ".specular", specular);
-
     // set depth texture
     glActiveTexture(GL_TEXTURE0 + textureIdx);
     shadowFBO.textures[0].bind();
-    shader.setInt(name + ".depthBuffer", textureIdx);
-
-    // set light space matrix
-    shader.setMat4(name + ".lightSpaceMatrix", lightSpaceMatrix);
+    shader.setInt("spotLightBuffers[" + std::to_string(idx) + "]", textureIdx);
 }
 
 // update light space matrix
