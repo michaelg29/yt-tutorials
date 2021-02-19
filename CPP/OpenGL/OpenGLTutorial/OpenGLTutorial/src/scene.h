@@ -19,6 +19,7 @@
 #include "graphics/model.h"
 #include "graphics/text.h"
 #include "graphics/framememory.hpp"
+#include "graphics/uniformmemory.hpp"
 
 #include "graphics/models/box.hpp"
 
@@ -63,6 +64,8 @@ public:
 
     FramebufferObject defaultFBO;
 
+    UBO::UBO lightUBO;
+
     /*
         callbacks
     */
@@ -89,7 +92,7 @@ public:
     bool init();
 
     // to be called after instances have been generated/registered
-    void prepare(Box &box);
+    void prepare(Box &box, std::vector<Shader> shaders);
 
     /*
         main loop methods
@@ -185,11 +188,13 @@ public:
     */
 
     // list of point lights
+    unsigned int noPointLights;
     std::vector<PointLight*> pointLights;
     // acts as array of switches for point lights
     unsigned int activePointLights;
 
     // list of spot lights
+    unsigned int noSpotLights;
     std::vector<SpotLight*> spotLights;
     // acts as array of switches for spot lights
     unsigned int activeSpotLights;
