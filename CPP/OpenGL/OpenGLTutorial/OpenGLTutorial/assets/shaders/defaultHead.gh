@@ -12,7 +12,7 @@ struct DirLight {
 	mat4 lightSpaceMatrix;
 };
 
-#define MAX_POINT_LIGHTS 20
+#define MAX_POINT_LIGHTS 10
 struct PointLight {
 	vec3 position;
 
@@ -27,7 +27,7 @@ struct PointLight {
 	float farPlane;
 };
 
-#define MAX_SPOT_LIGHTS 5
+#define MAX_SPOT_LIGHTS 2
 struct SpotLight {
 	vec3 position;
 	vec3 direction;
@@ -47,6 +47,20 @@ struct SpotLight {
 	float farPlane;
 
 	mat4 lightSpaceMatrix;
+};
+
+struct TangentLights {
+	vec3 FragPos;
+	vec3 Normal;
+
+	vec3 viewPos;
+
+	vec3 dirLightDirection;
+
+	vec3 pointLightPositions[MAX_POINT_LIGHTS];
+
+	vec3 spotLightPositions[MAX_SPOT_LIGHTS];
+	vec3 spotLightDirections[MAX_SPOT_LIGHTS];
 };
 
 layout (std140) uniform Lights {
