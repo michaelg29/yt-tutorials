@@ -28,7 +28,7 @@
 #include "io/mouse.h"
 
 #include "algorithms/states.hpp"
-#include "algorithms/trie.hpp"
+#include "algorithms/avl.h"
 #include "algorithms/octree.h"
 
 // forward declarations
@@ -46,8 +46,8 @@ class Model;
 class Scene {
 public:
     // tries to store models/instances
-    trie::Trie<Model*> models;
-    trie::Trie<RigidBody*> instances;
+    avl* models;
+    avl* instances;
 
     // list of instances that should be deleted
     std::vector<RigidBody*> instancesToDelete;
@@ -60,7 +60,7 @@ public:
 
     // freetype library
     FT_Library ft;
-    trie::Trie<TextRenderer> fonts;
+    avl* fonts;
 
     FramebufferObject defaultFBO;
 
@@ -90,6 +90,9 @@ public:
 
     // to be called after constructor
     bool init();
+
+    // register a font family
+    bool registerFont(TextRenderer* tr, std::string name, std::string path);
 
     // to be called after instances have been generated/registered
     void prepare(Box &box, std::vector<Shader> shaders);

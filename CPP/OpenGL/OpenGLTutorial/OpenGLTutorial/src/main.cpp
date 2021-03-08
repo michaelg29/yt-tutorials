@@ -93,6 +93,12 @@ int main() {
 
     Shader::clearDefault();
 
+    // FONTS===============================
+    TextRenderer font(32);
+    if (!scene.registerFont(&font, "comic", "assets/fonts/comic.ttf")) {
+        std::cout << "Could not load font" << std::endl;
+    }
+
     // MODELS==============================
     scene.registerModel(&lamp);
 
