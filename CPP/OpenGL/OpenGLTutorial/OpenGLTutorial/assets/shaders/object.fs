@@ -49,7 +49,7 @@ void main() {
 
 	// normal texture
 	vec3 norm = normalize(fs_in.tanLights.Normal);
-	if (!noNormal) {
+	if (!noNormalMap) {
 		// take normal vector from texture (in tangent space)
 		norm = texture(normal0, fs_in.TexCoord).rgb;
 		norm = normalize(norm * 2.0 - 1.0);
@@ -67,7 +67,7 @@ void main() {
 	}
 
 	// calculate view vectors in tangent space
-	vec3 viewVec = fs_in.tanLights.ViewPos - fs_in.tanLights.FragPos;
+	vec3 viewVec = fs_in.tanLights.viewPos - fs_in.tanLights.FragPos;
 	vec3 viewDir = normalize(viewVec);
 	// output placeholder
 	vec4 result = vec4(0.0, 0.0, 0.0, 1.0);

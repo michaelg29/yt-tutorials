@@ -113,6 +113,12 @@ bool Scene::init() {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // disable cursor
 
     /*
+        init model/instance trees
+    */
+    models = avl_createEmptyRoot(strkeycmp);
+    instances = avl_createEmptyRoot(strkeycmp);
+
+    /*
         init octree
     */
     octree = new Octree::node(BoundingRegion(glm::vec3(-16.0f), glm::vec3(16.0f)));
@@ -124,23 +130,28 @@ bool Scene::init() {
         std::cout << "Could not init FreeType library" << std::endl;
         return false;
     }
-
-    // insert font
-    fonts.insert("comic", TextRenderer(32));
-    if (!fonts["comic"].loadFont(ft, "assets/fonts/comic.ttf")) {
-        std::cout << "Could not load font" << std::endl;
-        return false;
-    }
-
-    FT_Done_FreeType(ft);
+    fonts = avl_createEmptyRoot(strkeycmp);
 
     variableLog["skipNormalMapping"] = false;
 
     return true;
 }
 
+// register a font family
+bool Scene::registerFont(TextRenderer* tr, std::string name, std::string path) {
+    if (tr->loadFont(ft, path)) {
+        fonts = avl_insert(fonts, (void*)name.c_str(), tr);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 // to be called after instances have been generated/registered
-void Scene::prepare(Box &box, std::vector<Shader> shaders) {
+void Scene::prepare(Box& box, std::vector<Shader> shaders) {
+    // close FT library
+    FT_Done_FreeType(ft);
     // process current instances
     octree->update(box);
 
@@ -419,17 +430,23 @@ void Scene::renderSpotLightShader(Shader shader, unsigned int idx) {
 
 // render specified model's instances
 void Scene::renderInstances(std::string modelId, Shader shader, float dt) {
-    // render each mesh in specified model
-    shader.activate();
-    models[modelId]->render(shader, dt, this);
+    void* val = avl_get(models, (void*)modelId.c_str());
+    if (val) {
+        // render each mesh in specified model
+        shader.activate();
+        ((Model*)val)->render(shader, dt, this);
+    }
 }
 
 // render text
 void Scene::renderText(std::string font, Shader shader, std::string text, float x, float y, glm::vec2 scale, glm::vec3 color) {
-    shader.activate();
-    shader.setMat4("projection", textProjection);
+    void* val = avl_get(fonts, (void*)font.c_str());
+    if (val) {
+        shader.activate();
+        shader.setMat4("projection", textProjection);
 
-    fonts[font].render(shader, text, x, y, scale, color);
+        ((TextRenderer*)val)->render(shader, text, x, y, scale, color);
+    }
 }
 
 /*
@@ -438,22 +455,20 @@ void Scene::renderText(std::string font, Shader shader, std::string text, float 
 
 // called after main loop
 void Scene::cleanup() {
-    // clean all models
-    models.traverse([](Model* model) -> void {
-        model->cleanup();
-    });
+    // clean up instances
+    avl_free(instances);
 
-    // clean up model and instances tries
-    models.cleanup();
-    instances.cleanup();
+    // clean all models
+    avl_postorderTraverse(models, [](avl* node) -> void {
+        ((Model*)node->val)->cleanup();
+    });
+    avl_free(models);
 
     // cleanup fonts
-    fonts.traverse([](TextRenderer tr) -> void {
-        tr.cleanup();
+    avl_postorderTraverse(fonts, [](avl* node) -> void {
+        ((TextRenderer*)node->val)->cleanup();
     });
-
-    // clean up fonts trie
-    fonts.cleanup();
+    avl_free(fonts);
 
     // destroy octree
     octree->destroy();
@@ -501,22 +516,26 @@ void Scene::setWindowColor(float r, float g, float b, float a) {
 
 // register model into model trie
 void Scene::registerModel(Model* model) {
-    models.insert(model->id, model);
+    models = avl_insert(models, (void*)model->id.c_str(), model);
 }
 
 // generate instance of specified model with physical parameters
 RigidBody* Scene::generateInstance(std::string modelId, glm::vec3 size, float mass, glm::vec3 pos) {
     // generate new rigid body
-    RigidBody* rb = models[modelId]->generateInstance(size, mass, pos);
-    if (rb) {
-        // successfully generated, set new and unique id for instance
-        std::string id = generateId();
-        rb->instanceId = id;
-        // insert into trie
-        instances.insert(id, rb);
-        // insert into pending queue
-        octree->addToPending(rb, models);
-        return rb;
+    void* val = avl_get(models, (void*)modelId.c_str());
+    if (val) {
+        Model* model = (Model*)val;
+        RigidBody* rb = model->generateInstance(size, mass, pos);
+        if (rb) {
+            // successfully generated, set new and unique id for instance
+            std::string id = generateId();
+            rb->instanceId = id;
+            // insert into trie
+            instances = avl_insert(instances, (void*)id.c_str(), rb);
+            // insert into pending queue
+            octree->addToPending(rb, model);
+            return rb;
+        }
     }
     return nullptr;
 }
@@ -524,38 +543,41 @@ RigidBody* Scene::generateInstance(std::string modelId, glm::vec3 size, float ma
 // initialize model instances
 void Scene::initInstances() {
     // initialize all instances for each model
-    models.traverse([](Model* model) -> void {
-        model->initInstances();
+    avl_inorderTraverse(models, [](avl* node) -> void {
+        ((Model*)node->val)->initInstances();
     });
 }
 
 // load model data
 void Scene::loadModels() {
     // initialize each model
-    models.traverse([](Model* model) -> void {
-        model->init();
+    avl_inorderTraverse(models, [](avl* node) -> void {
+        ((Model*)node->val)->init();
     });
 }
 
 // delete instance
 void Scene::removeInstance(std::string instanceId) {
+    RigidBody* instance = (RigidBody*)avl_get(instances, (void*)instanceId.c_str());
     // get instance's model
-    std::string targetModel = instances[instanceId]->modelId;
+    std::string targetModel = instance->modelId;
+    Model* model = (Model*)avl_get(models, (void*)targetModel.c_str());
 
     // delete instance from model
-    models[targetModel]->removeInstance(instanceId);
+    model->removeInstance(instanceId);
 
-    // remove from trie
-    instances[instanceId] = nullptr;
-    instances.erase(instanceId);
+    // remove from tree
+    instances = avl_remove(instances, (void*)instanceId.c_str());
 }
 
 // mark instance for deletion
 void Scene::markForDeletion(std::string instanceId) {
+    RigidBody* instance = (RigidBody*)avl_get(instances, (void*)instanceId.c_str());
+
     // activate kill switch
-    States::activate(&instances[instanceId]->state, INSTANCE_DEAD);
+    States::activate(&instance->state, INSTANCE_DEAD);
     // push to list
-    instancesToDelete.push_back(instances[instanceId]);
+    instancesToDelete.push_back(instance);
 }
 
 // clear all instances marked for deletion

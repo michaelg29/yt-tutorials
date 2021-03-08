@@ -163,6 +163,7 @@
     <None Include="src\graphics\texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\algorithms\avl.cpp" />
     <ClCompile Include="lib\stb.cpp" />
     <ClCompile Include="src\algorithms\bounds.cpp" />
     <ClCompile Include="src\algorithms\octree.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="src\scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\algorithms\avl.h" />
     <ClInclude Include="src\algorithms\bounds.h" />
     <ClInclude Include="src\algorithms\list.hpp" />
     <ClInclude Include="src\algorithms\octree.h" />

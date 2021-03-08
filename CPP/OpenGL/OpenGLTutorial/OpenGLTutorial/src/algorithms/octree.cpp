@@ -1,4 +1,5 @@
 #include "octree.h"
+#include "avl.h"
 #include "../graphics/models/box.hpp"
 
 // calculate bounds of specified quadrant in bounding region
@@ -56,9 +57,9 @@ Octree::node::node(BoundingRegion bounds, std::vector<BoundingRegion> objectList
 */
 
 // add instance to pending queue
-void Octree::node::addToPending(RigidBody* instance, trie::Trie<Model*> models) {
+void Octree::node::addToPending(RigidBody* instance, Model *model) {
     // get all bounding regions of model and put them in queue
-    for (BoundingRegion br : models[instance->modelId]->boundingRegions) {
+    for (BoundingRegion br : model->boundingRegions) {
         br.instance = instance;
         br.transform();
         queue.push(br);
