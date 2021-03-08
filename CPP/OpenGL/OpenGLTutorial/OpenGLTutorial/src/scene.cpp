@@ -132,8 +132,6 @@ bool Scene::init() {
     }
     fonts = avl_createEmptyRoot(strkeycmp);
 
-    variableLog["skipNormalMapping"] = false;
-
     return true;
 }
 
@@ -319,10 +317,6 @@ void Scene::processInput(float dt) {
 
         // set pos
         cameraPos = cameras[activeCamera]->cameraPos;
-
-        if (Keyboard::keyWentDown(GLFW_KEY_N)) {
-            variableLog["skipNormalMapping"] = !variableLog["skipNormalMapping"].val<bool>();
-        }
     }
 }
 
@@ -388,8 +382,6 @@ void Scene::renderShader(Shader shader, bool applyLighting) {
             }
         }
         shader.setInt("noSpotLights", noActiveLights);
-
-        shader.setBool("skipNormalMapping", variableLog["skipNormalMapping"].val<bool>());
     }
 }
 // set uniform shader variables for directional light render
