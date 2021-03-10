@@ -14,14 +14,16 @@
 
 #include <jsoncpp/json.hpp>
 
-#include "graphics/light.h"
-#include "graphics/shader.h"
-#include "graphics/model.h"
-#include "graphics/text.h"
-#include "graphics/framememory.hpp"
-#include "graphics/uniformmemory.hpp"
+#include "graphics/memory/framememory.hpp"
+#include "graphics/memory/uniformmemory.hpp"
 
 #include "graphics/models/box.hpp"
+
+#include "graphics/objects/model.h"
+
+#include "graphics/rendering/light.h"
+#include "graphics/rendering/shader.h"
+#include "graphics/rendering/text.h"
 
 #include "io/camera.h"
 #include "io/keyboard.h"

@@ -1,6 +1,6 @@
 #include "model.h"
 
-#include "../physics/environment.h"
+#include "../../physics/environment.h"
 
 #include <iostream>
 

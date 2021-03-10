@@ -7,13 +7,13 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-#include "shader.h"
-#include "texture.h"
-#include "vertexmemory.hpp"
+#include "../rendering/shader.h"
+#include "../rendering/texture.h"
+#include "../memory/vertexmemory.hpp"
 
-#include "models/box.hpp"
+#include "../models/box.hpp"
 
-#include "../algorithms/bounds.h"
+#include "../../algorithms/bounds.h"
 
 /*
     structure storing values for each vertex

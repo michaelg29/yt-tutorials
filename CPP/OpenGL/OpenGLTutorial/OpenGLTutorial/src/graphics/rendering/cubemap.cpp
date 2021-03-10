@@ -1,6 +1,6 @@
 #include "cubemap.h"
 
-#include "../scene.h"
+#include "../../scene.h"
 
 Cubemap::Cubemap()
     : hasTextures(false) {}

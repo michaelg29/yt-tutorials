@@ -1,9 +1,9 @@
 #ifndef CUBE_H
 #define CUBE_H
 
-#include "../model.h"
-#include "../texture.h"
-#include "../material.h"
+#include "../objects/model.h"
+#include "../rendering/texture.h"
+#include "../rendering/material.h"
 
 class Cube : public Model {
 public:

@@ -15,13 +15,8 @@
 
 #include <glm/glm.hpp>
 
-#include "graphics/shader.h"
-#include "graphics/texture.h"
-#include "graphics/model.h"
-#include "graphics/light.h"
-#include "graphics/cubemap.h"
-#include "graphics/framememory.hpp"
-#include "graphics/uniformmemory.hpp"
+#include "graphics/memory/framememory.hpp"
+#include "graphics/memory/uniformmemory.hpp"
 
 #include "graphics/models/cube.hpp"
 #include "graphics/models/lamp.hpp"
@@ -30,6 +25,14 @@
 #include "graphics/models/box.hpp"
 #include "graphics/models/plane.hpp"
 #include "graphics/models/brickwall.hpp"
+
+#include "graphics/objects/model.h"
+
+#include "graphics/rendering/shader.h"
+#include "graphics/rendering/texture.h"
+#include "graphics/rendering/light.h"
+#include "graphics/rendering/cubemap.h"
+#include "graphics/rendering/text.h"
 
 #include "physics/environment.h"
 

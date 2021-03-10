@@ -15,12 +15,12 @@
 
 #include "mesh.h"
 
-#include "models/box.hpp"
+#include "../models/box.hpp"
 
-#include "../physics/rigidbody.h"
-#include "../algorithms/bounds.h"
+#include "../../physics/rigidbody.h"
+#include "../../algorithms/bounds.h"
 
-#include "../scene.h"
+#include "../../scene.h"
 
 // model switches
 #define DYNAMIC				(unsigned int)1 // 0b00000001
