@@ -12,8 +12,8 @@
 #include <string>
 #include <map>
 
-#include "vertexmemory.hpp"
-#include "shader.h"
+#include "../memory/vertexmemory.hpp"
+#include "../rendering/shader.h"
 
 typedef struct {
 	unsigned int	textureId;	// texture id storing character

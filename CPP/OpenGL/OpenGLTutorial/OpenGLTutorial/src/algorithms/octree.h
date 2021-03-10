@@ -12,7 +12,7 @@
 #include "states.hpp"
 #include "bounds.h"
 
-#include "../graphics/model.h"
+#include "../graphics/objects/model.h"
 
 // forward declaration
 class Model;

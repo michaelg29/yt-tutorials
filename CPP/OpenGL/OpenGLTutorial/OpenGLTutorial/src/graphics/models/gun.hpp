@@ -1,4 +1,5 @@
-#include "../model.h"
+#include "../objects/model.h"
+
 #include "../../io/camera.h"
 #include "../../io/keyboard.h"
 

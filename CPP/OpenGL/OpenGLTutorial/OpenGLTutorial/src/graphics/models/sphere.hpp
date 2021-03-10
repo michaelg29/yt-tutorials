@@ -1,7 +1,7 @@
 #ifndef SPHERE_HPP
 #define SPHERE_HPP
 
-#include "../model.h"
+#include "../objects/model.h"
 
 class Sphere : public Model {
 public:

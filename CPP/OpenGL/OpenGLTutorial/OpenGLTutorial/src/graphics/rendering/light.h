@@ -4,8 +4,8 @@
 #include <glm/glm.hpp>
 
 #include "shader.h"
-#include "../algorithms/bounds.h"
-#include "framememory.hpp"
+#include "../../algorithms/bounds.h"
+#include "../memory/framememory.hpp"
 
 /*
     directional light (eg sun)

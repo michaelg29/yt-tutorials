@@ -7,10 +7,10 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-#include "../vertexmemory.hpp"
+#include "../memory/vertexmemory.hpp"
 
 #include "../../algorithms/bounds.h"
-#include "../shader.h"
+#include "../rendering/shader.h"
 
 #define UPPER_BOUND 100
 
