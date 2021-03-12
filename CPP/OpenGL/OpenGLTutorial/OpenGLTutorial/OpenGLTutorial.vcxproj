@@ -165,6 +165,9 @@
     <ClCompile Include="src\algorithms\avl.cpp" />
     <ClCompile Include="lib\stb.cpp" />
     <ClCompile Include="src\algorithms\bounds.cpp" />
+    <ClCompile Include="src\algorithms\cmathematics\cmathematics.cpp" />
+    <ClCompile Include="src\algorithms\cmathematics\matrix.cpp" />
+    <ClCompile Include="src\algorithms\cmathematics\vec.cpp" />
     <ClCompile Include="src\algorithms\octree.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\graphics\objects\mesh.cpp" />
@@ -187,6 +190,9 @@
   <ItemGroup>
     <ClInclude Include="src\algorithms\avl.h" />
     <ClInclude Include="src\algorithms\bounds.h" />
+    <ClInclude Include="src\algorithms\cmathematics\cmathematics.h" />
+    <ClInclude Include="src\algorithms\cmathematics\matrix.h" />
+    <ClInclude Include="src\algorithms\cmathematics\vec.h" />
     <ClInclude Include="src\algorithms\list.hpp" />
     <ClInclude Include="src\algorithms\octree.h" />
     <ClInclude Include="src\algorithms\states.hpp" />
