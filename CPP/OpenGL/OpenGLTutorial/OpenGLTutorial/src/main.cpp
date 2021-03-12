@@ -64,8 +64,35 @@ Brickwall wall;
 
 std::string Shader::defaultDirectory = "assets/shaders";
 
+#include "physics/collisionmesh.h"
+
 int main() {
     std::cout << "Hello, OpenGL!" << std::endl;
+
+    float P[9] = {
+        0.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 0.0f,
+        1.0f, 0.0f, 0.0f
+    };
+    unsigned int Pi[3] = {
+        0, 1, 2
+    };
+
+    float U[9] = {
+        -1.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        1.0f, 2.0f, 0.5f
+    };
+    unsigned int Ui[3] = {
+        2, 0, 1
+    };
+
+    CollisionMesh PF(3, P, 1, Pi);
+    CollisionMesh UF(3, P, 1, Ui);
+
+    std::cout << PF.faces[0].collidesWith(UF.faces[0]) << std::endl;
+
+    return 0;
 
     // construct scene
     scene = Scene(3, 3, "OpenGL Tutorial", 1200, 720);

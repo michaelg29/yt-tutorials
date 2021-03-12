@@ -183,6 +183,8 @@
     <ClCompile Include="src\io\keyboard.cpp" />
     <ClCompile Include="src\io\mouse.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\physics\collisionmesh.cpp" />
+    <ClCompile Include="src\physics\collisionmodel.cpp" />
     <ClCompile Include="src\physics\environment.cpp" />
     <ClCompile Include="src\physics\rigidbody.cpp" />
     <ClCompile Include="src\scene.cpp" />
@@ -219,6 +221,8 @@
     <ClInclude Include="src\io\joystick.h" />
     <ClInclude Include="src\io\keyboard.h" />
     <ClInclude Include="src\io\mouse.h" />
+    <ClInclude Include="src\physics\collisionmesh.h" />
+    <ClInclude Include="src\physics\collisionmodel.h" />
     <ClInclude Include="src\physics\environment.h" />
     <ClInclude Include="src\physics\rigidbody.h" />
     <ClInclude Include="src\scene.h" />
