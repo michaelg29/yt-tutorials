@@ -32,6 +32,7 @@
 #include "algorithms/states.hpp"
 #include "algorithms/avl.h"
 #include "algorithms/octree.h"
+#include "algorithms/trie.hpp"
 
 // forward declarations
 namespace Octree {
@@ -49,7 +50,7 @@ class Scene {
 public:
     // tries to store models/instances
     avl* models;
-    avl* instances;
+    trie::Trie<RigidBody*> instances;
 
     // list of instances that should be deleted
     std::vector<RigidBody*> instancesToDelete;
