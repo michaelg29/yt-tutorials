@@ -2,6 +2,8 @@
 
 #include "../../physics/environment.h"
 
+#include "../../scene.h"
+
 #include <iostream>
 
 /*
@@ -11,7 +13,8 @@
 // initialize with parameters
 Model::Model(std::string id, BoundTypes boundType, unsigned int maxNoInstances, unsigned int flags)
     : id(id), boundType(boundType), switches(flags),
-    currentNoInstances(0), maxNoInstances(maxNoInstances), instances(maxNoInstances) {}
+    currentNoInstances(0), maxNoInstances(maxNoInstances), instances(maxNoInstances),
+    collision(nullptr) {}
 
 /*
     process functions
@@ -39,6 +42,19 @@ void Model::loadModel(std::string path) {
 
     // process root node
     processNode(scene->mRootNode, scene);
+}
+
+// enable a collision model
+void Model::enableCollisionModel() {
+    if (!this->collision) {
+        this->collision = new CollisionModel(this);
+    }
+}
+
+// add a mesh to the list
+void Model::addMesh(Mesh* mesh) {
+    meshes.push_back(*mesh);
+    boundingRegions.push_back(mesh->br);
 }
 
 // render instance(s)
@@ -221,8 +237,7 @@ void Model::processNode(aiNode* node, const aiScene* scene) {
     for (unsigned int i = 0; i < node->mNumMeshes; i++) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         Mesh newMesh = processMesh(mesh, scene);
-        meshes.push_back(newMesh);
-        boundingRegions.push_back(newMesh.br);
+        addMesh(&newMesh);
     }
 
     // process all child nodes
@@ -362,6 +377,48 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 
     // load vertex and index data
     ret.loadData(vertices, indices);
+    return ret;
+}
+
+// proces a custom mesh
+Mesh Model::processMesh(BoundingRegion br,
+    unsigned int noVertices, float* vertices,
+    unsigned int noIndices, unsigned int* indices,
+    bool calcTanVectors,
+    unsigned int noCollisionPoints, float* collisionPoints,
+    unsigned int noCollisionFaces, unsigned int* collisionIndices,
+    bool pad) {
+    // process vertex array
+    std::vector<Vertex> vertexList = Vertex::genList(vertices, noVertices);
+
+    // create index list
+    std::vector<unsigned int> indexList(noIndices);
+    if (indices) {
+        // copy array
+        memcpy(indexList.data(), indices, noIndices * sizeof(unsigned int));
+    }
+    else {
+        // insert sequential indices
+        for (unsigned int i = 0; i < noIndices; i++) {
+            indexList[i] = i;
+        }
+    }
+
+    // calculate the lighting values
+    if (calcTanVectors) {
+        Vertex::calcTanVectors(vertexList, indexList);
+    }
+
+    // setup return mesh
+    Mesh ret(br);
+    ret.loadData(vertexList, indexList, pad);
+
+    // allocate collision mesh if specified
+    if (noCollisionPoints) {
+        enableCollisionModel();
+        ret.loadCollisionMesh(noCollisionPoints, collisionPoints, noCollisionFaces, collisionIndices);
+    }
+    
     return ret;
 }
 

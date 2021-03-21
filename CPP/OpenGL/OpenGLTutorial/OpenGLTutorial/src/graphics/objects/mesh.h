@@ -9,11 +9,15 @@
 
 #include "../rendering/shader.h"
 #include "../rendering/texture.h"
+#include "../rendering/material.h"
+
 #include "../memory/vertexmemory.hpp"
 
 #include "../models/box.hpp"
 
 #include "../../algorithms/bounds.h"
+
+#include "../../physics/collisionmesh.h"
 
 /*
     structure storing values for each vertex
@@ -47,6 +51,8 @@ class Mesh {
 public:
     // Bounding region for mesh
     BoundingRegion br;
+    // pointer to the attached collision mesh
+    CollisionMesh* collision;
 
     // list of vertices
     std::vector<Vertex> vertices;
@@ -69,14 +75,32 @@ public:
     // default
     Mesh();
 
+    // intialize with a bounding region
+    Mesh(BoundingRegion br);
+
     // initialize as textured object
-    Mesh(BoundingRegion br, std::vector<Texture> textures = {});
+    Mesh(BoundingRegion br, std::vector<Texture> textures);
 
     // initialize as material object
     Mesh(BoundingRegion br, aiColor4D diff, aiColor4D spec);
 
+    // initialize with a material
+    Mesh(BoundingRegion br, Material m);
+
     // load vertex and index data
     void loadData(std::vector<Vertex> vertices, std::vector<unsigned int> indices, bool pad = false);
+
+    // setup collision mesh
+    void loadCollisionMesh(unsigned int noPoints, float* coordinates, unsigned int noFaces, unsigned int* indices);
+
+    // setup textures
+    void setupTextures(std::vector<Texture> textures);
+
+    // setup material colors
+    void setupColors(aiColor4D diff, aiColor4D spec);
+
+    // set material structure
+    void setupMaterial(Material mat);
 
     // render number of instances using shader
     void render(Shader shader, unsigned int noInstances);

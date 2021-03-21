@@ -92,8 +92,6 @@ int main() {
 
     std::cout << PF.faces[0].collidesWith(UF.faces[0]) << std::endl;
 
-    return 0;
-
     // construct scene
     scene = Scene(3, 3, "OpenGL Tutorial", 1200, 720);
     // test if GLFW successfully started and created window

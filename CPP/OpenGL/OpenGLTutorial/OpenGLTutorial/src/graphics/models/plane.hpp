@@ -18,22 +18,31 @@ public:
             -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,	0.0f, 0.0f, // bottom left
              0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,	1.0f, 0.0f  // bottom right
         };
+        float collisionVertices[] = {
+            // position			
+             0.5f,  0.5f, 0.0f,
+            -0.5f,  0.5f, 0.0f,
+            -0.5f, -0.5f, 0.0f,
+             0.5f, -0.5f, 0.0f
+        };
 
-        std::vector<unsigned int> indices = {
+        unsigned int indices[] = {
             0, 1, 3,
             1, 2, 3
         };
 
         BoundingRegion br(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.5f, 0.5f, 0.0f));
 
-        std::vector<Vertex> vertexList = Vertex::genList(quadVertices, noVertices);
-        Vertex::calcTanVectors(vertexList, indices);
+        Mesh ret = processMesh(br,
+            noVertices, quadVertices,
+            6, indices,
+            true,
+            noVertices, collisionVertices,
+            2, indices);
 
-        Mesh ret(br, textures);
-        ret.loadData(vertexList, indices, true);
+        ret.setupTextures(textures);
 
-        meshes.push_back(ret);
-        boundingRegions.push_back(br);
+        addMesh(&ret);
     }
 };
 
