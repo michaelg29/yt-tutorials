@@ -10,7 +10,8 @@
 
 // initialize with parameters
 Model::Model(std::string id, BoundTypes boundType, unsigned int maxNoInstances, unsigned int flags)
-    : id(id), boundType(boundType), switches(flags), currentNoInstances(0), maxNoInstances(maxNoInstances) {}
+    : id(id), boundType(boundType), switches(flags),
+    currentNoInstances(0), maxNoInstances(maxNoInstances), instances(maxNoInstances) {}
 
 /*
     process functions
@@ -50,7 +51,7 @@ void Model::render(Shader shader, float dt, Scene* scene, glm::mat4 model) {
         // dynamic instances - update VBO data
 
         // create list of each
-        std::vector<glm::vec3> positions, sizes;
+        std::vector<glm::vec3> positions(currentNoInstances), sizes(currentNoInstances);
 
         // determine if instances are moving
         bool doUpdate = States::isActive(&switches, DYNAMIC);
@@ -69,8 +70,8 @@ void Model::render(Shader shader, float dt, Scene* scene, glm::mat4 model) {
             }
 
             // add updates positions and sizes
-            positions.push_back(instances[i]->pos);
-            sizes.push_back(instances[i]->size);
+            positions[i] = instances[i]->pos;
+            sizes[i] = instances[i]->size;
         }
 
         // set position data
@@ -102,7 +103,7 @@ void Model::cleanup() {
     instances.clear();
 
     // cleanup each mesh
-    for (unsigned int i = 0; i < meshes.size(); i++) {
+    for (unsigned int i = 0, len = instances.size(); i < len; i++) {
         meshes[i].cleanup();
     }
 
@@ -123,7 +124,7 @@ RigidBody* Model::generateInstance(glm::vec3 size, float mass, glm::vec3 pos) {
     }
 
     // instantiate new instance
-    instances.push_back(new RigidBody(id, size, mass, pos));
+    instances[currentNoInstances] = new RigidBody(id, size, mass, pos);
     return instances[currentNoInstances++];
 }
 
@@ -134,14 +135,14 @@ void Model::initInstances() {
     glm::vec3* sizeData = nullptr;
     GLenum usage = GL_DYNAMIC_DRAW;
 
-    std::vector<glm::vec3> positions, sizes;
+    std::vector<glm::vec3> positions(currentNoInstances), sizes (currentNoInstances);
 
     if (States::isActive(&switches, CONST_INSTANCES)) {
         // instances won't change, set data pointers
 
         for (unsigned int i = 0; i < currentNoInstances; i++) {
-            positions.push_back(instances[i]->pos);
-            sizes.push_back(instances[i]->size);
+            positions[i] = instances[i]->pos;
+            sizes[i] = instances[i]->size;
         }
 
         if (positions.size() > 0) {
@@ -182,8 +183,13 @@ void Model::initInstances() {
 
 // remove instance at idx
 void Model::removeInstance(unsigned int idx) {
-    instances.erase(instances.begin() + idx);
-    currentNoInstances--;
+    if (idx < maxNoInstances) {
+        // shift down
+        for (unsigned int i = idx + 1; i < currentNoInstances; i++) {
+            instances[i - 1] = instances[i];
+        }
+        currentNoInstances--;
+    }
 }
 
 // remove instance with id
@@ -238,10 +244,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 
     // vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-        Vertex vertex;
-
         // position
-        vertex.pos = glm::vec3(
+        vertices[i].pos = glm::vec3(
             mesh->mVertices[i].x,
             mesh->mVertices[i].y,
             mesh->mVertices[i].z
@@ -250,13 +254,13 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
         // determine if outside of current min and max
         for (int j = 0; j < 3; j++) {
             // if smaller than min
-            if (vertex.pos[j] < min[j]) min[j] = vertex.pos[j];
+            if (vertices[i].pos[j] < min[j]) min[j] = vertices[i].pos[j];
             // if larger than max
-            if (vertex.pos[j] > max[j]) max[j] = vertex.pos[j];
+            if (vertices[i].pos[j] > max[j]) max[j] = vertices[i].pos[j];
         }
 
         // normal vectors
-        vertex.normal = glm::vec3(
+        vertices[i].normal = glm::vec3(
             mesh->mNormals[i].x,
             mesh->mNormals[i].y,
             mesh->mNormals[i].z
@@ -264,23 +268,21 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 
         // textures
         if (mesh->mTextureCoords[0]) {
-            vertex.texCoord = glm::vec2(
+            vertices[i].texCoord = glm::vec2(
                 mesh->mTextureCoords[0][i].x,
                 mesh->mTextureCoords[0][i].y
             );
         }
         else {
-            vertex.texCoord = glm::vec2(0.0f);
+            vertices[i].texCoord = glm::vec2(0.0f);
         }
 
         // tangent vector
-        vertex.tangent = {
+        vertices[i].tangent = {
             mesh->mTangents[i].x,
             mesh->mTangents[i].y,
             mesh->mTangents[i].z
         };
-
-        vertices.push_back(vertex);
     }
 
     // process min/max for BR
