@@ -17,10 +17,10 @@
 
 #include "../models/box.hpp"
 
+#include "../../physics/collisionmodel.h"
 #include "../../physics/rigidbody.h"
-#include "../../algorithms/bounds.h"
 
-#include "../../scene.h"
+#include "../../algorithms/bounds.h"
 
 // model switches
 #define DYNAMIC				(unsigned int)1 // 0b00000001
@@ -44,6 +44,8 @@ public:
 
     // list of meshes
     std::vector<Mesh> meshes;
+    // pointer to the collision model
+    CollisionModel* collision;
     // list of bounding regions (1 for each mesh)
     std::vector<BoundingRegion> boundingRegions;
 
@@ -74,6 +76,12 @@ public:
 
     // load model from path
     void loadModel(std::string path);
+
+    // enable a collision model
+    void enableCollisionModel();
+
+    // add a mesh to the list
+    void addMesh(Mesh* mesh);
 
     // render instance(s)
     virtual void render(Shader shader, float dt, Scene *scene, glm::mat4 model = glm::mat4(1.0f));
@@ -119,6 +127,15 @@ protected:
 
     // process mesh in object file
     Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+
+    // proces a custom mesh
+    Mesh processMesh(BoundingRegion br,
+        unsigned int noVertices, float* vertices,
+        unsigned int noIndices, unsigned int* indices,
+        bool calcTanVectors = true,
+        unsigned int noCollisionPoints = 0, float* collisionPoints = NULL,
+        unsigned int noCollisionFaces = 0, unsigned int* collisionIndices = NULL,
+        bool pad = false);
 
     // load list of textures
     std::vector<Texture> loadTextures(aiMaterial* mat, aiTextureType type);

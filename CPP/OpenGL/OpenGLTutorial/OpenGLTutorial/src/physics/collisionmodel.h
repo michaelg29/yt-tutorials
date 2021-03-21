@@ -3,8 +3,18 @@
 
 #include "collisionmesh.h"
 
-class CollisionModel {
+#include <vector>
 
+// forward declaration
+class Model;
+
+class CollisionModel {
+public:
+	Model* model;
+
+	std::vector<CollisionMesh> meshes;
+
+	CollisionModel(Model* model);
 };
 
 #endif
