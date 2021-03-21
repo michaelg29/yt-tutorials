@@ -93,6 +93,14 @@ void Model::render(Shader shader, float dt, Scene* scene, glm::mat4 model) {
 
 // free up memory
 void Model::cleanup() {
+    // free all instances
+    for (unsigned int i = 0, len = instances.size(); i < len; i++) {
+        if (instances[i]) {
+            free(instances[i]);
+        }
+    }
+    instances.clear();
+
     // cleanup each mesh
     for (unsigned int i = 0; i < meshes.size(); i++) {
         meshes[i].cleanup();
