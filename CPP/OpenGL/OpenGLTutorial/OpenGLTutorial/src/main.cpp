@@ -213,7 +213,8 @@ int main() {
     }
 
     // instantiate the brickwall plane
-    scene.generateInstance(wall.id, glm::vec3(1.0f), 1.0f, glm::vec3(0.0f, 0.0f, -2.0f));
+    scene.generateInstance(wall.id, glm::vec3(1.0f), 1.0f, 
+        { 0.0f, 0.0f, 2.0f }, { -1.0f, glm::pi<float>(), 0.0f });
 
     // instantiate instances
     scene.initInstances();

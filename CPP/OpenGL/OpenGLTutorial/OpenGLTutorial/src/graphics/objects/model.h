@@ -84,7 +84,7 @@ public:
     void addMesh(Mesh* mesh);
 
     // render instance(s)
-    virtual void render(Shader shader, float dt, Scene *scene, glm::mat4 model = glm::mat4(1.0f));
+    virtual void render(Shader shader, float dt, Scene *scene);
 
     // free up memory
     void cleanup();
@@ -94,7 +94,7 @@ public:
     */
 
     // generate instance with parameters
-    RigidBody* generateInstance(glm::vec3 size, float mass, glm::vec3 pos);
+    RigidBody* generateInstance(glm::vec3 size, float mass, glm::vec3 pos, glm::vec3 rot);
 
     // initialize memory for instances
     void initInstances();
@@ -140,9 +140,9 @@ protected:
     // load list of textures
     std::vector<Texture> loadTextures(aiMaterial* mat, aiTextureType type);
 
-    // VBOs for positions and sizes
-    BufferObject posVBO;
-    BufferObject sizeVBO;
+    // VBOs for model matrices
+    BufferObject modelVBO;
+    BufferObject normalModelVBO;
 };
 
 #endif

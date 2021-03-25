@@ -32,6 +32,13 @@ public:
     // dimensions of object
     glm::vec3 size;
 
+    // rotation in Euler angles
+    glm::vec3 rot;
+
+    // model matrix
+    glm::mat4 model;
+    glm::mat3 normalModel;
+
     // ids for quick access to instance/model
     std::string modelId;
     std::string instanceId;
@@ -45,7 +52,11 @@ public:
     */
 
     // construct with parameters and default
-    RigidBody(std::string modelId = "", glm::vec3 size = glm::vec3(1.0f), float mass = 1.0f, glm::vec3 pos = glm::vec3(0.0f));
+    RigidBody(std::string modelId = "",
+        glm::vec3 size = glm::vec3(1.0f),
+        float mass = 1.0f,
+        glm::vec3 pos = glm::vec3(0.0f),
+        glm::vec3 rot = glm::vec3(0.0f));
 
     /*
         transformation functions

@@ -2,8 +2,8 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoord;
 layout (location = 3) in vec3 aTangent;
-layout (location = 4) in vec3 aOffset;
-layout (location = 5) in vec3 aSize;
+layout (location = 4) in mat4 model;
+layout (location = 8) in mat3 normalModel;
 
 out VS_OUT {
 	vec3 FragPos;
@@ -12,8 +12,6 @@ out VS_OUT {
 	TangentLights tanLights;
 } vs_out;
 
-uniform mat4 model;
-uniform mat3 normalModel;
 uniform mat4 view;
 uniform mat4 projection;
 
@@ -21,10 +19,8 @@ uniform vec3 viewPos;
 
 void main() {
 	// get position in world space
-	vec3 pos = aPos * aSize + aOffset;
-
 	// apply model transformation
-	vs_out.FragPos = vec3(model * vec4(pos, 1.0));
+	vs_out.FragPos = vec3(model * vec4(aPos, 1.0));
 
 	// set texture coordinate
 	vs_out.TexCoord = aTexCoord;

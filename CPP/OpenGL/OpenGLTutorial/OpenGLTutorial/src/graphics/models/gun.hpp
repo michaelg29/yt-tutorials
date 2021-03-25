@@ -16,7 +16,7 @@ public:
         loadModel("assets/models/m4a1/scene.gltf");
     }
 
-    void render(Shader shader, float dt, Scene *scene, glm::mat4 model) {
+    /*void render(Shader shader, float dt, Scene *scene, glm::mat4 model) {
         // set position
         // multiply offset by unit vector in 2 directions
         instances[0]->pos = scene->getActiveCamera()->cameraPos + glm::vec3(scene->getActiveCamera()->cameraFront * 0.5f) - glm::vec3(scene->getActiveCamera()->cameraUp * 0.205f);
@@ -37,6 +37,6 @@ public:
         // scale
         model = glm::scale(model, instances[0]->size);
 
-        Model::render(shader, dt, scene, model);
-    }
+        Model::render(shader, dt, scene);
+    }*/
 };
