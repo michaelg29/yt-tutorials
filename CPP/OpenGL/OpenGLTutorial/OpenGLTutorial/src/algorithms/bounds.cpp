@@ -130,7 +130,16 @@ bool BoundingRegion::intersectsWith(BoundingRegion br) {
     else if (type == BoundTypes::SPHERE && br.type == BoundTypes::SPHERE) {
         // both spheres - distance between centers must be less than combined radius
 
-        return glm::length(center - br.center) < (radius + br.radius);
+        glm::vec3 centerDiff = center - br.center;
+        float distSquared = 0.0f;
+        for (int i = 0; i < 3; i++) {
+            distSquared += centerDiff[i] * centerDiff[i];
+        }
+
+        float maxMagSquared = radius + br.radius;
+        maxMagSquared *= maxMagSquared;
+
+        return distSquared <= maxMagSquared;
     }
     else if (type == BoundTypes::SPHERE) {
         // this is a sphere, br is a box

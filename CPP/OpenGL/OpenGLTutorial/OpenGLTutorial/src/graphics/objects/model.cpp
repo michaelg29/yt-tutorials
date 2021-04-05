@@ -5,6 +5,7 @@
 #include "../../scene.h"
 
 #include <iostream>
+#include <limits>
 
 /*
     constructor
@@ -255,8 +256,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 
     // setup bounding region
     BoundingRegion br(boundType);
-    glm::vec3 min((float)(~0));		// min point = max float
-    glm::vec3 max(-(float)(~0));	// max point = min float
+    glm::vec3 min(std::numeric_limits<float>::max()); // min point = max float
+    glm::vec3 max(std::numeric_limits<float>::min()); // max point = min float
 
     // vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
