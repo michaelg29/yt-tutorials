@@ -1,5 +1,6 @@
 #include "collisionmesh.h"
 #include "collisionmodel.h"
+#include "rigidbody.h"
 
 /*
 	Line-plane intersection cases
@@ -114,20 +115,50 @@ void rref(glm::mat<C, R, float>& m) {
 	}
 }
 
-bool Face::collidesWith(Face& face) {
+glm::vec3 mat4vec3mult(glm::mat4& m, glm::vec3& v) {
+	glm::vec3 ret;
+	for (int i = 0; i < 3; i++) {
+		ret[i] = v[0] * m[0][i] + v[1] * m[1][i] + v[2] * m[2][i] + m[3][i];
+	}
+	return ret;
+}
+
+glm::vec3 linCombSolution(glm::vec3 A, glm::vec3 B, glm::vec3 C, glm::vec3 point) {
+	// represent the point as a linear combination of the 3 basis vectors
+	glm::mat4x3 m(A, B, C, point);
+
+	// do RREF
+	rref(m);
+
+	return m[3];
+}
+
+bool faceContainsPointRange(glm::vec3 A, glm::vec3 B, glm::vec3 N, glm::vec3 point, float radius) {
+	glm::vec3 c = linCombSolution(A, B, N, point);
+
+	return c[0] >= -radius && c[1] >= -radius && c[0] + c[1] <= 1.0f + radius;
+}
+
+bool faceContainsPoint(glm::vec3 A, glm::vec3 B, glm::vec3 N, glm::vec3 point) {
+	return faceContainsPointRange(A, B, N, point, 0.0f);
+}
+
+bool Face::collidesWithFace(RigidBody* thisRB, Face& face, RigidBody* faceRB) {
 	// transform coordinates so that P1 is the origin
-	glm::vec3 P1 = this->mesh->points[this->i1];
-	glm::vec3 P2 = this->mesh->points[this->i2] - P1;
-	glm::vec3 P3 = this->mesh->points[this->i3] - P1;
+	glm::vec3 P1 = mat4vec3mult(thisRB->model, this->mesh->points[this->i1]);
+	glm::vec3 P2 = mat4vec3mult(thisRB->model, this->mesh->points[this->i2]) - P1;
+	glm::vec3 P3 = mat4vec3mult(thisRB->model, this->mesh->points[this->i3]) - P1;
 	glm::vec3 lines[3] = {
 		P2,
 		P3,
 		P3 - P2
 	};
 
-	glm::vec3 U1 = face.mesh->points[face.i1] - P1;
-	glm::vec3 U2 = face.mesh->points[face.i2] - P1;
-	glm::vec3 U3 = face.mesh->points[face.i3] - P1;
+	glm::vec3 thisNorm = thisRB->normalModel * this->norm;
+
+	glm::vec3 U1 = mat4vec3mult(faceRB->model, face.mesh->points[face.i1]) - P1;
+	glm::vec3 U2 = mat4vec3mult(faceRB->model, face.mesh->points[face.i2]) - P1;
+	glm::vec3 U3 = mat4vec3mult(faceRB->model, face.mesh->points[face.i3]) - P1;
 
 	// set P1 as the origin
 	P1[0] = 0.0f; P1[1] = 0.0f; P1[2] = 0.0f;
@@ -152,7 +183,7 @@ bool Face::collidesWith(Face& face) {
 		// get intersection with the plane
 		float t = 0.0f;
 
-		char currentCase = linePlaneIntersection(P1, this->norm,
+		char currentCase = linePlaneIntersection(P1, thisNorm,
 			sideOrigins[i], sides[i],
 			t);
 
@@ -189,18 +220,7 @@ bool Face::collidesWith(Face& face) {
 			// get point of intersection
 			glm::vec3 intersection = sideOrigins[i] + t * sides[i];
 
-			// represent the intersection point as a linear combination of the face sides
-			glm::mat4x3 m(P2, P3, this->norm, intersection);
-
-			// do RREF
-			rref(m);
-
-			// obtain the coefficients for the linear combination
-			c1 = m[3][0];
-			c2 = m[3][1];
-			c3 = m[3][2];
-
-			if (c1 >= 0.0f && c2 >= 0.0f && c1 + c2 <= 1.0f) {
+			if (faceContainsPoint(P2, P3, thisNorm, intersection)) {
 				return true;
 			}
 
@@ -209,6 +229,31 @@ bool Face::collidesWith(Face& face) {
 			// intersection in the plane out of range, no collision
 			continue;
 		};
+	}
+
+	return false;
+}
+
+bool Face::collidesWithSphere(RigidBody* thisRB, BoundingRegion& br) {
+	if (br.type != BoundTypes::SPHERE) {
+		return false;
+	}
+
+	// apply model transformations
+	glm::vec3 P1 = mat4vec3mult(thisRB->model, this->mesh->points[i1]);
+	glm::vec3 P2 = mat4vec3mult(thisRB->model, this->mesh->points[i2]);
+	glm::vec3 P3 = mat4vec3mult(thisRB->model, this->mesh->points[i3]);
+
+	glm::vec3 norm = thisRB->normalModel * this->norm;
+	glm::vec3 unitN = norm / glm::length(norm);
+
+	glm::vec3 distanceVec = br.center - P1;
+	float distance = glm::dot(distanceVec, unitN);
+
+	if (abs(distance) < br.radius) {
+		glm::vec3 circCenter = br.center + distance * unitN;
+
+		return faceContainsPointRange(P2 - P1, P3 - P1, norm, circCenter - P1, br.radius);
 	}
 
 	return false;
