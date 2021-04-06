@@ -84,13 +84,40 @@ int main() {
         1.0f, 2.0f, 0.5f
     };
     unsigned int Ui[3] = {
-        2, 0, 1
+        0, 1, 2
     };
 
     CollisionMesh PF(3, P, 1, Pi);
-    CollisionMesh UF(3, P, 1, Ui);
+    CollisionMesh UF(3, U, 1, Ui);
 
-    std::cout << PF.faces[0].collidesWith(UF.faces[0]) << std::endl;
+    RigidBody prb;
+    RigidBody urb;
+
+    std::cout << PF.faces[0].collidesWithFace(&prb, UF.faces[0], &urb) << std::endl;
+
+    float V[9] = {
+        0.0f, 0.0f, 0.0f,
+        3.0f, 1.0f, sqrt(3.0f),
+        -3.0f, 0.6, -sqrt(3.0f)
+    };
+    unsigned int Vi[3] = {
+        0, 1, 2
+    };
+
+    CollisionMesh VF(3, V, 1, Vi);
+
+    RigidBody vrb;
+    vrb.pos = { 0.0f, 10.0f, 0.0f };
+    vrb.update(0.0f);
+
+    BoundingRegion br({ 1.0f, 0.0f, -1.0f, }, 2.0f);
+    RigidBody rb2;
+    br.instance = &rb2;
+    br.transform();
+
+    std::cout << VF.faces[0].collidesWithSphere(&vrb, br);
+
+    return 0;
 
     // construct scene
     scene = Scene(3, 3, "OpenGL Tutorial", 1200, 720);
