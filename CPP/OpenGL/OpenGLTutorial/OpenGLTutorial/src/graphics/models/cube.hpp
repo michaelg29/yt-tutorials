@@ -10,7 +10,7 @@ public:
     Material m;
 
     Cube(unsigned int maxNoInstances, Material m = Material::red_plastic)
-        : Model("cube", BoundTypes::AABB, maxNoInstances, CONST_INSTANCES | NO_TEX), m(m) {}
+        : Model("cube", maxNoInstances, CONST_INSTANCES | NO_TEX), m(m) {}
 
     void init() {
         int noVertices = 36;
@@ -90,7 +90,8 @@ public:
             7, 3, 2
         };
 
-        BoundingRegion br(glm::vec3(-0.5f), glm::vec3(0.5f));
+        //BoundingRegion br(glm::vec3(-0.5f), glm::vec3(0.5f));
+        BoundingRegion br(glm::vec3(0.0f), sqrt(3.0f) / 2.0f);
 
         Mesh ret = processMesh(br,
             noVertices, vertices,

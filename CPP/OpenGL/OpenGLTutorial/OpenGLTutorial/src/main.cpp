@@ -57,7 +57,7 @@ Camera cam;
 double dt = 0.0f; // tme btwn frames
 double lastFrame = 0.0f; // time of last frame
 
-//Sphere sphere(10);
+Sphere sphere(10);
 //Cube cube(10);
 Lamp lamp(4);
 Brickwall wall;
@@ -117,8 +117,6 @@ int main() {
 
     std::cout << VF.faces[0].collidesWithSphere(&vrb, br);
 
-    return 0;
-
     // construct scene
     scene = Scene(3, 3, "OpenGL Tutorial", 1200, 720);
     // test if GLFW successfully started and created window
@@ -159,7 +157,7 @@ int main() {
 
     scene.registerModel(&wall);
 
-    //scene.registerModel(&sphere);
+    scene.registerModel(&sphere);
 
     //scene.registerModel(&cube);
 
@@ -277,11 +275,11 @@ int main() {
         // activate the directional light's FBO
 
         // remove launch objects if too far
-        //for (int i = 0; i < sphere.currentNoInstances; i++) {
-        //    if (glm::length(cam.cameraPos - sphere.instances[i]->pos) > 250.0f) {
-        //        scene.markForDeletion(sphere.instances[i]->instanceId);
-        //    }
-        //}
+        for (int i = 0; i < sphere.currentNoInstances; i++) {
+            if (glm::length(cam.cameraPos - sphere.instances[i]->pos) > 250.0f) {
+                scene.markForDeletion(sphere.instances[i]->instanceId);
+            }
+        }
 
         //// render scene to dirlight FBO
         //dirLight.shadowFBO.activate();
@@ -312,8 +310,8 @@ int main() {
         renderScene(shader);
 
         // render boxes
-        //scene.renderShader(boxShader, false);
-        //box.render(boxShader);
+        scene.renderShader(boxShader, false);
+        box.render(boxShader);
 
         // send new frame to window
         scene.newFrame(box);
@@ -328,9 +326,9 @@ int main() {
 }
 
 void renderScene(Shader shader) {
-    //if (sphere.currentNoInstances > 0) {
-    //    scene.renderInstances(sphere.id, shader, dt);
-    //}
+    if (sphere.currentNoInstances > 0) {
+        scene.renderInstances(sphere.id, shader, dt);
+    }
 
     //scene.renderInstances(cube.id, shader, dt);
 
@@ -340,12 +338,12 @@ void renderScene(Shader shader) {
 }
 
 void launchItem(float dt) {
-    //RigidBody* rb = scene.generateInstance(sphere.id, glm::vec3(0.5f), 1.0f, cam.cameraPos);
-    //if (rb) {
-    //    // instance generated successfully
-    //    rb->transferEnergy(50.0f, cam.cameraFront);
-    //    rb->applyAcceleration(Environment::gravitationalAcceleration);
-    //}
+    RigidBody* rb = scene.generateInstance(sphere.id, glm::vec3(0.1f), 1.0f, cam.cameraPos);
+    if (rb) {
+        // instance generated successfully
+        rb->transferEnergy(50.0f, cam.cameraFront);
+        rb->applyAcceleration(Environment::gravitationalAcceleration);
+    }
 }
 
 void processInput(double dt) {

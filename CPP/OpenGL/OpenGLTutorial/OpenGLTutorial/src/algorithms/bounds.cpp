@@ -1,5 +1,6 @@
 #include "bounds.h"
 #include "octree.h"
+#include "../physics/collisionmesh.h"
 
 /*
         Constructors
@@ -30,7 +31,15 @@ void BoundingRegion::transform() {
         }
         else {
             center = ogCenter * instance->size + instance->pos;
-            radius = ogRadius * instance->size.x;
+            
+            float maxDim = instance->size[0];
+            for (int i = 1; i < 3; i++) {
+                if (instance->size[i] > maxDim) {
+                    maxDim = instance->size[i];
+                }
+            }
+
+            radius = ogRadius * maxDim;
         }
     }
 }

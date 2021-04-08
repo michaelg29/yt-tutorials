@@ -9,6 +9,7 @@
 namespace Octree {
     class node;
 }
+class CollisionMesh;
 
 /*
     enum for possible Bound Types
@@ -28,8 +29,9 @@ public:
     // type of region
     BoundTypes type;
 
-    // pointer for quick access to instance
+    // pointer for quick access to instance and collision mesh
     RigidBody* instance;
+    CollisionMesh* collisionMesh;
 
     // pointer for quick access to current octree node
     Octree::node* cell;

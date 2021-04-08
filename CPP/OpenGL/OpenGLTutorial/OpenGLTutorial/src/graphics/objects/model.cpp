@@ -12,8 +12,8 @@
 */
 
 // initialize with parameters
-Model::Model(std::string id, BoundTypes boundType, unsigned int maxNoInstances, unsigned int flags)
-    : id(id), boundType(boundType), switches(flags),
+Model::Model(std::string id, unsigned int maxNoInstances, unsigned int flags)
+    : id(id), switches(flags),
     currentNoInstances(0), maxNoInstances(maxNoInstances), instances(maxNoInstances),
     collision(nullptr) {}
 
@@ -111,7 +111,7 @@ void Model::cleanup() {
     // free all instances
     for (unsigned int i = 0, len = instances.size(); i < len; i++) {
         if (instances[i]) {
-            free(instances[i]);
+            //free(instances[i]);
         }
     }
     instances.clear();
@@ -250,12 +250,12 @@ void Model::processNode(aiNode* node, const aiScene* scene) {
 
 // process mesh in object file
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
+    std::vector<Vertex> vertices(mesh->mNumVertices);
+    std::vector<unsigned int> indices(3 * mesh->mNumFaces);
     std::vector<Texture> textures;
 
     // setup bounding region
-    BoundingRegion br(boundType);
+    BoundingRegion br(BoundTypes::SPHERE);
     glm::vec3 min(std::numeric_limits<float>::max()); // min point = max float
     glm::vec3 max(std::numeric_limits<float>::min()); // max point = min float
 
@@ -303,34 +303,26 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
     }
 
     // process min/max for BR
-    if (boundType == BoundTypes::AABB) {
-        // assign max and min
-        br.min = min;
-        br.ogMin = min;
-        br.max = max;
-        br.ogMax = max;
-    }
-    else {
-        // calculate max distance from the center
-        br.center = BoundingRegion(min, max).calculateCenter();
-        br.ogCenter = br.center;
-        float maxRadiusSquared = 0.0f;
+    // calculate max distance from the center
+    br.center = (min + max) / 2.0f;
+    br.ogCenter = br.center;
+    br.collisionMesh = NULL;
+    float maxRadiusSquared = 0.0f;
 
-        for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-            float radiusSquared = 0.0f; // distance for this vertex
-            for (int j = 0; j < 3; j++) {
-                radiusSquared += (vertices[i].pos[j] - br.center[j]) * (vertices[i].pos[j] - br.center[j]);
-            }
-            if (radiusSquared > maxRadiusSquared) {
-                // found new squared radius
-                // a^2 > b^2 --> |a| > |b|
-                maxRadiusSquared = radiusSquared;
-            }
+    for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+        float radiusSquared = 0.0f; // distance for this vertex
+        for (int j = 0; j < 3; j++) {
+            radiusSquared += (vertices[i].pos[j] - br.center[j]) * (vertices[i].pos[j] - br.center[j]);
         }
-
-        br.radius = sqrt(maxRadiusSquared);
-        br.ogRadius = br.radius;
+        if (radiusSquared > maxRadiusSquared) {
+            // found new squared radius
+            // a^2 > b^2 --> |a| > |b|
+            maxRadiusSquared = radiusSquared;
+        }
     }
+
+    br.radius = sqrt(maxRadiusSquared);
+    br.ogRadius = br.radius;
 
     // process indices
     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {

@@ -388,11 +388,82 @@ bool Octree::node::insert(BoundingRegion obj) {
 // check collisions with all objects in node
 void Octree::node::checkCollisionsSelf(BoundingRegion obj) {
     for (BoundingRegion br : objects) {
+        if (br.instance->instanceId == obj.instance->instanceId) {
+            // do not test collisions with the same instance
+            continue;
+        }
+
+        // coarse check for bounding region intersection
         if (br.intersectsWith(obj)) {
-            if (br.instance->instanceId != obj.instance->instanceId) {
-                // different instances collide
-                std::cout << "Instance " << br.instance->instanceId << "(" << br.instance->modelId << ") collides with " << obj.instance->instanceId << "(" << obj.instance->modelId << ")" << std::endl;
-                br.intersectsWith(obj);
+            // coarse check passed
+
+            unsigned int noFacesBr = br.collisionMesh ? br.collisionMesh->faces.size() : 0;
+            unsigned int noFacesObj = obj.collisionMesh ? obj.collisionMesh->faces.size() : 0;
+
+            if (noFacesBr) {
+                unsigned int noFacesBr = br.collisionMesh->faces.size();
+
+                if (noFacesObj) {
+                    // both have collision meshes
+                    unsigned int noFacesObj = obj.collisionMesh->faces.size();
+
+                    // check all faces in br against all faces in obj
+                    for (unsigned int i = 0; i < noFacesBr; i++) {
+                        for (unsigned int j = 0; j < noFacesObj; j++) {
+                            if (br.collisionMesh->faces[i].collidesWithFace(
+                                br.instance,
+                                obj.collisionMesh->faces[j],
+                                obj.instance
+                            )) {
+                                std::cout << "Case 1: Instance " << br.instance->instanceId
+                                    << " (" << br.instance->modelId << ") collides with instance "
+                                    << obj.instance->instanceId << " (" << obj.instance->modelId << ")" << std::endl;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else {
+                    // br has a collision mesh, obj does not
+                    // check all faces in br against the obj's sphere
+                    for (unsigned int i = 0; i < noFacesBr; i++) {
+                        if (br.collisionMesh->faces[i].collidesWithSphere(
+                            br.instance,
+                            obj
+                        )) {
+                            std::cout << "Case 2: Instance " << br.instance->instanceId
+                                << " (" << br.instance->modelId << ") collides with instance "
+                                << obj.instance->instanceId << " (" << obj.instance->modelId << ")" << std::endl;
+                            break;
+                        }
+                    }
+                }
+            }
+            else {
+                if (noFacesObj) {
+                    // obj has a collision mesh, br does not
+                    // check all faces in obj against br's sphere
+                    unsigned int noFacesObj = obj.collisionMesh->faces.size();
+
+                    for (int i = 0; i < noFacesObj; i++) {
+                        if (obj.collisionMesh->faces[i].collidesWithSphere(
+                            obj.instance,
+                            br
+                        )) {
+                            std::cout << "Case 3: Instance " << br.instance->instanceId
+                                << " (" << br.instance->modelId << ") collides with instance "
+                                << obj.instance->instanceId << " (" << obj.instance->modelId << ")" << std::endl;
+                            break;
+                        }
+                    }
+                }
+                else {
+                    // neither have a collision mesh
+                    // coarse grain test pased (test collision between spheres)
+                    std::cout << "Case 3: Instance " << br.instance->instanceId
+                        << " (" << br.instance->modelId << ") collides with instance "
+                        << obj.instance->instanceId << " (" << obj.instance->modelId << ")" << std::endl;
+                }
             }
         }
     }
