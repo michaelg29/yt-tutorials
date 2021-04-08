@@ -6,7 +6,7 @@
 class Plane : public Model {
 public:
     Plane()
-        : Model("plane", BoundTypes::AABB, 1, CONST_INSTANCES) {}
+        : Model("plane", 1, CONST_INSTANCES) {}
 
     void init(std::vector<Texture> textures) {
         int noVertices = 4;
@@ -31,7 +31,8 @@ public:
             1, 2, 3
         };
 
-        BoundingRegion br(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.5f, 0.5f, 0.0f));
+        //BoundingRegion br(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.5f, 0.5f, 0.0f));
+        BoundingRegion br(glm::vec3(0.0f), 1 / sqrt(2.0f));
 
         Mesh ret = processMesh(br,
             noVertices, quadVertices,

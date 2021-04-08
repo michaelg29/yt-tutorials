@@ -39,9 +39,6 @@ public:
     // id of model in scene
     std::string id;
 
-    // type of bounding region for all meshes
-    BoundTypes boundType;
-
     // list of meshes
     std::vector<Mesh> meshes;
     // pointer to the collision model
@@ -65,7 +62,7 @@ public:
     */
 
     // initialize with parameters
-    Model(std::string id, BoundTypes boundType, unsigned int maxNoInstances, unsigned int flags = 0);
+    Model(std::string id, unsigned int maxNoInstances, unsigned int flags = 0);
 
     /*
         process functions
