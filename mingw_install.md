@@ -30,7 +30,7 @@ It provides many tools, but this outlines the process to download the GCC or GNU
 11. Open up the control panel and search *environment variables* and click on *Edit the system environment variables*.
 12. Click *Environment Variables* at the bottom of the dialogue.
 13. In *System Variables*, select *PATH* and click *Edit*.
-14. Click *New* and input the installation path for MinGW.
+14. Click *New* and input the installation path for MinGW\bin (ie *C:\MinGW\bin*).
 15. To verify the path, open up a command prompt and run the command, *gcc --version*.
 
 ## Execution Instructions
