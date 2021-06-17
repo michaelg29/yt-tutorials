@@ -17,8 +17,8 @@ typedef struct Face {
 	glm::vec3 baseNormal;
 	glm::vec3 norm;
 
-	bool collidesWithFace(RigidBody* thisRB, struct Face& face, RigidBody* faceRB);
-	bool collidesWithSphere(RigidBody* thisRB, BoundingRegion& br);
+	bool collidesWithFace(RigidBody* thisRB, struct Face& face, RigidBody* faceRB, glm::vec3& retNorm);
+	bool collidesWithSphere(RigidBody* thisRB, BoundingRegion& br, glm::vec3& retNorm);
 } Face;
 
 class CollisionMesh {

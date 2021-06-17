@@ -69,54 +69,6 @@ std::string Shader::defaultDirectory = "assets/shaders";
 int main() {
     std::cout << "Hello, OpenGL!" << std::endl;
 
-    float P[9] = {
-        0.0f, 0.0f, 1.0f,
-        0.0f, 1.0f, 0.0f,
-        1.0f, 0.0f, 0.0f
-    };
-    unsigned int Pi[3] = {
-        0, 1, 2
-    };
-
-    float U[9] = {
-        -1.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f,
-        1.0f, 2.0f, 0.5f
-    };
-    unsigned int Ui[3] = {
-        0, 1, 2
-    };
-
-    CollisionMesh PF(3, P, 1, Pi);
-    CollisionMesh UF(3, U, 1, Ui);
-
-    RigidBody prb;
-    RigidBody urb;
-
-    std::cout << PF.faces[0].collidesWithFace(&prb, UF.faces[0], &urb) << std::endl;
-
-    float V[9] = {
-        0.0f, 0.0f, 0.0f,
-        3.0f, 1.0f, sqrt(3.0f),
-        -3.0f, 0.6, -sqrt(3.0f)
-    };
-    unsigned int Vi[3] = {
-        0, 1, 2
-    };
-
-    CollisionMesh VF(3, V, 1, Vi);
-
-    RigidBody vrb;
-    vrb.pos = { 0.0f, 10.0f, 0.0f };
-    vrb.update(0.0f);
-
-    BoundingRegion br({ 1.0f, 0.0f, -1.0f, }, 2.0f);
-    RigidBody rb2;
-    br.instance = &rb2;
-    br.transform();
-
-    std::cout << VF.faces[0].collidesWithSphere(&vrb, br);
-
     // construct scene
     scene = Scene(3, 3, "OpenGL Tutorial", 1200, 720);
     // test if GLFW successfully started and created window
@@ -202,7 +154,7 @@ int main() {
             0.5f, 50.0f
         );
         // create physical model for each lamp
-        scene.generateInstance(lamp.id, glm::vec3(0.25f), 0.25f, pointLightPositions[i]);
+        scene.generateInstance(lamp.id, glm::vec3(10.0f, 0.25f, 10.0f), 0.25f, pointLightPositions[i]);
         // add lamp to scene's light source
         scene.pointLights.push_back(&pointLights[i]);
         // activate lamp in scene
@@ -341,7 +293,7 @@ void launchItem(float dt) {
     RigidBody* rb = scene.generateInstance(sphere.id, glm::vec3(0.1f), 1.0f, cam.cameraPos);
     if (rb) {
         // instance generated successfully
-        rb->transferEnergy(50.0f, cam.cameraFront);
+        rb->transferEnergy(25.0f, cam.cameraFront);
         rb->applyAcceleration(Environment::gravitationalAcceleration);
     }
 }
