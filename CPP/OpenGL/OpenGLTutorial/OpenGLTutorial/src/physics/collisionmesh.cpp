@@ -145,7 +145,7 @@ bool faceContainsPoint(glm::vec3 A, glm::vec3 B, glm::vec3 N, glm::vec3 point) {
 	return faceContainsPointRange(A, B, N, point, 0.0f);
 }
 
-bool Face::collidesWithFace(RigidBody* thisRB, Face& face, RigidBody* faceRB) {
+bool Face::collidesWithFace(RigidBody* thisRB, Face& face, RigidBody* faceRB, glm::vec3& retNorm) {
 	// transform coordinates so that P1 is the origin
 	glm::vec3 P1 = mat4vec3mult(thisRB->model, this->mesh->points[this->i1]);
 	glm::vec3 P2 = mat4vec3mult(thisRB->model, this->mesh->points[this->i2]) - P1;
@@ -161,6 +161,8 @@ bool Face::collidesWithFace(RigidBody* thisRB, Face& face, RigidBody* faceRB) {
 	glm::vec3 U1 = mat4vec3mult(faceRB->model, face.mesh->points[face.i1]) - P1;
 	glm::vec3 U2 = mat4vec3mult(faceRB->model, face.mesh->points[face.i2]) - P1;
 	glm::vec3 U3 = mat4vec3mult(faceRB->model, face.mesh->points[face.i3]) - P1;
+
+	retNorm = faceRB->normalModel * face.norm;
 
 	// set P1 as the origin
 	P1[0] = 0.0f; P1[1] = 0.0f; P1[2] = 0.0f;
@@ -236,7 +238,7 @@ bool Face::collidesWithFace(RigidBody* thisRB, Face& face, RigidBody* faceRB) {
 	return false;
 }
 
-bool Face::collidesWithSphere(RigidBody* thisRB, BoundingRegion& br) {
+bool Face::collidesWithSphere(RigidBody* thisRB, BoundingRegion& br, glm::vec3& retNorm) {
 	if (br.type != BoundTypes::SPHERE) {
 		return false;
 	}
@@ -254,6 +256,8 @@ bool Face::collidesWithSphere(RigidBody* thisRB, BoundingRegion& br) {
 
 	if (abs(distance) < br.radius) {
 		glm::vec3 circCenter = br.center + distance * unitN;
+
+		retNorm = unitN;
 
 		return faceContainsPointRange(P2 - P1, P3 - P1, norm, circCenter - P1, br.radius);
 	}

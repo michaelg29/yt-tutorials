@@ -9,6 +9,8 @@
 #define INSTANCE_DEAD		(unsigned char)0b00000001
 #define INSTANCE_MOVED		(unsigned char)0b00000010
 
+#define COLLISION_THRESHOLD 0.05f
+
 /*
     Rigid Body class
     - represents physical body and holds all parameters
@@ -42,6 +44,10 @@ public:
     // ids for quick access to instance/model
     std::string modelId;
     std::string instanceId;
+
+    // data of previous collision
+    float lastCollision;
+    std::string lastCollisionID;
 
     // test for equivalence of two rigid bodies
     bool operator==(RigidBody rb);
@@ -79,6 +85,11 @@ public:
 
     // transfer potential or kinetic energy from another object
     void transferEnergy(float joules, glm::vec3 direction);
+
+    /*
+        collisions
+    */
+    void handleCollision(RigidBody* inst, glm::vec3 norm);
 };
 
 #endif
