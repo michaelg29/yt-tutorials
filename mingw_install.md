@@ -7,7 +7,7 @@ It provides many tools, but this outlines the process to download the GCC or GNU
 ## Installation Instructions
 
 #### Installer Installation
-1. Go to [MinGW's home page](http://mingw.org/).
+1. Go to [MinGW's home page](https://sourceforge.net/projects/mingw/).
 2. Click on the downloads tab.
 3. In the package list, click on the *show* button next to *MinGW Installation Manager*.
 4. In the dropdown, click *show* on the latest version.
