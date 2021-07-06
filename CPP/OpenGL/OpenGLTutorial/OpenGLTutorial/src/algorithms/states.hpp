@@ -25,7 +25,7 @@ namespace States {
             00001000 == 1 << target
         */
 
-        return (*states & (1 << target)) == (1 << target);
+        return (*states & (1 << target));
     }
 
     // activate state
@@ -104,7 +104,7 @@ namespace States {
     // tell if state is active
     template<typename T>
     bool isActive(T* states, T state) {
-        return (*states & state) == state;
+        return (*states & state);
     }
 
     // activate state
