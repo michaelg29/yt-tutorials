@@ -2,148 +2,7 @@
 #include "collisionmodel.h"
 #include "rigidbody.h"
 
-#include <limits>
-
-/*
-	Line-plane intersection cases
-	PI is the plane containing the vectors P1P2 and P1P3
-
-	CASE 0
-		line U1U2 lies in the plane PI
-		t = 0 / 0
-
-	CASE 1
-		no planar intersection
-		t = (R != 0) / 0
-
-		=> intersection when
-		!(tnum != 0 && tden == 0)
-		= tnum == 0 || tden != 0 (DeMorgan)
-
-	CASE 2
-		planar intersection, in between U1 and U2
-		t = R / (R != 0) in the range [0, 1]
-
-	CASE 3
-		planar intersection, outside of U1 and U2
-		t = R / (R != 0) not in the range [0, 1]
-*/
-#define CASE0 (char)0
-#define CASE1 (char)1
-#define CASE2 (char)2
-#define CASE3 (char)3
-
-char linePlaneIntersection(glm::vec3 P1, glm::vec3 norm, glm::vec3 U1, glm::vec3 side, float& t) {
-	// calculate the parameter t of the line { U1 + side * t } at the point of intersection
-	/*
-		t = (N dot U1P1) / (N dot U1U2)
-	*/
-	glm::vec3 U1P1 = P1 - U1;
-
-	float tnum = glm::dot(norm, U1P1);
-	float tden = glm::dot(norm, side);
-
-	if (tden == 0.0f) {
-		return tnum == 0.0f ? CASE0 : CASE1;
-	}
-	else {
-		// can do division
-		t = tnum / tden;
-		return t >= 0.0f && t <= 1.0f ? CASE2 : CASE3;
-	}
-}
-
-template <int C, int R>
-void rref(glm::mat<C, R, float>& m) {
-	unsigned int currentRow = 0;
-	for (unsigned int c = 0; c < C; c++) {
-		unsigned int r = currentRow;
-		if (r >= R)
-		{
-			// no more rows
-			break;
-		}
-
-		// find nonzero entry
-		for (; r < R; r++)
-		{
-			if (m[c][r] != 0.0f)
-			{
-				// non-zero value
-				break;
-			}
-		}
-
-		// didn't find a nonzero entry in column
-		if (r == R)
-		{
-			continue;
-		}
-
-		// swap with proper row
-		if (r != currentRow) {
-			for (unsigned int i = 0; i < C; i++) {
-				float tmp = m[i][currentRow];
-				m[i][currentRow] = m[i][r];
-				m[i][r] = tmp;
-			}
-		}
-
-		// multiply row by 1 / value
-		if (m[c][currentRow] != 0.0f) {
-			float k = 1 / m[c][currentRow];
-			m[c][currentRow] = 1.0f;
-			for (unsigned int col = c + 1; col < C; col++)
-			{
-				m[col][currentRow] *= k;
-			}
-		}
-
-		// clear out rows above and below
-		for (r = 0; r < R; r++)
-		{
-			if (r == currentRow)
-			{
-				continue;
-			}
-			float k = -m[c][r];
-			for (unsigned int i = 0; i < C; i++) {
-
-				m[i][r] += k * m[i][currentRow];
-			}
-		}
-
-		currentRow++;
-	}
-}
-
-glm::vec3 mat4vec3mult(glm::mat4& m, glm::vec3& v) {
-	glm::vec3 ret;
-	for (int i = 0; i < 3; i++) {
-		ret[i] = v[0] * m[0][i] + v[1] * m[1][i] + v[2] * m[2][i] + m[3][i];
-	}
-	return ret;
-}
-
-glm::vec3 linCombSolution(glm::vec3 A, glm::vec3 B, glm::vec3 C, glm::vec3 point) {
-	// represent the point as a linear combination of the 3 basis vectors
-	glm::mat4x3 m(A, B, C, point);
-
-	// do RREF
-	rref(m);
-
-	return m[3];
-}
-
-bool faceContainsPointRange(glm::vec3 A, glm::vec3 B, glm::vec3 N, glm::vec3 point, float radius) {
-	glm::vec3 c = linCombSolution(A, B, N, point);
-
-	return c[0] >= -radius && c[1] >= -radius && c[0] + c[1] <= 1.0f + radius;
-}
-
-bool faceContainsPoint(glm::vec3 A, glm::vec3 B, glm::vec3 N, glm::vec3 point) {
-	return faceContainsPointRange(A, B, N, point, 0.0f);
-}
+#include "../linalg.h"
 
 bool Face::collidesWithFace(RigidBody* thisRB, Face& face, RigidBody* faceRB, glm::vec3& retNorm) {
 	// transform coordinates so that P1 is the origin
@@ -187,12 +46,12 @@ bool Face::collidesWithFace(RigidBody* thisRB, Face& face, RigidBody* faceRB, gl
 		// get intersection with the plane
 		float t = 0.0f;
 
-		char currentCase = linePlaneIntersection(P1, thisNorm,
+		LinePlaneIntCase currentCase = linePlaneIntersection(P1, thisNorm,
 			sideOrigins[i], sides[i],
 			t);
 
 		switch (currentCase) {
-		case CASE0:
+		case LinePlaneIntCase::CASE0:
 			// determine intersection with the lines of this face
 
 			for (int j = 0; j < 3; j++) {
@@ -215,10 +74,10 @@ bool Face::collidesWithFace(RigidBody* thisRB, Face& face, RigidBody* faceRB, gl
 			}
 
 			return false;
-		case CASE1:
+		case LinePlaneIntCase::CASE1:
 			// no intersection, no collision
 			continue;
-		case CASE2:
+		case LinePlaneIntCase::CASE2:
 			// intersection in the plane in range, determine if inside the triangle of this face
 
 			// get point of intersection
@@ -229,7 +88,7 @@ bool Face::collidesWithFace(RigidBody* thisRB, Face& face, RigidBody* faceRB, gl
 			}
 
 			continue;
-		case CASE3:
+		case LinePlaneIntCase::CASE3:
 			// intersection in the plane out of range, no collision
 			continue;
 		};
