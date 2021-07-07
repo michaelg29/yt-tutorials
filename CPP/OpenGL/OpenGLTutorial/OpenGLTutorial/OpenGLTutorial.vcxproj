@@ -166,6 +166,7 @@
     <ClCompile Include="lib\stb.cpp" />
     <ClCompile Include="src\algorithms\bounds.cpp" />
     <ClCompile Include="src\algorithms\octree.cpp" />
+    <ClCompile Include="src\algorithms\ray.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\graphics\objects\mesh.cpp" />
     <ClCompile Include="src\graphics\objects\model.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="src\algorithms\bounds.h" />
     <ClInclude Include="src\algorithms\list.hpp" />
     <ClInclude Include="src\algorithms\octree.h" />
+    <ClInclude Include="src\algorithms\ray.h" />
     <ClInclude Include="src\algorithms\states.hpp" />
     <ClInclude Include="src\algorithms\trie.hpp" />
     <ClInclude Include="src\graphics\memory\framememory.hpp" />

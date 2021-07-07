@@ -42,6 +42,7 @@
 #include "io/camera.h"
 
 #include "algorithms/states.hpp"
+#include "algorithms/ray.h"
 
 #include "scene.h"
 
@@ -298,6 +299,20 @@ void launchItem(float dt) {
     }
 }
 
+void emitRay() {
+    Ray r(cam.cameraPos, cam.cameraFront);
+
+    float tmin = std::numeric_limits<float>::max();
+    BoundingRegion* intersected = scene.octree->checkCollisionsRay(r, tmin);
+    if (intersected) {
+        std::cout << "Hits " << intersected->instance->instanceId << " at t = " << tmin << std::endl;
+        scene.markForDeletion(intersected->instance->instanceId);
+    }
+    else {
+        std::cout << "No hit" << std::endl;
+    }
+}
+
 void processInput(double dt) {
     // process input with cameras
     scene.processInput(dt);
@@ -322,6 +337,11 @@ void processInput(double dt) {
     // launch sphere
     if (Keyboard::keyWentDown(GLFW_KEY_F)) {
         launchItem(dt);
+    }
+
+    // emit ray
+    if (Mouse::buttonWentDown(GLFW_MOUSE_BUTTON_1)) {
+        emitRay();
     }
 
     // determine if each lamp should be toggled
