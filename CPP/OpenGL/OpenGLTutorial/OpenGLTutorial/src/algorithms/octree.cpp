@@ -501,6 +501,75 @@ void Octree::node::checkCollisionsChildren(BoundingRegion obj) {
     }
 }
 
+// check collisions with a ray
+BoundingRegion* Octree::node::checkCollisionsRay(Ray r, float& tmin) {
+    float tmin_tmp = std::numeric_limits<float>::max();
+    float tmax_tmp = std::numeric_limits<float>::lowest();
+    float t_tmp = std::numeric_limits<float>::max();
+
+    // check current region
+    if (r.intersectsBoundingRegion(region, tmin_tmp, tmax_tmp)) {
+        // know ray collides with the current region
+        if (tmin_tmp >= tmin) {
+            // found nearer collision
+            return nullptr;
+        }
+
+        BoundingRegion* ret = nullptr, * ret_tmp = nullptr;
+
+        // check objects in the node
+        for (BoundingRegion& br : this->objects) {
+            tmin_tmp = std::numeric_limits<float>::max();
+            tmax_tmp = std::numeric_limits<float>::lowest();
+
+            // coarse check - check against BR
+            if (r.intersectsBoundingRegion(br, tmin_tmp, tmax_tmp)) {
+                std::cout << "Passed coarse check, ";
+                if (tmin_tmp > tmin) {
+                    continue;
+                }
+                else if (br.collisionMesh) {
+                    // fine grain check with collision mesh
+                    t_tmp = std::numeric_limits<float>::max();
+                    if (r.intersectsMesh(br.collisionMesh, br.instance, t_tmp)) {
+                        if (t_tmp < tmin) {
+                            // found closer collision
+                            tmin = t_tmp;
+                            ret = &br;
+                        }
+                    }
+                }
+                else {
+                    // rely on coarse check
+                    if (tmin_tmp < tmin) {
+                        tmin = tmin_tmp;
+                        ret = &br;
+                    }
+                }
+            }
+            else {
+                std::cout << "Failed coarse check, ";
+            }
+        }
+
+        // check children
+        if (children) {
+            for (unsigned char flags = activeOctants, i = 0;
+                flags;
+                flags >>= 1, i++) {
+                ret_tmp = children[i]->checkCollisionsRay(r, tmin);
+                if (ret_tmp) {
+                    ret = ret_tmp;
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    return nullptr;
+}
+
 // destroy object (free memory)
 void Octree::node::destroy() {
     // clearing out children
