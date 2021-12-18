@@ -60,9 +60,6 @@ namespace Octree {
         // switch for active octants
         unsigned char activeOctants;
 
-        // if node has children
-        bool hasChildren = false;
-
         // if tree is ready
         bool treeReady = false;
         // if tree is built
