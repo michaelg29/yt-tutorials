@@ -123,7 +123,6 @@ void Octree::node::build() {
             States::activateIndex(&activeOctants, i); // activate octant
             children[i]->parent = this;
             children[i]->build();
-            hasChildren = true;
         }
     }
     
@@ -146,7 +145,7 @@ void Octree::node::update(Box &box) {
 
         // countdown timer
         if (objects.size() == 0) {
-            if (!hasChildren) {
+            if (!activeOctants) {
                 // ensure no child leaves
                 if (currentLifespan == -1) {
                     // initial check
@@ -203,6 +202,7 @@ void Octree::node::update(Box &box) {
                 }
                 else {
                     // branch is dead
+                    free(children[i]);
                     children[i] = nullptr;
                     States::deactivateIndex(&activeOctants, i);
                 }
@@ -377,7 +377,6 @@ bool Octree::node::insert(BoundingRegion obj) {
                 children[i]->parent = this;
                 States::activateIndex(&activeOctants, i);
                 children[i]->build();
-                hasChildren = true;
             }
         }
     }
