@@ -255,7 +255,7 @@ void Octree::node::update(Box &box) {
             */
             objects.erase(objects.begin() + movedObjects.top());
             movedObjects.pop();
-            current->insert(movedObj);
+            current->queue.push(movedObj);
 
             // collision detection
             // itself
@@ -272,12 +272,8 @@ void Octree::node::update(Box &box) {
             }
         }
     }
-    else {
-        // process pending results
-        if (queue.size() > 0) {
-            processPending();
-        }
-    }
+
+    processPending();
 }
 
 // process pending queue
