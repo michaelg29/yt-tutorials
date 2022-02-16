@@ -110,6 +110,9 @@ bool Scene::init() {
     // keep fragments if either stencil or depth fails, replace if both pass
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
+    // v-sync
+    glfwSwapInterval(1);
+
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // disable cursor
 
     /*
