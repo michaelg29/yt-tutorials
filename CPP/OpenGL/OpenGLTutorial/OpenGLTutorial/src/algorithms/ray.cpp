@@ -1,6 +1,6 @@
 #include "ray.h"
 
-#include "../linalg.h"
+#include "../algorithms/math/linalg.h"
 #include <limits>
 
 Ray::Ray(glm::vec3 origin, glm::vec3 dir)

@@ -112,7 +112,7 @@
     <ClCompile Include="src\physics\collisionmodel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\linalg.cpp">
+    <ClCompile Include="src\algorithms\math\linalg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\algorithms\ray.cpp">
@@ -219,7 +219,7 @@
     <ClInclude Include="src\physics\collisionmodel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\linalg.h">
+    <ClInclude Include="src\algorithms\math\linalg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\algorithms\ray.h">
