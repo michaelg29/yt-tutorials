@@ -4,7 +4,6 @@
 #include <glad/glad.h>
 
 #include <string>
-#include <fstream>
 #include <sstream>
 #include <iostream>
 
@@ -53,9 +52,6 @@ public:
         utility functions
     */
 
-    // compile shader program
-    GLuint compileShader(bool includeDefaultHeader, const char* filePath, GLuint type);
-
     /*
         set uniform variables
     */
@@ -75,6 +71,9 @@ public:
         static
     */
 
+    // compile shader program
+    static GLuint compileShader(bool includeDefaultHeader, const char* filePath, GLuint type);
+
     // default directory
     static std::string defaultDirectory;
 
@@ -88,7 +87,7 @@ public:
     static void clearDefault();
 
     // load string from file
-    static std::string loadShaderSrc(bool includeDefaultHeader, const char* filePath);
+    static char *loadShaderSrc(bool includeDefaultHeader, const char* filePath);
 };
 
 #endif

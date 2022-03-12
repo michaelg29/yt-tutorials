@@ -1,5 +1,8 @@
 #include "Shader.h"
 
+#include <stdio.h>
+#include <fstream>
+
 /*
     constructors
 */
@@ -16,73 +19,39 @@ Shader::Shader(bool includeDefaultHeader, const char* vertexShaderPath, const ch
     process functions
 */
 
+void compileAndAttach(GLuint id, bool includeDefaultHeader, const char* path, GLuint type) {
+    if (!path) {
+        return;
+    }
+
+    GLuint shader = Shader::compileShader(includeDefaultHeader, path, type);
+    glAttachShader(id, shader);
+    glDeleteShader(shader);
+}
+
 // generate using vertex and frag shaders
 void Shader::generate(bool includeDefaultHeader, const char* vertexShaderPath, const char* fragShaderPath, const char* geoShaderPath) {
-    int success;
-    char infoLog[512];
-
-    // compile shaders
-    GLuint vertexShader = compileShader(includeDefaultHeader, vertexShaderPath, GL_VERTEX_SHADER);
-    GLuint fragShader = compileShader(includeDefaultHeader, fragShaderPath, GL_FRAGMENT_SHADER);
-
-    GLuint geoShader = 0; // placeholder
-    if (geoShaderPath) {
-        geoShader = compileShader(includeDefaultHeader, geoShaderPath, GL_GEOMETRY_SHADER);
-    }
-
-    // create program and attach shaders
     id = glCreateProgram();
-    glAttachShader(id, vertexShader);
-    glAttachShader(id, fragShader);
-    if (geoShaderPath) {
-        glAttachShader(id, geoShader);
-    }
+
+    // compile and attach shaders
+    compileAndAttach(id, includeDefaultHeader, vertexShaderPath, GL_VERTEX_SHADER);
+    compileAndAttach(id, includeDefaultHeader, fragShaderPath, GL_FRAGMENT_SHADER);
+    compileAndAttach(id, includeDefaultHeader, geoShaderPath, GL_GEOMETRY_SHADER);
     glLinkProgram(id);
 
     // linking errors
+    int success;
     glGetProgramiv(id, GL_LINK_STATUS, &success);
     if (!success) {
+        char* infoLog = (char*)malloc(512);
         glGetProgramInfoLog(id, 512, NULL, infoLog);
         std::cout << "Linking error:" << std::endl << infoLog << std::endl;
-    }
-
-    // delete shaders
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragShader);
-    if (geoShaderPath) {
-        glDeleteShader(geoShader);
     }
 }
 
 // activate shader
 void Shader::activate() {
     glUseProgram(id);
-}
-
-/*
-    utility functions
-*/
-
-// compile shader program
-GLuint Shader::compileShader(bool includeDefaultHeader, const char* filePath, GLuint type) {
-    int success;
-    char infoLog[512];
-
-    // create shader from file
-    GLuint ret = glCreateShader(type);
-    std::string shaderSrc = loadShaderSrc(includeDefaultHeader, filePath);
-    const GLchar* shader = shaderSrc.c_str();
-    glShaderSource(ret, 1, &shader, NULL);
-    glCompileShader(ret);
-
-    // catch compilation error
-    glGetShaderiv(ret, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(ret, 512, NULL, infoLog);
-        std::cout << "Error with shader comp." << filePath << ":" << std::endl << infoLog << std::endl;
-    }
-
-    return ret;
 }
 
 /*
@@ -133,14 +102,37 @@ void Shader::setMat4(const std::string& name, glm::mat4 val) {
     static
 */
 
+// compile shader program
+GLuint Shader::compileShader(bool includeDefaultHeader, const char* filePath, GLuint type) {
+    // create shader from file
+    GLuint ret = glCreateShader(type);
+    GLchar* shader = loadShaderSrc(includeDefaultHeader, filePath);
+    glShaderSource(ret, 1, &shader, NULL);
+    glCompileShader(ret);
+    free(shader);
+
+    // catch compilation error
+    int success;
+    glGetShaderiv(ret, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        char* infoLog = (char*)malloc(512);
+        glGetShaderInfoLog(ret, 512, NULL, infoLog);
+        std::cout << "Error with shader comp." << filePath << ":" << std::endl << infoLog << std::endl;
+    }
+
+    return ret;
+}
+
 // stream containing default headers
 std::stringstream Shader::defaultHeaders;
 
 // load into default header
 void Shader::loadIntoDefault(const char* filepath) {
-    std::string fileContents = Shader::loadShaderSrc(false, filepath);
+    char *fileContents = Shader::loadShaderSrc(false, filepath);
 
     Shader::defaultHeaders << fileContents;
+
+    free(fileContents);
 }
 
 // clear default header (after shader compilation)
@@ -149,33 +141,38 @@ void Shader::clearDefault() {
 }
 
 // load string from file
-std::string Shader::loadShaderSrc(bool includeDefaultHeader, const char* filePath) {
-    std::ifstream file;
-    std::stringstream buf;
-
-    std::string ret = "";
-
-    // include default
-    if (includeDefaultHeader) {
-        buf << Shader::defaultHeaders.str();
-    }
-
+char *Shader::loadShaderSrc(bool includeDefaultHeader, const char* filePath) {
     std::string fullPath = Shader::defaultDirectory + '/' + filePath;
 
-    // open file
-    file.open(fullPath.c_str());
+    FILE* file = NULL;
+    fopen_s(&file, fullPath.c_str(), "rb");
+    if (!file) {
+        std::cout << "Could not open " << filePath << std::endl;
+        return NULL;
+    }
 
-    if (file.is_open()) {
-        // read buffer
-        buf << file.rdbuf();
-        ret = buf.str();
+    // move cursor to the end
+    fseek(file, 0L, SEEK_END);
+    // get length
+    int len = ftell(file);
+    // return to beginning
+    fseek(file, 0, SEEK_SET);
+
+    // read
+    char* ret = NULL;
+    int cursor = 0;
+    if (includeDefaultHeader) {
+        // copy header and advance cursor to read into space after default header
+        cursor = Shader::defaultHeaders.str().size();
+        ret = (char*)malloc(cursor + len + 1);
+        memcpy_s(ret, cursor + len + 1, Shader::defaultHeaders.str().c_str(), cursor);
     }
     else {
-        std::cout << "Could not open " << filePath << std::endl;
+        ret = (char*)malloc(len + 1);
     }
-
-    // close file
-    file.close();
+    // read from file
+    fread(ret + cursor, 1, len, file);
+    ret[cursor + len] = 0; // terminator
 
     return ret;
 }
