@@ -48,9 +48,8 @@ public:
     // activate shader
     void activate();
 
-    /*
-        utility functions
-    */
+    // cleanup
+    void cleanup();
 
     /*
         set uniform variables

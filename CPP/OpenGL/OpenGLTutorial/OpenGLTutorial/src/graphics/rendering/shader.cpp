@@ -54,6 +54,11 @@ void Shader::activate() {
     glUseProgram(id);
 }
 
+// cleanup
+void Shader::cleanup() {
+    glDeleteProgram(id);
+}
+
 /*
     set uniform variables
 */
